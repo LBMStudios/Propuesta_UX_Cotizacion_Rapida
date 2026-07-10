@@ -93,11 +93,36 @@ function renderUI(cotizacion) {
         const uiId = REVERSE_MAP_PROD[prod.producto_id];
         if (!uiId) return;
 
+        const cardEl = document.getElementById(`card-${uiId}`);
         const oriEl = document.getElementById(`${uiId}-ori`);
         const finEl = document.getElementById(`${uiId}-fin`);
         const discEl = document.getElementById(`${uiId}-disc`);
         const subEl = document.getElementById(`${uiId}-sub`);
         const totEl = document.getElementById(`${uiId}-tot`);
+
+        // ── ELEGIBILIDAD POR EDAD ──
+        if (cardEl) {
+            if (!prod.elegible) {
+                cardEl.style.opacity = '0.45';
+                cardEl.style.pointerEvents = 'none';
+                // Agregar badge de no elegible si no existe
+                let badge = cardEl.querySelector('.age-badge');
+                if (!badge) {
+                    badge = document.createElement('div');
+                    badge.className = 'age-badge';
+                    badge.style.cssText = 'position:absolute;top:6px;right:6px;background:#E40046;color:white;font-size:0.5rem;padding:2px 6px;border-radius:10px;font-weight:700;z-index:5;';
+                    cardEl.style.position = 'relative';
+                    cardEl.appendChild(badge);
+                }
+                badge.textContent = `⚠ ${prod.limite_edad || 70}+ NO`;
+                badge.style.display = 'block';
+            } else {
+                cardEl.style.opacity = '1';
+                cardEl.style.pointerEvents = '';
+                const badge = cardEl.querySelector('.age-badge');
+                if (badge) badge.style.display = 'none';
+            }
+        }
 
         const tieneDescuento = prod.descuento_porcentaje > 0;
 
@@ -145,6 +170,41 @@ function renderUI(cotizacion) {
             }
         }
     }
+
+    // ── ALERTAS DE ELEGIBILIDAD ──
+    renderAlertas(cotizacion.alertas);
+}
+
+function renderAlertas(alertas) {
+    let container = document.getElementById('alertas-container');
+    if (!container) {
+        // Crear contenedor de alertas antes del footer
+        const footer = document.querySelector('footer');
+        if (footer) {
+            container = document.createElement('div');
+            container.id = 'alertas-container';
+            container.style.cssText = 'padding:0 12px; display:flex; flex-direction:column; gap:4px;';
+            footer.parentNode.insertBefore(container, footer);
+        }
+    }
+    if (!container) return;
+
+    if (!alertas || alertas.length === 0) {
+        container.innerHTML = '';
+        container.style.display = 'none';
+        return;
+    }
+
+    container.style.display = 'flex';
+    container.innerHTML = alertas.map(a => {
+        const colors = a.severidad === 'WARNING' 
+            ? 'background:#fff3cd;border:1px solid #ffc107;color:#856404;' 
+            : 'background:#d1ecf1;border:1px solid #17a2b8;color:#0c5460;';
+        const icon = a.severidad === 'WARNING' ? '⚠️' : '💡';
+        return `<div style="${colors} padding:6px 10px; border-radius:8px; font-size:0.65rem; line-height:1.3;">
+            ${icon} ${a.mensaje}
+        </div>`;
+    }).join('');
 }
 
 // ========================================================================
@@ -227,18 +287,23 @@ function updatePendientesBadge() {
 // HELPERS — Construcción de mensaje WA/Email
 // ========================================================================
 
-function _buildQuoteMsg() {
+function _buildQuoteData() {
     const nombre = document.getElementById('prospecto-nombre')?.value?.trim() || '';
-    if(!ultimaCotizacion) return { nombre, plan: '', total: '', destino: '', dias: '', totalPax: 0 };
+    if(!ultimaCotizacion) return { nombre, plan: '', total: '', destino: '', dias: '', totalPax: 0, convenioNombre: null, descuento: 0 };
     
     const actProd = ultimaCotizacion.productos_ofrecidos.find(p => p.producto_id === activeCardId);
+    const convInfo = activeConvenio ? DataRepository.getConvenioById(activeConvenio) : null;
+    const descPct = actProd ? actProd.descuento_porcentaje : 0;
+    
     return { 
         nombre, 
         plan: actProd ? actProd.nombre_comercial : '', 
         total: actProd ? `USD ${actProd.importe_cotizado_final}` : '', 
         destino: document.getElementById('destino')?.value || '', 
         dias: ultimaCotizacion.dias, 
-        totalPax: ultimaCotizacion.cantidad_pasajeros 
+        totalPax: ultimaCotizacion.cantidad_pasajeros,
+        convenioNombre: convInfo ? convInfo.nombre : null,
+        descuento: descPct
     };
 }
 
@@ -412,44 +477,27 @@ function cerrarDetalles(e) {
 
 function enviarWhatsAppProspecto() {
     const tel = document.getElementById('prospecto-tel')?.value?.replace(/\D/g,'');
-    if (!tel) { alert('Ingresa el telefono del prospecto primero.'); return; }
-    const { nombre, plan, total, destino, dias, totalPax } = _buildQuoteMsg();
-    if (!nombre) { alert('Ingresa el nombre del prospecto primero.'); return; }
+    if (!tel) { alert('Ingresa el teléfono del prospecto primero.'); return; }
+    const data = _buildQuoteData();
+    if (!data.nombre) { alert('Ingresa el nombre del prospecto primero.'); return; }
     
-    const convInfo = activeConvenio ? DataRepository.getConvenioById(activeConvenio) : null;
-    const convenioTxt = convInfo ? `Convenio: ${convInfo.nombre}` : '';
+    // Usar plantilla real de ENV-004
+    const template = PlantillasMsg.TEMPLATES.COTIZACION_WA;
+    const mensaje = template.generar(data);
     
-    const lines = [
-        `Hola *${nombre}*!`,
-        '',
-        'Te comparto la cotizacion de tu seguro de viaje con *Universal Assistance*:',
-        '',
-        `Destino: *${destino}*`,
-        `Dias: *${dias}*`,
-        `Pasajeros: *${totalPax}*`,
-        `Plan: *${plan}*`,
-        convenioTxt ? convenioTxt : null,
-        '',
-        `*TOTAL: ${total}*`,
-        '',
-        'Para confirmar tu reserva podes responder este mensaje.',
-        '',
-        '_Universal Assistance - A Zurich Company_'
-    ].filter(l => l !== null).join('\n');
-    window.open(`https://wa.me/598${tel}?text=${encodeURIComponent(lines)}`, '_blank');
+    window.open(`https://wa.me/598${tel}?text=${encodeURIComponent(mensaje)}`, '_blank');
 }
 
 function enviarEmailProspecto() {
     const email = document.getElementById('prospecto-email')?.value;
     if (!email) { alert('Ingresá el email del prospecto primero.'); return; }
-    const { nombre, plan, total, destino, dias } = _buildQuoteMsg();
-    const subject = encodeURIComponent(`Cotización Seguro de Viaje – Plan ${plan} | Universal Assistance`);
-    const body = encodeURIComponent(
-        `Estimado/a ${nombre},\n\nAdjuntamos su cotización personalizada:\n\n` +
-        `Destino: ${destino}\nDías: ${dias}\nPlan: ${plan}\nTotal: ${total}\n\n` +
-        `Para confirmar, comuníquese con su agente.\n\nSaludos,\nUniversal Assistance`
-    );
-    window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
+    const data = _buildQuoteData();
+    
+    // Usar plantilla real de ENV-004
+    const template = PlantillasMsg.TEMPLATES.COTIZACION_EMAIL;
+    const resultado = template.generar(data);
+    
+    window.location.href = `mailto:${email}?subject=${encodeURIComponent(resultado.subject)}&body=${encodeURIComponent(resultado.body)}`;
 }
 
 function enviarContacto() {
