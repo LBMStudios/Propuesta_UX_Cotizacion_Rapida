@@ -202,31 +202,31 @@ export const PlantillasMsg = {
                 // Formatear opciones adicionales
                 let altLines = '';
                 if (opcionesAdicionales && opcionesAdicionales.length > 0) {
-                    altLines = '\n🔍 *Otras opciones comparadas en propuesta PDF:*' + 
+                    altLines = '\n\u{1F50D} *Otras opciones comparadas en propuesta PDF:*' + 
                         opcionesAdicionales.map(opt => `\n• Plan *${opt.nombre}*: ${opt.total}`).join('') + '\n';
                 }
 
                 // Línea de link de pago Plexo
-                const paymentLine = linkPago ? `\n💳 *Link de Pago Seguro (Plexo):*\n${linkPago}\n` : '';
+                const paymentLine = linkPago ? `\n\u{1F4B3} *Link de Pago Seguro (Plexo):*\n${linkPago}\n` : '';
 
                 const lines = [
-                    `Hola *${nombre}*! 👋`,
+                    `Hola *${nombre}*! \u{1F44B}`,
                     '',
                     'Te comparto la cotización de tu seguro de viaje con *Universal Assistance*:',
                     '',
-                    `🌍 Destino: *${destino}*`,
-                    `📅 Días: *${dias}*`,
-                    `👥 Pasajeros: *${totalPax}*`,
-                    `📋 Plan Seleccionado: *${plan}*`,
-                    convenioNombre ? `🏷️ Convenio: *${convenioNombre}* (${descuento}% dto)` : null,
+                    `\u{1F30D} Destino: *${destino}*`,
+                    `\u{1F4C5} Días: *${dias}*`,
+                    `\u{1F465} Pasajeros: *${totalPax}*`,
+                    `\u{1F4CB} Plan Seleccionado: *${plan}*`,
+                    convenioNombre ? `\u{1F3F7}\u{FE0F} Convenio: *${convenioNombre}* (${descuento}% dto)` : null,
                     altLines || null,
-                    `💰 *TOTAL: ${total}*`,
+                    `\u{1F4B0} *TOTAL: ${total}*`,
                     paymentLine || null,
-                    '✅ Para confirmar tu reserva podés responder este mensaje o realizar el pago en el link de arriba.',
+                    '\u{2705} Para confirmar tu reserva podés responder este mensaje o realizar el pago en el link de arriba.',
                     '',
-                    '📞 Cualquier consulta: *2 9017378*',
+                    '\u{1F4DE} Cualquier consulta: *2 9017378*',
                     '',
-                    '_Universal Assistance - A Zurich Company_ 🛡️'
+                    '_Universal Assistance - A Zurich Company_ \u{1F6E1}\u{FE0F}'
                 ].filter(l => l !== null).join('\n');
                 return lines;
             }
@@ -257,20 +257,20 @@ export const PlantillasMsg = {
             canal: 'WhatsApp',
             generar: (data) => {
                 return [
-                    `Hola *${data.nombre}*! 👋`,
+                    `Hola *${data.nombre}*! \u{1F44B}`,
                     '',
                     'Soy de *Universal Assistance Uruguay*. Estamos preparando tu cotización de seguro de viaje.',
                     '',
                     'Para armarte la mejor propuesta, ¿podrías confirmarme estos datos?',
                     '',
-                    '📅 Fecha de salida de Uruguay:',
-                    '📅 Fecha de regreso:',
-                    '🎂 Edad(es) del/los pasajero(s):',
-                    '🌍 Destino:',
+                    '\u{1F4C5} Fecha de salida de Uruguay:',
+                    '\u{1F4C5} Fecha de regreso:',
+                    '\u{1F382} Edad(es) del/los pasajero(s):',
+                    '\u{1F30D} Destino:',
                     '',
-                    '¡Gracias! Te respondo enseguida con opciones. 😊',
+                    '¡Gracias! Te respondo enseguida con opciones. \u{1F60A}',
                     '',
-                    '_Universal Assistance - A Zurich Company_ 🛡️'
+                    '_Universal Assistance - A Zurich Company_ \u{1F6E1}\u{FE0F}'
                 ].join('\n');
             }
         },
@@ -279,15 +279,15 @@ export const PlantillasMsg = {
             canal: 'WhatsApp',
             generar: (data) => {
                 return [
-                    `Hola *${data.nombre}*! 👋`,
+                    `Hola *${data.nombre}*! \u{1F44B}`,
                     '',
                     `Te escribimos de *Universal Assistance*. Te habíamos enviado una cotización para tu viaje.`,
                     '',
                     '¿Pudiste verla? ¿Tenés alguna duda o te gustaría que te arme otra opción?',
                     '',
-                    'Estamos a las órdenes. 😊',
+                    'Estamos a las órdenes. \u{1F60A}',
                     '',
-                    '_Universal Assistance - A Zurich Company_ 🛡️'
+                    '_Universal Assistance - A Zurich Company_ \u{1F6E1}\u{FE0F}'
                 ].join('\n');
             }
         },
@@ -296,26 +296,26 @@ export const PlantillasMsg = {
             canal: 'WhatsApp',
             generar: (data) => {
                 return [
-                    `Hola *${data.nombre}*! 👋`,
+                    `Hola *${data.nombre}*! \u{1F44B}`,
                     '',
                     '¡Genial que quieras contratar! Para emitir tu voucher necesitamos:',
                     '',
-                    '📝 Nombre y apellido completo',
-                    '📝 Fecha de nacimiento',
-                    '📝 C.I. o Pasaporte',
-                    '📝 Fecha de salida',
-                    '📝 Fecha de regreso',
-                    '📝 Producto elegido',
-                    '📝 Contacto de emergencia (nombre + teléfono) _(opcional)_',
+                    '\u{1F4DD} Nombre y apellido completo',
+                    '\u{1F4DD} Fecha de nacimiento',
+                    '\u{1F4DD} C.I. o Pasaporte',
+                    '\u{1F4DD} Fecha de salida',
+                    '\u{1F4DD} Fecha de regreso',
+                    '\u{1F4DD} Producto elegido',
+                    '\u{1F4DD} Contacto de emergencia (nombre + teléfono) _(opcional)_',
                     '',
-                    '💳 *Formas de pago:*',
+                    '\u{1F4B3} *Formas de pago:*',
                     '• Link de pago (tarjetas)',
                     '• Transferencia bancaria',
                     '• Mercado Pago',
                     '',
                     'Una vez recibidos los datos, emitimos el voucher al instante.',
                     '',
-                    '_Universal Assistance - A Zurich Company_ 🛡️'
+                    '_Universal Assistance - A Zurich Company_ \u{1F6E1}\u{FE0F}'
                 ].join('\n');
             }
         }
