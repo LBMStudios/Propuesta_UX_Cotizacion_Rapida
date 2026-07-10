@@ -171,17 +171,12 @@
             <div class="card" style="flex:1; display:flex; flex-direction:column; gap:6px;">
                 <button class="btn-outline-blue" style="padding:5px 0; font-size:0.7rem;">VER CONVENIOS ACTIVOS</button>
                 
-                <div class="convenios-grid">
-                    <div class="convenio-logo logo-semm active" id="conv-semm" onclick="toggleConvenio('semm', 0.30)">SEMM</div>
-                    <div class="convenio-logo logo-oca" id="conv-oca" onclick="toggleConvenio('oca', 0.10)">OCA</div>
-                    <div class="convenio-logo logo-master" id="conv-master" onclick="toggleConvenio('master', 0.05)">Mastercard</div>
-                    <div class="convenio-logo" id="conv-itau" style="background:#003087; color:white; border:none;" onclick="toggleConvenio('itau', 0.20)">Itaú</div>
-                    <div class="convenio-logo" id="conv-santander" style="background:#ec0000; color:white; border:none;" onclick="toggleConvenio('santander', 0.25)">Santander</div>
-                    <div class="convenio-logo" id="conv-santmc" style="background:#ec0000; color:white; border:none; line-height:1.1;" onclick="toggleConvenio('santmc', 0.25)">Santander<br><small style="font-size:0.55rem;">Mastercard</small></div>
+                <div class="convenios-grid" id="convenios-grid">
+                    <!-- Se generan dinámicamente desde data-maestros.js -->
                 </div>
 
                 <div class="discount-text" id="convenio-msg" style="font-size:0.65rem; padding:4px 8px; background:rgba(228,0,70,0.06); border-radius:8px; border:1px solid rgba(228,0,70,0.12); line-height:1.3;">
-                    <i class="fa-solid fa-tag" style="color:#E40046;"></i> <b>SEMM:</b> 30% en Maximum / 20% en Premium / 10% en Value
+                    Selecciona un convenio para ver descuentos
                 </div>
 
                 <!-- Buscar Convenio -->
@@ -202,14 +197,27 @@
                         </select>
                     </div>
                     <div style="flex:1; display:flex; flex-direction:column; gap:1px;">
-                        <span style="font-size:0.55rem; font-weight:700; color:#64748b; margin-left:4px;">Organización</span>
+                        <span style="font-size:0.55rem; font-weight:700; color:#64748b; margin-left:4px;">Organización emisora</span>
                         <select id="org-emisora" onchange="onOrgChange(this.value)" style="background:white; height:24px; border-radius:20px; font-size:0.65rem; padding:1px 6px; border:1px solid #cbd5e1;">
                             <option value="">📍 Seleccionar</option>
-                            <option value="surview">Surview</option>
+                            <option value="surview">Surview (Directa)</option>
                             <option value="semm">SEMM</option>
-                            <option value="casmu">Casmu</option>
+                            <option value="semm_call">SEMM Call</option>
+                            <option value="casmu">CASMU</option>
                             <option value="smi">SMI</option>
                             <option value="oca">OCA</option>
+                            <option value="itau">Metlife Itaú</option>
+                            <option value="h_evang">Hospital Evangélico</option>
+                            <option value="mp">Medicina Personalizada</option>
+                            <option value="asoc_esp">Asociación Española</option>
+                            <option value="summum">Summum Travel</option>
+                            <option value="amecom">AMECOM</option>
+                            <option value="amsj">Asoc. Médica San José</option>
+                            <option value="comero">COMERO</option>
+                            <option value="sapp">SAPP</option>
+                            <option value="sat">SAT</option>
+                            <option value="seg_amer">Seguro Americano</option>
+                            <option value="bbva">BBVA</option>
                         </select>
                     </div>
                 </div>

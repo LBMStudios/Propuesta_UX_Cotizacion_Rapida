@@ -37,9 +37,6 @@ class MotorCotizacion {
         let convenio = null;
         if (convenio_id) {
             convenio = DataRepository.getConvenioById(convenio_id);
-            if (convenio && convenio.productos_habilitados && convenio.productos_habilitados.length > 0) {
-                productos = productos.filter(p => convenio.productos_habilitados.includes(p.producto_id));
-            }
         }
 
         // 4. Calcular Precio por Producto

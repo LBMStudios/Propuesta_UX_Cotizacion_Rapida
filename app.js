@@ -1,6 +1,6 @@
 /* ========================================================================
    UNIVERSAL ASSISTANCE — One-Click Quote — Lógica de Aplicación
-   v3.0 — Refactorizado con Arquitectura Ordenanza de Datos
+   v4.0 — Con datos maestros REALES (20 convenios, 12 productos)
    ======================================================================== */
 
 // ── Estado Global ──────────────────────────────────────────────────────
@@ -8,23 +8,27 @@ let pax = { adultos: 1, mayores: 1, menores: 0 };
 let activeConvenio = null; // Guardará el ID del convenio de la BD (ej. 'SEMM_UY')
 let activeCardId = 'MAXIMUM_300K'; // Default a Maximum
 
-// Mapeo entre IDs legacy de HTML y IDs de la base de datos maestra
+// IDs de los 3 productos que se muestran en las tarjetas de la UI
+const DISPLAY_PRODUCTS = ['VALUE_80K', 'MAXIMUM_300K', 'EXCLUSIVE_500K'];
 const MAP_PRODUCTOS = { 'base': 'VALUE_80K', 'max': 'MAXIMUM_300K', 'pre': 'EXCLUSIVE_500K' };
 const REVERSE_MAP_PROD = { 'VALUE_80K': 'base', 'MAXIMUM_300K': 'max', 'EXCLUSIVE_500K': 'pre' };
 
-const MAP_CONVENIOS = {
-    'semm': 'SEMM_UY',
-    'oca': 'OCA_UY',
-    'master': 'MASTER_UY',
-    'itau': 'ITAU_UY',
-    'santander': 'SANTANDER_UY',
-    'santmc': 'SANTANDER_MC_UY'
+// Mapeo de valores de checkbox HTML → IDs de adicionales en la BD
+const MAP_ADICIONALES = {
+    '4.5': 'PREEX_EXT',
+    '15': 'TECH_PRO',
+    '8': 'DEP_ADV',
+    '3.5': 'CANC_VIAJE',
+    '6': 'EMBARAZO',
+    '10': 'MASCOTAS'
 };
 
-const MAP_ADICIONALES = {
-    '20': 'TECH_PRO',
-    '10': 'DEP_ADV', // Ejemplo (ajustado para mapeo aproximado al HTML original)
-    '15': 'MASCOTAS'
+// Colores para los badges de tipo de convenio
+const CONVENIO_STYLES = {
+    'SALUD':   { bg: '#e8f5e9', color: '#2e7d32', border: '#c8e6c9' },
+    'BANCO':   { bg: '#e3f2fd', color: '#1565c0', border: '#bbdefb' },
+    'TARJETA': { bg: '#fff3e0', color: '#e65100', border: '#ffcc80' },
+    'DIRECTO': { bg: '#f3e5f5', color: '#6a1b9a', border: '#ce93d8' }
 };
 
 // Variable para guardar la última cotización completa generada
@@ -45,14 +49,12 @@ function recalcular() {
     const salidaEl = document.getElementById('salida');
     const regresoEl = document.getElementById('regreso');
 
-    // Extraer adicionales desde los checkbox
+    // Extraer adicionales desde los checkbox usando mapeo a IDs de la BD
     let adicionalesSeleccionados = [];
     document.querySelectorAll('.extra-cbx:checked').forEach(cb => {
-        // En el HTML original los values son números (precios sueltos), hacemos un mock mapping.
-        const addId = Object.keys(MAP_ADICIONALES)[0]; // Usaremos TECH_PRO por defecto en el prototipo si está marcado
-        if(addId) adicionalesSeleccionados.push('TECH_PRO');
+        const dbId = MAP_ADICIONALES[cb.value];
+        if (dbId) adicionalesSeleccionados.push(dbId);
     });
-    // Deduplicar si hay varios
     adicionalesSeleccionados = [...new Set(adicionalesSeleccionados)];
 
     // 1. Invocar al Motor de Cotización (Core)
@@ -82,10 +84,12 @@ function triggerPriceAnimation(id) {
 }
 
 function renderUI(cotizacion) {
+    // Filtrar solo los 3 productos que mostramos en tarjetas
+    const displayProds = cotizacion.productos_ofrecidos.filter(p => DISPLAY_PRODUCTS.includes(p.producto_id));
     const totalPax = cotizacion.cantidad_pasajeros;
     
     // Render de cada tarjeta de producto
-    cotizacion.productos_ofrecidos.forEach(prod => {
+    displayProds.forEach(prod => {
         const uiId = REVERSE_MAP_PROD[prod.producto_id];
         if (!uiId) return;
 
@@ -319,16 +323,14 @@ document.querySelectorAll('.prod-card').forEach(card => {
 });
 
 // CONVENIOS
-function toggleConvenio(htmlId, dummyDesc) {
+function toggleConvenio(convenioDbId) {
     document.querySelectorAll('.convenio-logo').forEach(c => c.classList.remove('active'));
     
-    const dbId = MAP_CONVENIOS[htmlId];
-    
-    if (activeConvenio === dbId) {
+    if (activeConvenio === convenioDbId) {
         activeConvenio = null;
     } else {
-        activeConvenio = dbId;
-        const el = document.getElementById(`conv-${htmlId}`);
+        activeConvenio = convenioDbId;
+        const el = document.getElementById(`conv-${convenioDbId}`);
         if(el) el.classList.add('active');
     }
     
@@ -338,10 +340,11 @@ function toggleConvenio(htmlId, dummyDesc) {
         if (activeConvenio) {
             const convData = DataRepository.getConvenioById(activeConvenio);
             if (convData) {
-                const val = convData.reglas_precio['VALUE_80K'] ? (convData.reglas_precio['VALUE_80K']*100) : 10;
-                const max = convData.reglas_precio['MAXIMUM_300K'] ? (convData.reglas_precio['MAXIMUM_300K']*100) : 15;
-                const pre = convData.reglas_precio['EXCLUSIVE_500K'] ? (convData.reglas_precio['EXCLUSIVE_500K']*100) : 20;
-                msgEl.innerHTML = `<i class="fa-solid fa-tag" style="color:#E40046;"></i> <b>${convData.nombre}:</b> ${max}% en Maximum / ${pre}% en Exclusive / ${val}% en Value`;
+                const val = convData.reglas_precio['VALUE_80K'] ? (convData.reglas_precio['VALUE_80K']*100) : 0;
+                const max = convData.reglas_precio['MAXIMUM_300K'] ? (convData.reglas_precio['MAXIMUM_300K']*100) : 0;
+                const pre = convData.reglas_precio['EXCLUSIVE_500K'] ? (convData.reglas_precio['EXCLUSIVE_500K']*100) : 0;
+                const capitaTag = convData.tiene_capita ? ' <span style="background:#e8f5e9;color:#2e7d32;padding:1px 5px;border-radius:8px;font-size:0.55rem;">CON CÁPITA</span>' : '';
+                msgEl.innerHTML = `<i class="fa-solid fa-tag" style="color:#E40046;"></i> <b>${convData.nombre}${capitaTag}:</b> ${max}% Maximum / ${pre}% Exclusive / ${val}% Value`;
             }
         } else {
             msgEl.innerHTML = 'Selecciona un convenio para ver descuentos';
@@ -514,8 +517,29 @@ window.addEventListener('keydown', function(e) {
     if (e.key === 'F10') { e.preventDefault(); nuevaCotizacion(); }
 });
 
+// ========================================================================
+// RENDER DINÁMICO DE CONVENIOS (desde data-maestros.js)
+// ========================================================================
+
+function renderConveniosGrid() {
+    const grid = document.getElementById('convenios-grid');
+    if (!grid) return;
+    
+    const convenios = DataRepository.getConvenios().filter(c => c.convenio_id !== 'FOLLETO');
+    
+    grid.innerHTML = convenios.map(conv => {
+        const style = CONVENIO_STYLES[conv.tipo_convenio] || CONVENIO_STYLES['DIRECTO'];
+        const capitaDot = conv.tiene_capita ? '<span style="position:absolute;top:2px;right:3px;width:5px;height:5px;background:#27ae60;border-radius:50;"></span>' : '';
+        return `<div class="convenio-logo" id="conv-${conv.convenio_id}" 
+                     onclick="toggleConvenio('${conv.convenio_id}')" 
+                     style="background:${style.bg}; color:${style.color}; border:1px solid ${style.border}; position:relative; font-size:0.58rem;">
+                    ${capitaDot}${conv.nombre}
+                </div>`;
+    }).join('');
+}
+
 // INICIALIZACIÓN
+renderConveniosGrid();
 selectCard('max');
 recalcular();
-toggleConvenio('semm', 0.30); // Usamos 'semm' del HTML que se mapea a SEMM_UY internamente
 updatePendientesBadge();
