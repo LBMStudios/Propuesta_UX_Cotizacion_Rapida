@@ -1,0 +1,2373 @@
+
+
+
+<!doctype html>
+<html lang="es">
+<!--LayoutEmision-->
+<!--VMPBWS10 - PROD-->
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Universal Assistance - Portal de Partners</title>
+    <link rel="shortcut icon" href="/Content/pdp/img/favicon.ico" type="image/x-icon">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap">
+    <link rel="stylesheet" href="/Content/pdp/css/bootstrap.min.css?v=95">
+    <link rel="stylesheet" href="/Content/pdp/css/splide.min.css?v=95">
+    <link rel="stylesheet" href="/Content/pdp/css/styles.css?v=95">
+    <link rel="stylesheet" href="/Content/pdp/css/bootstrap-select.min.css?v=95">
+    <link rel="stylesheet" href="/Content/pdp/css/bootstrap-datepicker.css?v=95">
+    <link rel="stylesheet" href="/Content/pdp/css/planes.css?v=95">
+    <link rel="stylesheet" href="/Content/pdp/css/modal-detalle-cobertura.css?v=95">
+    <link rel="stylesheet" href="/Content/pdp/css/offcanvas-form.css?v=95">
+    <link rel="stylesheet" href="/Content/pdp/css/pasajeros.css?v=95">
+    <link rel="stylesheet" href="/Content/pdp/css/bootstrap-select-custom.css?v=95">
+    <link rel="stylesheet" href="/Content/pdp/css/portal-layout.css?v=95">
+    <link rel="stylesheet" href="/Content/pdp/css/limitecredito.css?v=95">
+
+    
+        <!-- Google Tag Manager -->
+        <script>
+        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','GTM-5K8WBVDH');</script>
+        <!-- End Google Tag Manager -->
+
+    
+    <link href="/Content/pdp/css/emision.css?v=95" rel="stylesheet" />
+    <style>
+        #PrefiltroSelect {
+            padding: 0;
+            cursor: pointer;
+        }
+
+            #PrefiltroSelect a {
+                text-decoration: none;
+                color: #002A67;
+                padding-top: 8px;
+                font-weight: 500;
+            }
+
+            #PrefiltroSelect .dropdown-select-placeholder {
+                color: #999;
+                font-size: 14px;
+                font-style: italic;
+            }
+
+            #PrefiltroSelect .dropdown-select-selected-value {
+                font-size: 1rem;
+                font-weight: 400;
+                letter-spacing: 0.42px;
+            }
+
+        #edades, #fecnac {
+            flex-wrap: wrap;
+        }
+
+            #edades input, #fecnac input {
+                text-align: center;
+            }
+
+        .heading-text-edad {
+            display: none;
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--ua-primary-alt);
+            line-height: 30px;
+            margin-right: 5px;
+        }
+
+        .box-pasajeros /*.box-button.collapsed*/ .heading-text-edad {
+            display: block;
+        }
+
+        .div-espera {
+            margin-top: 150px;
+            text-align: center;
+            display: none;
+        }
+
+        #progess-bar-espera {
+            position: absolute;
+            top: 65px;
+            left: 0px;
+            width: 0%;
+            height: 10px;
+            background-image: linear-gradient(to right, #ffb4c5, #ff436e);
+            border-top-right-radius: 5px;
+            border-bottom-right-radius: 5px;
+            transition: width 0.5s;
+        }
+
+        #divMediosPagoPasajero, #divMediosPagoPartner, #paymentOptions {
+            display: none;
+        }
+
+        .aclaraciones {
+            font-size: 11px;
+            text-align: justify;
+            margin: 5px;
+        }
+
+            .aclaraciones.importante {
+                color: #FF436E;
+                font-weight: 500;
+            }
+
+        .tarjeta-mensaje {
+            background-color: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.1);
+            color: #002A67;
+        }
+
+        #divCargarEdades {
+            margin-left: 0px;
+            margin-right: 0px;
+        }
+
+        #errores {
+            text-align: center;
+            color: #FF436E;
+        }
+
+        .box-pasajeros .invalid-feedback,
+        .box-pasajeros .form-floating .invalid-feedback,
+        .box-pasajeros .col-lg-4 .invalid-feedback {
+            display: flex !important;
+            align-items: flex-start;
+            gap: 0.35rem;
+            width: 100%;
+            max-width: 100%;
+            color: #dc3545;
+            font-size: 0.8rem;
+        }
+        .box-pasajeros .invalid-feedback .invalid-feedback-icon {
+            flex-shrink: 0;
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+        .box-pasajeros .invalid-feedback .invalid-feedback-text {
+            min-width: 0;
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+        }
+        .box-pasajeros.pasajero-con-error {
+            border: 1px solid var(--bs-form-invalid-border-color, #dc3545);
+            border-radius: 20px;
+        }
+        .box-pasajeros.pasajero-con-error .box-button {
+            border-color: transparent;
+        }
+
+        #listaPasajeros_wrapper {
+            font-size: 12px;
+            color: #002A67;
+        }
+
+        .div-cant-dias {
+            position: absolute;
+            right: -90px;
+            width: fit-content;
+            top: -5px;
+        }
+
+        .rotate {
+            transform: rotate(180deg);
+            transition: transform 0.3s ease;
+        }
+
+        .tdImg-position-relative {
+            position: relative;
+            width: 25px;
+            height: 20px;
+        }
+
+        .div-position-absolute {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .table-striped-even {
+            background-color: #f8f9fa; /* el color que usa Bootstrap para striped */
+        }
+
+        .table-striped-odd {
+            background-color: white;
+        }
+
+        #tr-vacio {
+            display: none !important;
+        }
+
+        .text-b-popup-cc {
+            color: var(--UA-Colours-Blue, #005191);
+            text-align: center;
+            font-family: Poppins;
+            font-size: 31.809px;
+            font-style: normal;
+            font-weight: 600;
+            line-height: 117.832%;
+        }
+
+        .sub-text-popup-cc {
+            color: var(--UA-Colours-Blue, #005191);
+            text-align: center;
+            font-family: Poppins;
+            font-size: 18px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: 130%;
+            margin-top: 15px;
+        }
+
+        .btn-popup-cc {
+            background-color: #FF436E !important;
+            height: 30px;
+            width: 100%;
+            border-color: transparent;
+            border-radius: 33px;
+            outline: none;
+            color: #FFF;
+            text-align: center;
+            font-family: Poppins;
+            font-size: 18px;
+            font-style: normal;
+            font-weight: 500;
+            line-height: normal;
+            padding: 5px 20px;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-recordar-popup {
+            border: none;
+            background-color: transparent !important;
+            color: var(--UA-Colours-Blue, #005191);
+            text-align: center;
+            font-family: Poppins;
+            font-size: 14.667px;
+            font-style: normal;
+            font-weight: 500;
+            line-height: normal;
+            text-decoration-line: underline;
+            text-decoration-style: solid;
+            text-decoration-skip-ink: none;
+            text-decoration-thickness: auto;
+            text-underline-offset: auto;
+            text-underline-position: from-font;
+            padding: 10px;
+        }
+
+        div-popup {
+            width: 28%;
+            color: unset;
+        }
+
+        .text-popup-mail {
+            text-decoration: underline;
+        }
+
+        .blockUI blockMsg blockPage {
+            cursor: default !important;
+        }
+
+        .blockUI {
+            cursor: default !important;
+            padding: 10px 50px 20px 50px !important;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #blockUI-popup {
+            background: linear-gradient(180deg, #FFF 0%, #E8FDFF 100%);
+            width: 37% !important;
+            border-radius: 15px !important;
+        }
+
+        #container-detalle-mobile {
+            display: none;
+        }
+
+        #detalleDelPago .box-heading, box-collapsable .box-heading {
+            border-radius: unset;
+            border-top-left-radius: unset;
+            border-top-right-radius: unset;
+        }
+
+        #precioNuevoDetalle {
+            border-radius: unset;
+        }
+
+        .text-pasajero {
+            margin-right: 5px;
+        }
+
+        .titulo-subtitulo-padlock {
+            color: var(--UA-Colours-Dark-blue, #002447);
+            text-align: center;
+            font-family: Poppins;
+            font-style: normal;
+        }
+
+        .btn-padlock {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            align-self: stretch;
+            border: none !important;
+            width: 100%;
+            color: #FFFFFF;
+            background: #005AEF;
+        }
+
+        #blockUI-popupNoCotiza,
+        #blockUI-popupNoCotiza *:focus {
+            outline: none !important;
+            box-shadow: none !important;
+        }
+
+        #popup-no-cotizar {
+            display: none;
+        }
+
+        .white-color {
+            color: white !important;
+        }
+
+        @media (min-width: 768px) {
+            #blockUI-popupNoCotiza {
+                display: flex;
+                width: 400px !important;
+                padding: 20px 40px 30px 40px !important;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                gap: 25px;
+                border-radius: 15px;
+                background: linear-gradient(180deg, #FFF 0%, #E8FDFF 100%);
+            }
+
+            .titulo-popup-no-cotizar {
+                font-size: 32px;
+                font-weight: 600;
+                line-height: 110.04%;
+            }
+
+            .sub-text-popup-no-cotizar {
+                font-size: 16px;
+                font-weight: 400;
+                line-height: 130%;
+                margin-bottom: 25px;
+                margin-top: 15px;
+            }
+
+            .btn-cerrar-popup-no-cotizar {
+                height: 45px;
+                padding: 5px 20px;
+                border-radius: 33.2px;
+                background: #005AEF;
+                color: #FFFFFF;
+                width: 100%;
+            }
+
+            .container-padlock {
+                width: 38px;
+                height: 38px;
+            }
+
+            .div-popup-no-cotizar {
+                display: flex;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 768px) {
+
+            #blockUI-popupNoCotiza {
+                display: flex;
+                width: 320px !important;
+                padding: 16px 32px 24px 32px !important;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                gap: 20px;
+                border-radius: 12px;
+                background: linear-gradient(180deg, #FFF 0%, #E8FDFF 100%);
+            }
+
+            .titulo-popup-no-cotizar {
+                font-size: 25.6px;
+                font-weight: 600;
+                line-height: 110.04%;
+            }
+
+            .sub-text-popup-no-cotizar {
+                font-size: 12.8px;
+                font-weight: 400;
+                line-height: 130%;
+                margin-bottom: 20px;
+                margin-top: 5px;
+            }
+
+            .btn-cerrar-popup-no-cotizar {
+                height: 36px;
+                padding: 4px 16px;
+                border-radius: 26.56px;
+            }
+
+            .box .box-pasajeros {
+                padding: 0px 15px;
+            }
+
+            .custom-row-barra-precio {
+                bottom: 10px !important;
+            }
+
+            main .container-fluid {
+                padding-left: 0px;
+                padding-right: 0px;
+            }
+
+            .div-cant-dias {
+                position: relative;
+                right: 0px;
+                width: 100%;
+                top: 0px;
+                text-align: center;
+                padding-bottom: 0px;
+            }
+
+            .br-cant-dias {
+                display: none;
+            }
+
+            .drp-buttons {
+                display: flex !important;
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: space-between;
+                align-items: center;
+                padding: 15px 10px 25px 10px;
+                gap: 12px;
+                box-sizing: border-box;
+                width: 100%;
+                margin-top: 30px;
+                min-height: auto;
+            }
+
+                .drp-buttons .drp-selected {
+                    flex-basis: 100%;
+                    width: 100%;
+                    font-size: 13px;
+                    color: gray;
+                    text-align: center;
+                    margin-bottom: 30px;
+                    white-space: normal;
+                    min-height: auto;
+                    line-height: 1.4;
+                    padding: 5px 0;
+                }
+
+                .drp-buttons .cancelBtn,
+                .drp-buttons .applyBtn {
+                    flex: 1;
+                    min-width: 90px;
+                    font-size: 13px;
+                    padding: 8px 10px;
+                    white-space: nowrap;
+                    text-align: center;
+                    position: relative;
+                    z-index: 1;
+                    margin-top: 20px !important;
+                }
+
+            #blockUI-popup {
+                width: 82% !important;
+                padding: 20px 20px 20px 20px !important;
+            }
+
+            .box-body, #detalleDelPago, #box-heading {
+                background-color: #fff;
+            }
+
+            #precioNuevoDetalle {
+                background-color: #fff;
+                border-radius: unset;
+            }
+
+            #container-detalle {
+                display: none;
+            }
+
+            #container-detalle-mobile {
+                display: block !important;
+            }
+
+            .detalle-eye {
+                margin-bottom: 10px;
+            }
+
+            #collapseDetalleCompraSidebar {
+                background-color: #FFF;
+            }
+
+            .box-collapsable .box-heading .box-trigger.collapsed {
+                transform: rotate(180deg);
+            }
+
+            .box-collapsable .box-heading .box-trigger:not(.collapsed) {
+                transform: rotate(0deg);
+            }
+
+            .box-collapsable .box-heading .box-trigger {
+                flex-shrink: 0;
+                stroke-width: 3px;
+                stroke: var(--UA-Colours-Gama-blue_UA-00B2C2, #00B2C2);
+                background-color: transparent;
+                background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 20 14' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M18 12L10 3L2 12' stroke='%2300B2C2' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E%0A");
+                background-repeat: no-repeat;
+                transform: rotate(0deg);
+                transition: transform 0.3s ease;
+            }
+
+            .box-btn-close {
+                display: flex;
+                padding: 5px 20px;
+                justify-content: flex-end;
+                align-items: center;
+                gap: 10px;
+                align-self: stretch;
+            }
+
+            .box-sidebar {
+                justify-content: center;
+                align-items: center;
+                gap: 10px;
+                align-self: stretch;
+                border-radius: 10px 10px 0 0;
+                background: #F8F8F8;
+                margin-bottom: 5px;
+                color: #002A67;
+                box-shadow: none;
+            }
+
+            .box-height {
+                height: 55px;
+            }
+
+            .barra-precio {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                gap: 10px;
+                align-self: stretch;
+                border-radius: 25px 25px 0 0;
+                background-color: #F0F1F3;
+                position: relative;
+                z-index: 10;
+                padding-bottom: 5px;
+                height: 60px;
+            }
+
+            .visor-footer .trigger {
+                position: absolute;
+                right: 0;
+                bottom: -6px;
+            }
+
+            .barra-precio.bg-activo {
+                background-color: #A9FCFC !important;
+            }
+
+            .barra-precio.bg-inactivo {
+                background-color: #F0F1F3 !important;
+            }
+
+            #collapseDetallePlan {
+                position: fixed;
+                bottom: 50px;
+                left: 0;
+                width: 100%;
+                height: 92.5%;
+                background: #fff;
+            }
+
+            .btn-svg-row-ad {
+                padding: 10px;
+                margin-right: -18px;
+            }
+
+            .trigger svg {
+                transition: transform 0.3s ease;
+            }
+
+            .trigger.collapsed svg {
+                transform: rotate(180deg);
+            }
+
+            .trigger:not(.collapsed) svg {
+                transform: rotate(0deg);
+            }
+
+            .tbl01 dl dt {
+                color: #002A67;
+                font-family: Poppins;
+                font-size: 14px;
+                font-style: normal;
+                font-weight: 600;
+                line-height: 125%;
+                letter-spacing: 0.42px;
+                text-transform: uppercase;
+            }
+
+            .tbl01 dl dd {
+                color: var(--Gama-blue-Gama-blue2, #002A67);
+                text-align: right;
+                font-family: Poppins;
+                font-size: 20px;
+                font-style: normal;
+                font-weight: 700;
+                line-height: 78%;
+            }
+        }
+
+        @media (max-width: 471px) {
+            .popup-container {
+                max-width: 300px;
+            }
+
+            .text-popup-mail {
+                overflow-wrap: anywhere;
+            }
+
+            .div-container-PDF-Mobile {
+                margin-bottom: 25px;
+            }
+        }
+
+        .btn-group-pill {
+            background: #F0F1F3;
+            border-radius: 30px;
+            padding: 4px;
+            display: inline-flex;
+        }
+
+        .btn-group-pill .btn {
+            border: 2px solid rgba(0, 81, 145, 0.05);
+            border-radius: 30px !important;
+            padding: 8px 20px;
+            color: #6c757d;
+            background: transparent;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .btn-group-pill .btn-check:checked + .btn {
+            background: #005191;
+            color: white;
+            border-color: #005191;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .btn-group-pill .btn:hover {
+            color: #495057;
+        }
+
+        .btn-group-pill .btn-check:checked + .btn:hover {
+            color: white;
+        }
+    </style>
+
+        <link href="/Content/daterangepicker/daterangepicker.css" rel="stylesheet" />
+        <link href="/Content/daterangepicker/daterangepicker-custom.css?v=95" rel="stylesheet" />
+        <link href="/Content/daterangepicker/mejoras-daterangepicker.css?v=95" rel="stylesheet" />
+        <link href="/Content/daterangepicker/mejoras-daterangepicker-emision.css?v=95" rel="stylesheet" />
+    
+</head>
+<body class="min-vh-100">
+        <!-- Google Tag Manager (noscript) -->
+        <noscript>
+            <iframe src=https://www.googletagmanager.com/ns.html?id =GTM-5K8WBVDH
+                    height="0" width="0" style="display:none;visibility:hidden"></iframe>
+        </noscript>
+        <!-- End Google Tag Manager (noscript) -->
+                <!-- START Botmaker Webchat-->
+            <script>
+                (function () {
+                    let js = document.createElement('script');
+                    js.type = 'text/javascript';
+                    js.async = 1;
+                    js.src = 'https://go.botmaker.com/rest/webchat/p/D2IMHFYMUY/init.js';
+                    document.body.appendChild(js);
+                })();
+            </script>
+            <!-- END Botmaker Webchat-->
+    <header class="site-header">
+        <nav class="navtop">
+            <a href="/portal-de-partners" class="header-logo me-auto">
+                <img src="/Content/pdp/img/logo_ua.svg" alt="UA">
+            </a>
+                    <div class="d-none d-lg-block ms-70 text-end">
+                        <div>Organización emisora</div>
+                        <div class="fs-14"><b>SURVIEW</b></div>
+                    </div>
+                <a href="#offcanvasNavbar" class="navtop-toggler" data-bs-toggle="offcanvas" style="margin-left: 18px;">
+                    <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="3" y="3.75" width="24" height="3.5" rx="1.75" fill="white" />
+                        <rect x="10" y="13.25" width="17" height="3.5" rx="1.75" fill="white" />
+                        <rect x="3" y="22.75" width="24" height="3.5" rx="1.75" fill="white" />
+                    </svg>
+                </a>
+                <div class="offcanvas offcanvas-end offcanvas-navbar" tabindex="-1" id="offcanvasNavbar" data-bs-scroll="true">
+                    <div class="site-menu">
+                            <div class="sm-header">
+
+                                <div class="usuario">SURVIEW</div>
+                                <div class="emisora">LUCASB</div>
+
+                            </div>
+
+                        <nav class="sm-nav">
+                            <ul>
+                                    <li class="sm-nav-item">
+                                        <a class="sm-nav-link" href="/portal-de-partners">
+                                            <svg class="svg-icon"><use xlink:href="#home" /></svg>
+                                            INICIO
+                                        </a>
+                                    </li>
+                                    <li class="sm-nav-item">
+                                        <a class="sm-nav-link" href="/portal-de-partners-seleccionar-agencia">
+                                            <svg class="svg-icon" width="30" height="30"><use xlink:href="#share" /></svg>
+                                            CAMBIAR ORGANIZACIÓN EMISORA
+                                        </a>
+                                    </li>
+                                    <li class="sm-nav-item">
+                                        <a class="sm-nav-link" href="/Emision/VouchersGenerados">
+                                            <svg class="svg-icon" width="30" height="30"><use xlink:href="#circle-check" /></svg>
+                                            VOUCHERS EMITIDOS
+                                        </a>
+                                    </li>
+                                    <li class="sm-nav-item">
+                                        <a class="sm-nav-link" href="/Emision/Precompras" id="linkPrecompras">
+                                            <svg class="svg-icon" width="30" height="30"><use xlink:href="#gift" /></svg>
+                                            MIS PRECOMPRAS
+                                        </a>
+                                    </li>
+                                    <li class="sm-nav-item">
+                                        <a class="sm-nav-link"
+                                           href="/Emision/MiCobertura"
+                                           target="_blank"
+                                           rel="noopener noreferrer">
+                                            <svg class="svg-icon" width="30" height="30">
+                                                <use xlink:href="#icon-doc" />
+                                            </svg>
+                                            ACCESO A MI COBERTURA
+                                        </a>
+                                    </li>
+                                    <li class="sm-nav-item">
+                                        <a class="sm-nav-link"
+                                           href="https://universalassistance.smartdelay.com/VIPDelay?lang=es-ES"
+                                           target="_blank"
+                                           rel="noopener noreferrer">
+                                            <svg class="svg-icon" width="30" height="30">
+                                                <use xlink:href="#icon-plane" />
+                                            </svg>
+                                            REGISTRO DE VIP DELAY
+                                        </a>
+                                    </li>
+                                    <li class="sm-nav-item">
+                                        <a class="sm-nav-link" href="/Emision/Perfil">
+                                            <svg class="svg-icon" width="30" height="30"><use xlink:href="#default-avatar" /></svg>
+                                            MI PERFIL
+                                        </a>
+                                    </li>
+                                    <li class="sm-nav-item">
+                                        <a class="sm-nav-link collapsed" href="#navItemLegales" aria-controls="navItemLegales" data-bs-toggle="collapse" role="button" aria-expanded="false">
+                                            <svg class="svg-icon" width="30" height="30"><use xlink:href="#license" /></svg>
+                                            LEGALES
+                                        </a>
+                                        <div id="navItemLegales" class="collapse">
+                                            <ul class="sm-nav-submenu">
+                                                <li><a href="https://www.universal-assistance.com/legacy/ua/files/emision/tyc-co-esp" target="_blank">Términos y condiciones</a></li>
+                                                <li><a href="https://www.universal-assistance.com/legacy/ua/files/emision/politicas-co-esp" target="_blank">Polí­ticas de privacidad</a></li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                <li class="sm-nav-item">
+                                    <a class="sm-nav-link" href="/portal-de-partners-salir">
+                                        <svg class="svg-icon" width="30" height="30"><use xlink:href="#file-import" /></svg>
+                                        SALIR
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <!-- /site-menu -->
+                </div>
+        </nav>
+    </header>
+
+    <main class="container-fluid ">
+        
+
+<main class="">
+    <div class="filtro-buscador d-lg-none">
+        <div>
+            <svg class="svg-icon" width="17" height="20"><use xlink:href="#place"></use></svg>
+            Europa
+        </div>
+        <div>
+            <svg class="svg-icon" width="19" height="18"><use xlink:href="#calendar"></use></svg>
+            10/07/2026 | 10/07/2026 (1 días)
+        </div>
+        <div>
+            <svg class="svg-icon" width="16" height="18"><use xlink:href="#person"></use></svg>
+            1
+        </div>
+        <div>
+            <a href="#offcanvasForm" data-bs-toggle="offcanvas" class="editar"><svg class="svg-icon" width="18" height="18"><use xlink:href="#pencil"></use></svg></a>
+        </div>
+    </div>
+
+    <div class="container-fluid px-3 px-lg-20 maxw-1360">
+
+<!--
+    Paso 1: Selección tipo de producto / tipo de viaje
+    Paso 2: Completar datos del viaje
+    Paso 3: Coberturas
+    Paso 4: Productos adicionales
+    Paso 5: Pasajeros
+    Paso 6: Selección de medio de pago
+    Paso 7: Selección de medio de pago
+    Paso 8: Confirmación
+-->
+
+<div class="navbar-progress">
+    <div class="navbar-progress-step navbar-progress-step--on">Coberturas</div>
+
+
+    <div class="navbar-progress-step ">Pasajeros</div>
+
+        <div class="navbar-progress-step ">
+            Pago <span class="d-none d-sm-inline">y facturación</span>
+        </div>
+
+    <div class="navbar-progress-step ">
+        <span class="d-none d-sm-inline">Confirmación</span>
+        <span class="d-inline d-sm-none">Checkout</span>
+    </div>
+</div>
+
+
+        <div class="row">
+
+            <div class="d-none d-lg-block col-lg-auto w-330p mb-80">
+
+                <div class="box rounded-3 px-15 py-20 mb-10">
+                    <div class="sec-title01 text-center mb-15">Asistencia al viajero</div>
+
+                        <!-- Recotizador -->
+                            <div class="" id="recotizadorDetalle">
+                                <div class="tbl01 mb-0">
+                                    <dl>
+                                        <div>
+                                            <dt>TIPO DE PRODUCTO:</dt>
+                                            <dd>Especiales</dd>
+                                        </div>
+                                        <div>
+                                            <dt>TIPO DE VIAJE:</dt>
+                                            <dd>Un viaje</dd>
+                                        </div>
+                                        <div>
+                                            <dt>DESTINO:</dt>
+                                            <dd>Europa*</dd>
+                                        </div>
+                                        <div>
+                                            <dt>FECHAS:</dt>
+                                            <dd>10/07/2026 | 10/07/2026 (1 días)</dd>
+                                        </div>
+                                        <div>
+                                            <dt>CANTIDAD DE PASAJEROS:</dt>
+                                            <dd>1</dd>
+                                        </div>
+                                <div>
+                                    <dt>EDADES:</dt>
+                                    <dd>29</dd>
+                                </div>
+                            </dl>
+                        </div>
+                        <div class="separador02"></div>
+                        <button type="button" class="btn btn-primary w-100" id="recotizadorEditar">Editar cotización</button>
+                    </div>
+ <!-- /Recotizador -->
+
+ <!-- Recotizador edicion -->
+                    <div class="recotizador-desktop-form d-none" id="recotizadorForm">
+
+                        <!-- Copia del form mobile con algunas vriantes -->
+<form action="/Emision/Recotizar?culture=es" class="d-flex flex-column justify-content-between" id="formCotizacion" method="post"><input name="__RequestVerificationToken" type="hidden" value="XRj5tU1V877zPZYugOGbxg7KesltasWKlFrA1026l2K5FOHiGL-QQ9bk1BXs3Lv1TCc0CqlgmZJGc0mRE8SgOJ3keyCvc3cKd_cKIolRmjY1" /><input id="TipoViaje" name="TipoViaje" type="hidden" value="Un viaje" /><input data-val="true" data-val-required="The MostrarPopup field is required." id="PopupLimiteCredito_MostrarPopup" name="PopupLimiteCredito.MostrarPopup" type="hidden" value="False" /><input data-val="true" data-val-required="The ErrorRequest field is required." id="PopupLimiteCredito_ErrorRequest" name="PopupLimiteCredito.ErrorRequest" type="hidden" value="False" /><input id="PopupLimiteCredito_PopuErrorMessage" name="PopupLimiteCredito.PopuErrorMessage" type="hidden" value="" /><input data-val="true" data-val-required="The EmitirCC field is required." id="PopupLimiteCredito_EmitirCC" name="PopupLimiteCredito.EmitirCC" type="hidden" value="False" /><input data-val="true" data-val-required="The PoseeCC field is required." id="PopupLimiteCredito_PoseeCC" name="PopupLimiteCredito.PoseeCC" type="hidden" value="True" /><input data-val="true" data-val-required="The NoPoseeCredito field is required." id="PopupLimiteCredito_NoPoseeCredito" name="PopupLimiteCredito.NoPoseeCredito" type="hidden" value="True" /><input data-val="true" data-val-required="The PopupA field is required." id="PopupLimiteCredito_PopupA" name="PopupLimiteCredito.PopupA" type="hidden" value="False" /><input data-val="true" data-val-required="The PopupB field is required." id="PopupLimiteCredito_PopupB" name="PopupLimiteCredito.PopupB" type="hidden" value="False" /><input data-val="true" data-val-required="The PopupC field is required." id="PopupLimiteCredito_PopupC" name="PopupLimiteCredito.PopupC" type="hidden" value="False" /><input id="PopupLimiteCredito_MailTo" name="PopupLimiteCredito.MailTo" type="hidden" value="contable@ua.com.uy" /><input data-val="true" data-val-required="The EsAgenciaTipoPuestoCotizador field is required." id="EsAgenciaTipoPuestoCotizador" name="EsAgenciaTipoPuestoCotizador" type="hidden" value="False" />                        <div class="container-fluid px-0">
+                            <div class="row">
+                                <div class="col-12 mb-15">
+                                    <div class="legend01">TIPO DE PRODUCTO</div>
+                                    <div class="dropdown bootstrap-select form-control">
+                                        <select class="selectpicker form-control" data-style="btn-bsselect" id="TipoProducto" name="TipoProducto">
+                                            <option value="Folleto" =>Folleto</option>
+                                            <option value="Especiales"  selected=>Especiales</option>
+                                            <option value="Precompras" =>Precompras</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-12 mb-15">
+                                    <div class="legend01">TIPO DE VIAJE</div>
+                                    <input type="hidden" id="Prefiltro" name="Prefiltro" value="" />
+                                    <div id="PrefiltroSelect" class="navbar navbar-expand-sm dropdown-select">
+                                        <div class="container-fluid px-0">
+                                            <div class="navbar-collapse">
+                                                <div class="navbar-nav w-100">
+                                                    <div class="dropdown w-100">
+                                                        <a class="form-select" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                                                            <span class="dropdown-select-placeholder">Seleccione un tipo de cotización</span>
+                                                            <span class="dropdown-select-selected-value"></span>
+                                                        </a>
+                                                        <ul class="dropdown-menu" id="ulPrefiltros">
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-12 mb-15">
+                                    <div class="legend01">¿A DÓNDE VIAJAN?</div>
+                                    <div class="dropdown bootstrap-select form-control">
+                                        <select class="selectpicker form-control" data-style="btn-bsselect" id="Destino" name="Destino">
+                                            <option value="Argentina" =>Argentina</option>
+                                            <option value="Centro america/Caribe" =>Centroam&#233;rica y Caribe (excepto Cuba*)</option>
+                                            <option value="Europa" selected=>Europa*</option>
+                                            <option value="Internacional Mundo" =>M&#250;ltiples Destinos*</option>
+                                            <option value="America del norte" =>Norteam&#233;rica</option>
+                                            <option value="Asia" =>Ocean&#237;a, Asia*, &#193;frica</option>
+                                            <option value="Pa&#237;ses Lim&#237;trofes" =>Pa&#237;ses Lim&#237;trofes</option>
+                                            <option value="Am&#233;rica del Sur (salvo Vzla)" =>Sudam&#233;rica</option>
+                                            <option value="Territorio Nacional" =>Territorio Nacional</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-12 mb-15">
+                                    <div class="legend01">¿CUÁNDO VIAJAN?</div>
+                                    <div class="row gx-3">
+                                        <div class="col">
+                                            <div class="form-floating">
+                                                <span class="input-icon input-icon-right icon-calendar input-group-addon"></span>
+                                                <input type="text" class="form-control" id="FechaInicio" name="FechaInicio" placeholder="Desde" value="10/07/2026" />
+                                                <label for="FechaInicio">Desde</label>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="form-floating">
+                                                <span class="input-icon input-icon-right icon-calendar input-group-addon"></span>
+                                                <input type="text" class="form-control" id="FechaFin" name="FechaFin" placeholder="Hasta" value="10/07/2026" />
+                                                <label for="FechaFin">Hasta</label>
+                                            </div>
+                                        </div>
+                                        <input type="text" id="RangoFechas" value="" style="visibility: hidden; position: absolute; height: 45px;" />
+                                    </div>
+                                </div>
+
+                                <div class="col-12 mb-15">
+                                    <div class="legend01">¿CUÁNTOS VIAJAN?</div>
+                                    <select class="selectpicker form-control" data-style="btn-bsselect" data-size="5" id="CantidadPasajeros" name="CantidadPasajeros">
+                                        <option value="1" selected=>1</option>
+                                        <option value="2" =>2</option>
+                                        <option value="3" =>3</option>
+                                        <option value="4" =>4</option>
+                                        <option value="5" =>5</option>
+                                        <option value="6" =>6</option>
+                                        <option value="7" =>7</option>
+                                        <option value="8" =>8</option>
+                                        <option value="9" =>9</option>
+                                        <option value="10" =>10</option>
+                                        <option value="11" =>11</option>
+                                        <option value="12" =>12</option>
+                                        <option value="13" =>13</option>
+                                        <option value="14" =>14</option>
+                                        <option value="15" =>15</option>
+                                    </select>
+                                </div>
+                                                                <div class="col-12 mb-15">
+                                    <div class="legend01">¿QUÉ EDAD TIENEN?</div>
+                                    <div class="d-flex flex-wrap gap-10 inputs-edades recotizadorEdades" id="edades"></div>
+                                    <input type="hidden" id="ListaEdades" name="ListaEdades" value="29" />
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="pt-20">
+                            <button type="submit" class="btn btn-primary w-100">Recotizar</button>
+                            <button type="button" class="btn btn-link btn-sm text-primary w-100" id="recotizadorCancelar">Cancelar</button>
+
+                            <span id="mensaje-tipo-producto-recotizar" class="field-validation-error"></span>
+                        </div>
+</form>                        <!-- /Copia del form mobile con algunas variantes -->
+
+                            </div>
+                            <!-- /Recotizador edicion -->
+
+                </div>
+
+                <div class="fs-13 text-59">Los precios corresponden al <span class="fw-semibold">total de pasajeros.</span></div>
+
+            </div>
+
+            <div class="col ps-xl-5">
+                <div class="planes">
+<div class="cabecera cabecera-diario">
+    <div class="titulo">
+        PLANES POR <b>1 DÍAS</b>
+        <span class="sub d-none d-lg-inline">Cubrimos la cantidad de d&#237;as que dure tu viaje</span>
+    </div>
+    <div class="lead d-lg-none">Cubrimos la cantidad de d&#237;as que dure tu viaje</div>
+</div>
+<div class="tarjeta tarjeta-diario">
+
+    <div class="cuerpo">
+
+        <div class="encabezado">
+            <div>
+
+                <div class="titulo">100K Grupal</div>
+
+
+                <div class="subtitulo"></div>
+            </div>
+            <a id="1-FJFOTUQ" href="#detCoberturas1-FJFOTUQ" class="vermas" data-bs-toggle="modal">Ver más</a>
+        </div>
+
+        <div class="cobertura">
+            <ul class="">
+
+                <li>
+                    Asistencia m&#233;dica por enfermedad / accidente <strong>USD 100.000</strong>
+                    <svg class="svg-icon icon-question"><use xlink:href="#question_mark"></use></svg>
+                </li>
+                <li>
+                    Asistencia m&#233;dica por Covid-19 <strong>USD 100.000</strong>
+                    <svg class="svg-icon icon-question"><use xlink:href="#question_mark"></use></svg>
+                </li>
+                <li>
+                    Asesor&#237;a y compensaci&#243;n por p&#233;rdida de equipaje complementaria (a&#233;reo/mar&#237;timo) <strong>USD 1.000</strong>
+                    <svg class="svg-icon icon-question"><use xlink:href="#question_mark"></use></svg>
+                </li>
+
+            </ul>
+
+            <a id="1-FJFOTUQ" href="#detCoberturas1-FJFOTUQ" class="vermas icon-eye" data-bs-toggle="modal">Ver más</a>
+        </div>
+
+
+        <div class="precios">
+            <div class="wrapper-lg-right">
+
+                <div class="importe"><span>USD</span> 15,00</div>
+            </div>
+
+
+
+
+            <div class="col2">
+                <form method="post" action="/portal-de-partners-completar-datos-de-pasajeros" class="formProductoSeleccionado">
+                    <input name="__RequestVerificationToken" type="hidden" value="LUiQtWVo6Amn_QnYuX1lKm_Pj3ouRQL3n9H7joKN2-hmsQ9PH7-ftq4-c_y8ynORIgnDGYAgqQwWatn-XhxhVjkFCh4PIqnO_N8_Yod7g7I1" />
+                    <input data-val="true" data-val-required="The MostrarPopup field is required." id="PopupLimiteCredito_MostrarPopup" name="PopupLimiteCredito.MostrarPopup" type="hidden" value="False" />
+                    <input data-val="true" data-val-required="The ErrorRequest field is required." id="PopupLimiteCredito_ErrorRequest" name="PopupLimiteCredito.ErrorRequest" type="hidden" value="False" />
+                    <input id="PopupLimiteCredito_PopuErrorMessage" name="PopupLimiteCredito.PopuErrorMessage" type="hidden" value="" />
+                    <input data-val="true" data-val-required="The EmitirCC field is required." id="PopupLimiteCredito_EmitirCC" name="PopupLimiteCredito.EmitirCC" type="hidden" value="False" />
+                    <input data-val="true" data-val-required="The PoseeCC field is required." id="PopupLimiteCredito_PoseeCC" name="PopupLimiteCredito.PoseeCC" type="hidden" value="True" />
+                    <input data-val="true" data-val-required="The NoPoseeCredito field is required." id="PopupLimiteCredito_NoPoseeCredito" name="PopupLimiteCredito.NoPoseeCredito" type="hidden" value="True" />
+                    <input data-val="true" data-val-required="The PopupA field is required." id="PopupLimiteCredito_PopupA" name="PopupLimiteCredito.PopupA" type="hidden" value="False" />
+                    <input data-val="true" data-val-required="The PopupB field is required." id="PopupLimiteCredito_PopupB" name="PopupLimiteCredito.PopupB" type="hidden" value="False" />
+                    <input data-val="true" data-val-required="The PopupC field is required." id="PopupLimiteCredito_PopupC" name="PopupLimiteCredito.PopupC" type="hidden" value="False" />
+                    <input id="PopupLimiteCredito_MailTo" name="PopupLimiteCredito.MailTo" type="hidden" value="contable@ua.com.uy" />
+                    <input data-val="true" data-val-required="The EsAgenciaTipoPuestoCotizador field is required." id="EsAgenciaTipoPuestoCotizador" name="EsAgenciaTipoPuestoCotizador" type="hidden" value="False" />
+                    <input type="hidden" name="ProductoSeleccionado" id="ProductoSeleccionado-1-FJFOTUQ" value="1-FJFOTUQ" />
+                    <button class="btn btn-sm" type="submit">Seleccionar</button>
+                </form>
+
+                <div class="mt-10 mt-lg-6">
+                    <div class="form-check form-check-alt d-inline-block">
+                        <input type="checkbox" class="form-check-input" id="check-1-FJFOTUQ" />
+                        <label class="form-check-label" for="check-1-FJFOTUQ">Elegir para descargar</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+                    <div class="cabecera cabecera-precompra d-none">
+                        <div class="titulo">
+                            Precompras disponibles
+                        </div>
+                    </div>
+                    <div id="divPrecompras"></div>
+<div class="col-lg-12" id="errores">
+</div>
+                </div>
+            </div>
+        </div>
+
+        <div style="font-size: 11px; color: #002447; text-align: justify; margin-bottom: 100px; font-family: 'Poppins'; font-weight: 400;">
+            *Debido a sanciones relacionadas con Cuba, Irán, Siria, Corea del Norte o las regiones de Crimea, República Popular de Donetsk (DNR) o República Popular de Lugansk (LNR) en Ucrania, Zurich Covermore debe cumplir las leyes aplicables. Esto puede limitar nuestra capacidad para tramitar siniestros o prestar asistencia. Cada caso será revisado individualmente. Por favor, envíe su “reintegro” a través de nuestra plataforma de reintegros.
+        </div>
+
+    </div>
+</main>
+<div class="descarga">
+    <div class="header">
+        <a href="#descargaForm" class="toggler collapsed" aria-controls="descargaForm" data-bs-toggle="collapse" role="button" aria-expanded="false">
+            Selecciona y descarga hasta 4 opciones a la vez
+            <span class="btn-cerrar"></span>
+        </a>
+    </div>
+    <div id="descargaForm" class="collapse">
+        <form class="form container">
+            <input name="__RequestVerificationToken" type="hidden" value="7IyMEzchVbZsnTdP6oHCVy7XhylfTtafeQ7tFMyZ9rDOiC3Q48w3bpTAV3Pl9mZ6wGe9PdOzsU7N6bSlcDZDyPihc3LixP4xw-IebC7Dh6s1" />
+            <div class="row g-3 gx-lg-5 align-items-center">
+                <div class="col-md-6">
+                    <input type="email" class="form-control" placeholder="Correo electrónico" />
+                </div>
+                <div class="col-md-6">
+                    <div class="row gx-3">
+                        <div class="col-6">
+                            <button type="button" class="btn btn-sm btn-outline-primary w-100" id="btnDescargarCotizacion">Descargar</button>
+                        </div>
+                        <div class="col-6">
+                            <button type="button" class="btn btn-sm btn-outline-primary w-100" id="btnSendCotizacion">Enviar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <div class="msg d-none"></div>
+    </div>
+</div>
+<!-- modal detalle de cobertura -->
+<div class="modal modal-detalle-cobertura modal-detalle-cobertura-anual fade" id="detCoberturas" tabindex="-1" aria-labelledby="detCoberturasLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+    
+            <div class="modal-header align-items-start">
+                <div>
+                    <h1 class="modal-title" id="detCoberturasLabel"></h1>
+                    <p class="modal-subtitle" id="detCoberturasSubLabel"></p>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+        
+            <div class="modal-body">
+                <table class="table table-striped" >
+                    <thead>
+                        <tr>
+                            <th>Detalle de cobertura</th>
+                            <th>Valor</th>
+                        </tr>
+                    </thead>
+                
+                    <tbody id="detBody">
+                        
+                    </tbody>
+                </table>
+            </div>
+        
+            <div class="modal-footer">
+                <div id="preciosModal" class="precios-footer w-100">
+                    <div id="valoresModal" class="valores">
+                        <p class="local"></p>
+                    </div>
+                
+                    <div class="comprar">
+                        <form action="#" id="formSelProd" method="post">
+                            <input type="hidden" id="formSelProdCode" value="" />
+                            <button class="btn" type="submit">Descargar</button>
+                        </form>
+                    </div>
+                </div>
+                <div id="beneficiariosModal" class="precios-footer-pax d-none">
+                    <h4>Asistencia al viajero para:</h4>
+                    <p>lorem knsd skdjns skn</p>
+                </div>
+            </div>
+        
+        </div>
+    </div>
+</div>
+<!-- /modal detalle de cobertura -->        <!-- offcanvasForm -->
+        <div class="offcanvas offcanvas-end offcanvas-form" tabindex="-1" id="offcanvasForm">
+            <div class="offcanvas-header">
+                <h1 class="offcanvas-title fs-21 fw-bold">Asistencia al viajero</h1>
+                <button type="button" class="btn-close btn-close-white me-2 opacity-100 fs-18" data-bs-dismiss="offcanvas"></button>
+            </div>
+
+    <div class="offcanvas-body py-0">
+<form action="/Emision/Recotizar?culture=es" class="d-flex flex-column h-100 justify-content-between" id="formCotizacion" method="post"><input name="__RequestVerificationToken" type="hidden" value="BfwbF-ujVk3AQEikFcu4Rk6T9i5e7DZg0NSmU7WIF1VKUY0wQPD4-Yzk8FQnPuvbpcdiCkcNQGgIr6jqEs_-TI8knzPWSa02-FqlA7hZAUE1" /><input id="TipoViaje" name="TipoViaje" type="hidden" value="Un viaje" /><input data-val="true" data-val-required="The MostrarPopup field is required." id="PopupLimiteCredito_MostrarPopup" name="PopupLimiteCredito.MostrarPopup" type="hidden" value="False" /><input data-val="true" data-val-required="The ErrorRequest field is required." id="PopupLimiteCredito_ErrorRequest" name="PopupLimiteCredito.ErrorRequest" type="hidden" value="False" /><input id="PopupLimiteCredito_PopuErrorMessage" name="PopupLimiteCredito.PopuErrorMessage" type="hidden" value="" /><input data-val="true" data-val-required="The EmitirCC field is required." id="PopupLimiteCredito_EmitirCC" name="PopupLimiteCredito.EmitirCC" type="hidden" value="False" /><input data-val="true" data-val-required="The PoseeCC field is required." id="PopupLimiteCredito_PoseeCC" name="PopupLimiteCredito.PoseeCC" type="hidden" value="True" /><input data-val="true" data-val-required="The NoPoseeCredito field is required." id="PopupLimiteCredito_NoPoseeCredito" name="PopupLimiteCredito.NoPoseeCredito" type="hidden" value="True" /><input data-val="true" data-val-required="The PopupA field is required." id="PopupLimiteCredito_PopupA" name="PopupLimiteCredito.PopupA" type="hidden" value="False" /><input data-val="true" data-val-required="The PopupB field is required." id="PopupLimiteCredito_PopupB" name="PopupLimiteCredito.PopupB" type="hidden" value="False" /><input data-val="true" data-val-required="The PopupC field is required." id="PopupLimiteCredito_PopupC" name="PopupLimiteCredito.PopupC" type="hidden" value="False" /><input id="PopupLimiteCredito_MailTo" name="PopupLimiteCredito.MailTo" type="hidden" value="contable@ua.com.uy" /><input data-val="true" data-val-required="The EsAgenciaTipoPuestoCotizador field is required." id="EsAgenciaTipoPuestoCotizador" name="EsAgenciaTipoPuestoCotizador" type="hidden" value="False" />        <div class="container-fluid px-0">
+            <div class="row">
+                <div class="col-12 mb-15">
+                    <div class="legend01">TIPO DE PRODUCTO</div>
+                    <select class="selectpicker form-control" data-style="btn-bsselect" id="TipoProducto" name="TipoProducto">
+                        <option value="Folleto" =>Folleto</option>
+                        <option value="Especiales"  selected=>Especiales</option>
+                        <option value="Precompras" =>Precompras</option>
+                    </select>
+                </div>
+
+                <div class="col-12 mb-15">
+                    <div class="legend01">TIPO DE VIAJE</div>
+                    <input type="hidden" id="Prefiltro" name="Prefiltro" value="" />
+                    <div id="PrefiltroSelect" class="navbar navbar-expand-sm dropdown-select">
+                        <div class="container-fluid px-0">
+                            <div class="navbar-collapse">
+                                <div class="navbar-nav w-100">
+                                    <div class="dropdown w-100">
+                                        <a class="form-select" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                                            <span class="dropdown-select-placeholder">Seleccione un tipo de cotización</span>
+                                            <span class="dropdown-select-selected-value"></span>
+                                        </a>
+                                        <ul class="dropdown-menu" id="ulPrefiltros">
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 mb-15">
+                    <div class="legend01">¿A DÓNDE VIAJAN?</div>
+                    <select class="selectpicker form-control" data-style="btn-bsselect" id="Destino" name="Destino">
+                        <option value="Argentina" =>Argentina</option>
+                        <option value="Centro america/Caribe" =>Centroam&#233;rica y Caribe (excepto Cuba*)</option>
+                        <option value="Europa" selected=>Europa*</option>
+                        <option value="Internacional Mundo" =>M&#250;ltiples Destinos*</option>
+                        <option value="America del norte" =>Norteam&#233;rica</option>
+                        <option value="Asia" =>Ocean&#237;a, Asia*, &#193;frica</option>
+                        <option value="Pa&#237;ses Lim&#237;trofes" =>Pa&#237;ses Lim&#237;trofes</option>
+                        <option value="Am&#233;rica del Sur (salvo Vzla)" =>Sudam&#233;rica</option>
+                        <option value="Territorio Nacional" =>Territorio Nacional</option>
+                    </select>
+                </div>
+
+                <div class="col-12 mb-15">
+                    <div class="legend01">¿CUÁNDO VIAJAN?</div>
+                    <div class="row gx-3">
+                        <div class="col">
+                            <div class="form-floating">
+                                <span class="input-icon input-icon-right icon-calendar input-group-addon"></span>
+                                <input type="text" class="form-control" id="FechaInicio" name="FechaInicio" placeholder="Desde" value="10/07/2026" />
+                                <label for="FechaInicio">Desde</label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-floating">
+                                <span class="input-icon input-icon-right icon-calendar input-group-addon"></span>
+                                <input type="text" class="form-control" id="FechaFin" name="FechaFin" placeholder="Hasta" value="10/07/2026" />
+                                <label for="FechaFin">Hasta</label>
+                            </div>
+                        </div>
+                        <input type="text" id="RangoFechas" value="" style="visibility: hidden; position: absolute; height: 45px;" />
+                    </div>
+                </div>
+
+                <div class="col-12 mb-15">
+                    <div class="legend01">¿CUÁNTOS VIAJAN?</div>
+                    <select class="selectpicker form-control" data-style="btn-bsselect" data-size="5" id="CantidadPasajeros" name="CantidadPasajeros">
+                        <option value="1" selected=>1</option>
+                        <option value="2" =>2</option>
+                        <option value="3" =>3</option>
+                        <option value="4" =>4</option>
+                        <option value="5" =>5</option>
+                        <option value="6" =>6</option>
+                        <option value="7" =>7</option>
+                        <option value="8" =>8</option>
+                        <option value="9" =>9</option>
+                        <option value="10" =>10</option>
+                        <option value="11" =>11</option>
+                        <option value="12" =>12</option>
+                        <option value="13" =>13</option>
+                        <option value="14" =>14</option>
+                        <option value="15" =>15</option>
+                    </select>
+                </div>
+                                <div class="col-12 mb-15">
+                    <div class="legend01">¿QUÉ EDAD TIENEN?</div>
+                    <div class="d-flex flex-wrap gap-10 recotizadorEdades" id="edades"></div>
+                    <input type="hidden" id="ListaEdades" name="ListaEdades" value="29" />
+                </div>
+
+            </div>
+        </div>
+        <div class="py-20">
+            <button type="submit" class="btn btn-alternative-1 w-100">Recotizar</button>
+            <button type="button" class="btn btn-link btn-sm text-white w-100" data-bs-dismiss="offcanvas">Cancelar</button>
+
+            <span id="mensaje-tipo-producto-recotizar" class="field-validation-error"></span>
+        </div>
+</form>    </div>
+
+        </div>
+        <!-- offcanvasForm -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+
+    <symbol id="default-avatar" viewBox="0 0 30 31">
+        <path d="M15.062 3.477a12.105 12.105 0 1 0 0 24.209 12.105 12.105 0 0 0 0-24.21Zm0 23.03a10.942 10.942 0 1 1 10.942-10.943A10.959 10.959 0 0 1 15.06 26.507Z" />
+        <path stroke-width=".326" d="M15.063 26.75A11.205 11.205 0 0 0 26.25 15.564 11.188 11.188 0 1 0 15.062 26.75ZM8.2 25.833A12.35 12.35 0 1 0 21.924 5.293 12.35 12.35 0 0 0 8.201 25.832Zm.273-20.13a11.858 11.858 0 0 1 6.588-1.998 11.875 11.875 0 0 1 11.859 11.859 11.859 11.859 0 1 1-18.447-9.86Zm.646.967a10.696 10.696 0 0 1 5.942-1.803A10.73 10.73 0 0 1 25.76 15.563 10.696 10.696 0 1 1 9.12 6.668Z" />
+        <path d="M15.062 19.349c2.906 0 5.645 1.428 7.77 4.035l.914-.698c-2.341-2.905-5.413-4.483-8.684-4.483-3.271 0-6.343 1.578-8.684 4.483l.913.698c2.125-2.607 4.865-4.035 7.77-4.035Z" />
+        <path stroke-width=".326" d="m22.686 23.595.098.131.131-.1 1.046-.796.129-.098-.097-.13-.05-.066-.004-.005c-2.384-2.955-5.533-4.577-8.877-4.577-3.344 0-6.493 1.622-8.877 4.577l-.004.005-.05.066-.097.13.129.098 1.046.797.13.1.1-.132.047-.064c2.083-2.541 4.762-3.939 7.576-3.939s5.493 1.398 7.576 3.94l.048.063Zm-7.624-5.149c3.1 0 6.05 1.47 8.334 4.194l-.522.4c-2.138-2.529-4.913-3.924-7.812-3.924-2.9 0-5.66 1.396-7.797 3.925l-.536-.402c2.284-2.723 5.234-4.193 8.333-4.193Z" />
+        <path d="M15.061 7.961a4.782 4.782 0 1 0 4.733 4.766A4.766 4.766 0 0 0 15.06 7.96Zm0 8.385a3.62 3.62 0 1 1 3.587-3.62 3.602 3.602 0 0 1-3.587 3.62Z" />
+        <path stroke-width=".326" d="M18.895 12.724a3.865 3.865 0 1 0-3.832 3.866 3.851 3.851 0 0 0 3.832-3.866Zm0 0h-.163.163Zm-6.638 4.206c.833.546 1.81.832 2.807.822a5.012 5.012 0 0 0 4.977-5.028 5.028 5.028 0 1 0-7.784 4.206Zm2.804-8.725h.001a4.502 4.502 0 0 1 4.503 4.519 4.536 4.536 0 1 1-4.504-4.52Zm0 1.162a3.357 3.357 0 0 1 3.342 3.357 3.374 3.374 0 1 1-3.342-3.357Z" />
+    </symbol>
+
+
+    <!-- filtro buscador -->
+    <symbol id="place" viewBox="0 0 17 20">
+        <path opacity="0.5" fill-rule="evenodd" clip-rule="evenodd" d="M8.2219 19.064C8.30347 19.1343 8.4048 19.1699 8.50613 19.1699C8.60745 19.1699 8.70878 19.1343 8.79036 19.064C8.81354 19.0438 8.8765 18.9975 8.97302 18.9265C10.142 18.0661 16.2344 13.582 16.2344 7.9957C16.2344 3.79438 12.767 0.376953 8.50613 0.376953C4.24526 0.376953 0.777832 3.79438 0.777832 7.9957C0.777832 13.582 6.87026 18.0661 8.03923 18.9265C8.13576 18.9975 8.19871 19.0438 8.2219 19.064ZM4.2124 8.18598C4.2124 10.5782 6.13846 12.5244 8.5059 12.5244C10.8733 12.5244 12.7994 10.5782 12.7994 8.18598C12.7994 5.79375 10.8733 3.84752 8.5059 3.84752C6.13846 3.84752 4.2124 5.79375 4.2124 8.18598Z" fill="white" />
+    </symbol>
+
+    <symbol id="pencil" viewBox="0 0 18 19">
+        <path d="M3 15.7392H6L13.875 7.86424C14.7034 7.03581 14.7034 5.69267 13.875 4.86424C13.0466 4.03581 11.7034 4.03581 10.875 4.86424L3 12.7392V15.7392" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M10.125 5.61426L13.125 8.61426" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+    </symbol>
+
+    <symbol id="person" viewBox="0 0 16 18">
+        <path d="M7.68699 9.02258C9.6678 9.02258 11.3488 7.23985 11.3488 4.93333C11.3488 2.68194 9.65871 0.954346 7.68699 0.954346C5.70618 0.954346 4.00705 2.70951 4.01613 4.95171C4.01613 7.23985 5.6971 9.02258 7.68699 9.02258ZM2.01715 17.5687H13.3387C14.8379 17.5687 15.3558 17.1092 15.3558 16.2638C15.3558 13.9021 12.3937 10.6491 7.6779 10.6491C2.97121 10.6491 0 13.9021 0 16.2638C0 17.1092 0.517918 17.5687 2.01715 17.5687Z" fill="white" fill-opacity="0.5" />
+    </symbol>
+
+    <symbol id="calendar" viewBox="0 0 19 18">
+        <path opacity="0.5" d="M3.10999 17.5518H15.6218C17.5935 17.5518 18.6203 16.5226 18.6203 14.5561V3.37268C18.6203 1.40616 17.5935 0.376953 15.6218 0.376953H3.10999C1.14735 0.376953 0.120605 1.39697 0.120605 3.37268V14.5561C0.120605 16.5226 1.14735 17.5518 3.10999 17.5518ZM3.1009 15.7231C2.34674 15.7231 1.92877 15.328 1.92877 14.5193V6.06515C1.92877 5.25649 2.34674 4.86135 3.1009 4.86135H15.6309C16.385 4.86135 16.803 5.25649 16.803 6.06515V14.5193C16.803 15.328 16.385 15.7231 15.6309 15.7231H3.1009ZM7.61678 8.03167H8.15287C8.47998 8.03167 8.58902 7.93059 8.58902 7.60896V7.06679C8.58902 6.73597 8.47998 6.63489 8.15287 6.63489H7.61678C7.28968 6.63489 7.18064 6.73597 7.18064 7.06679V7.60896C7.18064 7.93059 7.28968 8.03167 7.61678 8.03167ZM10.588 8.03167H11.1241C11.4421 8.03167 11.5511 7.93059 11.5511 7.60896V7.06679C11.5511 6.73597 11.4421 6.63489 11.1241 6.63489H10.588C10.2609 6.63489 10.1519 6.73597 10.1519 7.06679V7.60896C10.1519 7.93059 10.2609 8.03167 10.588 8.03167ZM13.5501 8.03167H14.0862C14.4133 8.03167 14.5224 7.93059 14.5224 7.60896V7.06679C14.5224 6.73597 14.4133 6.63489 14.0862 6.63489H13.5501C13.2321 6.63489 13.1231 6.73597 13.1231 7.06679V7.60896C13.1231 7.93059 13.2321 8.03167 13.5501 8.03167ZM4.65466 10.9906H5.18166C5.50877 10.9906 5.6178 10.8896 5.6178 10.5587V10.0166C5.6178 9.69494 5.50877 9.59386 5.18166 9.59386H4.65466C4.32755 9.59386 4.21852 9.69494 4.21852 10.0166V10.5587C4.21852 10.8896 4.32755 10.9906 4.65466 10.9906ZM7.61678 10.9906H8.15287C8.47998 10.9906 8.58902 10.8896 8.58902 10.5587V10.0166C8.58902 9.69494 8.47998 9.59386 8.15287 9.59386H7.61678C7.28968 9.59386 7.18064 9.69494 7.18064 10.0166V10.5587C7.18064 10.8896 7.28968 10.9906 7.61678 10.9906ZM10.588 10.9906H11.1241C11.4421 10.9906 11.5511 10.8896 11.5511 10.5587V10.0166C11.5511 9.69494 11.4421 9.59386 11.1241 9.59386H10.588C10.2609 9.59386 10.1519 9.69494 10.1519 10.0166V10.5587C10.1519 10.8896 10.2609 10.9906 10.588 10.9906ZM13.5501 10.9906H14.0862C14.4133 10.9906 14.5224 10.8896 14.5224 10.5587V10.0166C14.5224 9.69494 14.4133 9.59386 14.0862 9.59386H13.5501C13.2321 9.59386 13.1231 9.69494 13.1231 10.0166V10.5587C13.1231 10.8896 13.2321 10.9906 13.5501 10.9906ZM4.65466 13.9404H5.18166C5.50877 13.9404 5.6178 13.8393 5.6178 13.5177V12.9755C5.6178 12.6447 5.50877 12.5436 5.18166 12.5436H4.65466C4.32755 12.5436 4.21852 12.6447 4.21852 12.9755V13.5177C4.21852 13.8393 4.32755 13.9404 4.65466 13.9404ZM7.61678 13.9404H8.15287C8.47998 13.9404 8.58902 13.8393 8.58902 13.5177V12.9755C8.58902 12.6447 8.47998 12.5436 8.15287 12.5436H7.61678C7.28968 12.5436 7.18064 12.6447 7.18064 12.9755V13.5177C7.18064 13.8393 7.28968 13.9404 7.61678 13.9404ZM10.588 13.9404H11.1241C11.4421 13.9404 11.5511 13.8393 11.5511 13.5177V12.9755C11.5511 12.6447 11.4421 12.5436 11.1241 12.5436H10.588C10.2609 12.5436 10.1519 12.6447 10.1519 12.9755V13.5177C10.1519 13.8393 10.2609 13.9404 10.588 13.9404Z" fill="white" />
+    </symbol>
+
+
+    <!-- tarjetas planes -->
+    <symbol id="question_mark" viewBox="0 0 16 17" fill="none">
+        <circle cx="8" cy="8.5" r="7.355" stroke="#002447" stroke-width="1.291" />
+        <path fill="#002447" stroke="#002447" stroke-width=".108" d="m7.662 7.681.587 1.685.054.003v-.002c.022-.388.293-.653.803-.985.403-.26.738-.51.972-.814.236-.307.367-.666.367-1.142 0-.691-.313-1.235-.809-1.604-.494-.368-1.17-.561-1.897-.561-1.397 0-2.352.624-2.618 1.412-.055.144-.088.29-.088.451 0 .423.34.689.742.689.243 0 .4-.064.529-.167.062-.05.117-.11.17-.172a6.78 6.78 0 0 0 .064-.076c.033-.04.067-.08.105-.122l.004-.006c.248-.383.573-.602 1.015-.602.307 0 .554.086.724.231a.77.77 0 0 1 .266.604.811.811 0 0 1-.238.584c-.163.18-.41.358-.752.594Zm-1.199 3.951c0 .545.462.943 1.013.943.543 0 1.005-.39 1.005-.943 0-.544-.454-.943-1.005-.943-.559 0-1.013.399-1.013.943Z" />
+    </symbol>
+
+</svg>
+
+
+
+<div id="popup-limite-credito-a">
+
+    <div class="div-popup-cc">
+        <img class="img-responsive" src="/Content/img/Saldo-insuficiente.svg">
+    </div>
+    <div class="popup-container">
+        <b class="text-b-popup-cc">Tu crédito es insuficiente</b>
+        <p class="sub-text-popup-cc">Comunícate con <a href="/cdn-cgi/l/email-protection#660509081207040a032613074805090b48131f" target="_blank" class="text-popup-mail"><span class="__cf_email__" data-cfemail="d9bab6b7adb8bbb5bc99acb8f7bab6b4f7aca0">[email&#160;protected]</span></a> para consultar el estado de tu límite de crédito.</p>
+        <button id="btn-continuar-popup-cc-a" class="btn-popup-cc">Continuar</button>
+        <button id="btn-recordar-popup-cc" class="btn-recordar-popup">Recordarme en un día</button>
+    </div>
+</div>
+
+<div id="popup-limite-credito-b">
+
+    <div class="div-popup-cc">
+        <img class="img-responsive" src="/Content/img/Saldo-insuficiente.svg">
+    </div>
+
+    <b class="text-b-popup-cc">No cuentas con crédito disponible</b>
+    <p class="sub-text-popup-cc">Puedes emitir con otros medios cobro.<br>¿Quieres continuar?</p>
+
+    <button id="btn-continuar-popup-cc-b" class="btn-popup-cc">Continuar</button>
+    <button id="btn-cancelar-popup-cc-b" class="btn-recordar-popup">Cancelar</button>
+</div>
+
+<div id="popup-limite-credito-c">
+
+    <div class="div-popup-cc">
+        <img class="img-responsive" src="/Content/img/Saldo-insuficiente.svg">
+    </div>
+    <div class="popup-container">
+        <b class="text-b-popup-cc">No cuentas con crédito disponible</b>
+        <p class="sub-text-popup-cc">Comunícate con <a href="mailPopup:contable@ua.com.uy" target="_blank" class="text-popup-mail"><span class="__cf_email__" data-cfemail="472428293326252b220732266924282a69323e">[email&#160;protected]</span></a> para consultar el estado de tu límite de crédito.</p>
+        <button id="btn-volver-popup-cc" class="btn-popup-cc">Volver</button>
+    </div>
+</div>
+
+<div id="popup-limite-credito-err-no-med-cobro">
+
+    <div class="div-popup-cc">
+        <img class="img-responsive" src="/Content/img/Saldo-insuficiente.svg">
+    </div>
+    <div class="popup-container">
+        <b class="text-b-popup-cc">No pudimos consultar tu crédito disponible</b>
+        <p class="sub-text-popup-cc">Vuelve a intentar nuevamente o comunícate con <a href="mailPopup:contable@ua.com.uy" target="_blank" class="text-popup-mail"><span class="__cf_email__" data-cfemail="167579786277747a735663773875797b38636f">[email&#160;protected]</span></a></p>
+        <button id="btn-continuar-popup-cc-err-no" class="btn-popup-cc">Continuar</button>
+        <button id="btn-cancelar-popup-cc-err-no" class="btn-recordar-popup">Cancelar</button>
+    </div>
+</div>
+
+<div id="popup-limite-credito-err-si-med-cobro">
+
+    <div class="div-popup-cc">
+        <img class="img-responsive" src="/Content/img/Saldo-insuficiente.svg">
+    </div>
+    <div class="popup-container">
+        <b class="text-b-popup-cc">No pudimos consultar tu crédito disponible</b>
+        <p class="sub-text-popup-cc">Por favor emite con otros medios de cobro o comunicate con <a href="mailPopup:contable@ua.com.uy" target="_blank" class="text-popup-mail"><span class="__cf_email__" data-cfemail="a8cbc7c6dcc9cac4cde8ddc986cbc7c586ddd1">[email&#160;protected]</span></a></p>
+        <button id="btn-continuar-popup-cc-err-si" class="btn-popup-cc">Continuar</button>
+        <button id="btn-cancelar-popup-cc-err-si" class="btn-recordar-popup">Cancelar</button>
+    </div>
+</div>
+
+
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="text/javascript">
+    let limiteCreditoVM = {"PasoActual":3,"MostrarPopup":false,"MostrarPopupError":false,"Agencia":"1-QN2H3","Usuario":null,"TieneCC":true,"PropuestaEmisionId":2777688,"Origen":"URUGUAY","EmisionAgencia":{"Id":1255,"Nombre":"SURVIEW","CodigoUA":"1-QN2H3","Descuento":0,"Email":"","Pais":{"Id":238,"Iso2":"UY","Short_name":"Uruguay","Long_name":"Eastern Republic of Uruguay","Iso3":"URY","Numcode":"858","Un_member":"yes","Calling_code":"598","Cctld":".uy","Nombre":"Uruguay","Nombre_es":"Uruguay","Nombre_pt":"Uruguay","Nombre_en":"Uruguay","CodigoUA":"URUGUAY","Habilitado":true},"EsDefault":false,"CodPais":"URUGUAY","NoMostrarMonedaExtranjera":false,"PuestoDeTrabajo":"1-C8SRL80","CobroObligatorio":true,"PermitePrecompra":true,"PoseeCuentaCorriente":true,"CanalVenta":"Retail","ComisionMedioCobro":0,"Moneda":"USD","TipoPuestoTrabajo":null,"RestringirAnulacion":"Y","PermiteModificarFecha":"N","PermiteVoucherGrupal":"N","PoseeLimiteCredito":true},"ProductoSeleccionado":""};
+    let homeUrl = '/portal-de-partners';
+    let validarPopupLimiteCreditoEmisionUrl = '/Emision/ValidarPopupLimiteCredito';
+    let popupBtnContinuarUrl = '/Emision/PopupABtnContinuar';
+    </script>
+<div id="popup-no-cotizar">
+
+    <div class="div-popup-no-cotizar">
+        <svg xmlns="http://www.w3.org/2000/svg" width="90" height="91" viewBox="0 0 90 91" fill="none">
+
+            <path d="M45 90.4936C69.8446 90.4936 90 70.2559 90 45.2468C90 20.2377 69.8446 0 45 0C20.1554 0 0 20.2377 0 45.2468C0 70.2559 20.1554 90.4936 45 90.4936Z"
+                  fill="url(#paint0_linear_14754_394)" />
+
+            <g transform="translate(25.6, 35)">
+                <rect width="38.813" height="38.813" rx="6" fill="#3F8CF4" />
+
+                <path d="M19.4066 22.1789H2.77236C2.03709 22.1789 1.33193 21.8868 0.812007 21.3669C0.292088 20.847 0 20.1418 0 19.4066V11.0895C0 8.14835 1.16835 5.3277 3.24803 3.24803C5.3277 1.16835 8.14835 0 11.0895 0C14.0306 0 16.8512 1.16835 18.9309 3.24803C21.0106 5.3277 22.1789 8.14835 22.1789 11.0895V19.4066C22.1789 20.1418 21.8868 20.847 21.3669 21.3669C20.847 21.8868 20.1418 22.1789 19.4066 22.1789ZM5.54473 16.6342H16.6342V11.0895C16.6342 9.61891 16.05 8.20858 15.0102 7.16874C13.9703 6.12891 12.56 5.54473 11.0895 5.54473C9.61891 5.54473 8.20858 6.12891 7.16874 7.16874C6.12891 8.20858 5.54473 9.61891 5.54473 11.0895V16.6342Z"
+                      fill="#291DBE"
+                      transform="translate(8,-16)" />
+
+                <rect x="7" y="0" width="24" height="8" fill="#3F8CF4" />
+
+                <path d="M11.0894 5.57808C11.0952 4.60339 10.844 3.64437 10.3611 2.79769C9.87824 1.95101 9.18067 1.24659 8.33875 0.755424C7.49684 0.264261 6.54032 0.00371129 5.56562 3.93563e-05C4.59091 -0.00363258 3.63246 0.249699 2.78687 0.734505C1.94128 1.21931 1.23843 1.91846 0.749157 2.76148C0.259887 3.60449 0.00148739 4.56159 6.40216e-06 5.53631C-0.00147459 6.51102 0.254014 7.46889 0.74072 8.31339C1.22743 9.15789 1.92815 9.85917 2.77227 10.3465V13.8952C2.77227 14.6305 3.06435 15.3356 3.58427 15.8555C4.10419 16.3755 4.80935 16.6675 5.54463 16.6675C6.27991 16.6675 6.98507 16.3755 7.50499 15.8555C8.02491 15.3356 8.31699 14.6305 8.31699 13.8952V10.3465C9.15501 9.86274 9.85183 9.16805 10.3382 8.33151C10.8246 7.49497 11.0835 6.54571 11.0894 5.57808Z"
+                      fill="#291DBE"
+                      transform="translate(14, 10)" />
+            </g>
+
+            <defs>
+                <linearGradient id="paint0_linear_14754_394"
+                                x1="45.2035"
+                                y1="81.9505"
+                                x2="45"
+                                y2="-4.01913e-06"
+                                gradientUnits="userSpaceOnUse">
+                    <stop offset="0.2" stop-color="white" stop-opacity="0" />
+                    <stop offset="0.5" stop-color="#DDEDFF" stop-opacity="0.3" />
+                    <stop offset="0.7" stop-color="#DDEDFF" stop-opacity="0.6" />
+                    <stop offset="0.9" stop-color="#DDEDFF" stop-opacity="0.9" />
+                    <stop offset="1" stop-color="#DDEDFF" />
+                </linearGradient>
+            </defs>
+        </svg>
+    </div>
+
+    <div>
+        <b class="titulo-popup-no-cotizar titulo-subtitulo-padlock">Solo puedes cotizar</b>
+        <p class="sub-text-popup-no-cotizar titulo-subtitulo-padlock">Actualmente, tu perfil permite solo la cotización de productos.</p>
+        <button id="btn-cancelar-no-cotizar" type="button" class="btn-cerrar-popup-no-cotizar btn-padlock">Cerrar</button>
+    </div>
+</div><script>var jsProductos = [{"Id":16968702,"PropuestaEmision":{"Id":2777688,"Nombre":null,"Apellido":null,"Telefono":null,"Email":null,"Created":"2026-07-10T00:25:27.8459401-03:00","Origen":{"Id":238,"Nombre":"Uruguay","Nombre_es":"Uruguay","Nombre_pt":"Uruguay","Nombre_en":"Uruguay","CodigoUA":"URUGUAY","NumCode":"858","Cctld":".uy","Habilitado":true},"EmisionDestino":{"Id":1,"Nombre":"Europa*","Nombre_es":"Europa*","Nombre_pt":"Europa","Nombre_en":"Europe","CodigoUA":"Europa","Habilitado":false},"TipoViaje":{"Id":1,"Nombre":"Un viaje","Nombre_es":"Un viaje","Nombre_pt":"Um viagem","Nombre_en":"Un viaje","CodigoUA":"Un viaje","Orden":1,"NombreCodigo":"Un viaje (Un viaje)"},"Agencia":{"Id":1255,"Nombre":"SURVIEW","CodigoUA":"1-QN2H3","Descuento":0.0,"Email":"","Pais":{"Id":238,"Iso2":"UY","Short_name":"Uruguay","Long_name":"Eastern Republic of Uruguay","Iso3":"URY","Numcode":"858","Un_member":"yes","Calling_code":"598","Cctld":".uy","Nombre":"Uruguay","Nombre_es":"Uruguay","Nombre_pt":"Uruguay","Nombre_en":"Uruguay","CodigoUA":"URUGUAY","Habilitado":true},"EsDefault":false,"CodPais":"URUGUAY","NoMostrarMonedaExtranjera":false,"PuestoDeTrabajo":"1-C8SRL80","CobroObligatorio":true,"PermitePrecompra":true,"PoseeCuentaCorriente":true,"CanalVenta":"Retail","ComisionMedioCobro":0.0,"Moneda":"USD","TipoPuestoTrabajo":null,"RestringirAnulacion":"Y","PermiteModificarFecha":"N","PermiteVoucherGrupal":"N","PoseeLimiteCredito":true},"FechaInicio":"2026-07-10T00:00:00","FechaFin":"2026-07-10T00:00:00","CantidadPasajeros":1,"Edades":"29","FechasNacimiento":null,"Convenio":null,"Empresa":null,"NumeroVoucherSiebel":null,"Usuario":"LUCASB","NumeroControlAgencia":null,"NumeroPrecompra":null,"HistoricoPropuestas":null,"CodigoUaProductoEmitido":null,"ProductosFolleto":false,"ProductosPrecompra":false,"TipoProducto":"Especiales","PreFiltro":"Un viaje","Estado":null,"Marca":"ua","Pagado":false,"CobroObligatorio":false,"PermiteCobro":false,"ComisionAgencia":0.0,"TipoCargaPasajeros":"cargaredades","ImporteUpgradesLocal":0.0,"ImporteNetoLocal":0.0,"ImporteNetoLista":0.0,"ImporteEmisionLocal":0.0,"ImporteEmisionLista":0.0,"PaisTarjetas":null,"FinanciacionDisplay":null,"MedioPagoSeleccionado":null,"ComisionCalculada":0.0,"ImporteCalculado":0.0,"ProductoElegido":null,"Analytics":null},"Codigo":"1-FJFOTUQ","NombreProducto":"URU 100K DIARIO 2025 GRUPAL","Descripcion":"Value 80","DescripcionLarga":"100K Grupal","ImporteUSD":15.0,"CotizacionUSD":1.0,"Atributos":"[{\"NombreVisible\":\"Asistencia médica por enfermedad / accidente\",\"Nombre\":\"01 - Asistencia médica en caso de enfermedad o accidente\",\"Unidad\":\"USD\",\"Valor\":\"100000\",\"ValorDisplay\":\"USD 100.000\",\"Exceptions\":[]},{\"NombreVisible\":\"Asistencia médica por Covid-19\",\"Nombre\":\"02 - Asistencia médica por COVID19 producida por el virus SARS-COV2*\",\"Unidad\":\"USD\",\"Valor\":\"100000\",\"ValorDisplay\":\"USD 100.000\",\"Exceptions\":[]},{\"NombreVisible\":\"Asesoría y compensación por pérdida de equipaje complementaria (aéreo/marítimo)\",\"Nombre\":\"03 - Asesoría y compensación por pérdida de equipaje complementaria (aéreo/marítimo)\",\"Unidad\":\"USD\",\"Valor\":\"1000\",\"ValorDisplay\":\"USD 1.000\",\"Exceptions\":[]},{\"NombreVisible\":\"Teleasistencia\",\"Nombre\":\"04 - Teleasistencia\",\"Unidad\":\"\",\"Valor\":\"Incluido\",\"ValorDisplay\":\" Incluido\",\"Exceptions\":[]},{\"NombreVisible\":\"Asistencia médica por pre-existencia*\",\"Nombre\":\"06 - Asistencia médica en caso de pre-existencia*.\",\"Unidad\":\"USD\",\"Valor\":\"2000\",\"ValorDisplay\":\"USD 2.000\",\"Exceptions\":[]},{\"NombreVisible\":\"Prótesis y órtesis*\",\"Nombre\":\"06 - Prótesis y órtesis*\",\"Unidad\":\"USD\",\"Valor\":\"3000\",\"ValorDisplay\":\"USD 3.000\",\"Exceptions\":[]},{\"NombreVisible\":\"Asistencia médica en caso de enfermedad o accidente/Nacional\",\"Nombre\":\"07 - Asistencia médica en caso de enfermedad o accidente/Nacional\",\"Unidad\":\"USD\",\"Valor\":\"20000\",\"ValorDisplay\":\"USD 20.000\",\"Exceptions\":[]},{\"NombreVisible\":\"Gastos de hotel por convalecencia de Covid-19 (evento múltiple)\",\"Nombre\":\"08 - Cúmulo por evento múltiple aplicable a Gastos de hotel por Convalecencia por SARS COV2 Covid19\",\"Unidad\":\"USD\",\"Valor\":\"10000\",\"ValorDisplay\":\"USD 10.000\",\"Exceptions\":[]},{\"NombreVisible\":\"Gastos de hotel por Convalecencia por SARS COV2 Covid 19 - total*\",\"Nombre\":\"08 - Gastos de hotel por Convalecencia por SARS COV2 Covid 19 - total*\",\"Unidad\":\"USD\",\"Valor\":\"500***\",\"ValorDisplay\":\"USD 500***\",\"Exceptions\":[]},{\"NombreVisible\":\"Gastos de hotel por Convalecencia por SARS COV2 Covid 19 - por día*\",\"Nombre\":\"09 - Gastos de hotel por Convalecencia por SARS COV2 Covid 19 - por día*\",\"Unidad\":\"USD\",\"Valor\":\"100***\",\"ValorDisplay\":\"USD 100***\",\"Exceptions\":[]},{\"NombreVisible\":\"***o el mínimo establecido por autoridad gubernamental en país de destino\",\"Nombre\":\"10 - ***o el mínimo establecido por autoridad gubernamental en país de destino\",\"Unidad\":\"\",\"Valor\":\"\",\"ValorDisplay\":\" \",\"Exceptions\":[]},{\"NombreVisible\":\"Odontología*\",\"Nombre\":\"11 - Odontología*\",\"Unidad\":\"USD\",\"Valor\":\"600\",\"ValorDisplay\":\"USD 600\",\"Exceptions\":[]},{\"NombreVisible\":\"Medicamentos ambulatorio*\",\"Nombre\":\"12 - Medicamentos ambulatorio*\",\"Unidad\":\"USD\",\"Valor\":\"2500\",\"ValorDisplay\":\"USD 2.500\",\"Exceptions\":[]},{\"NombreVisible\":\"Días complementarios por internación*\",\"Nombre\":\"13 - Días complementarios por internación*\",\"Unidad\":\"\",\"Valor\":\"Incluido\",\"ValorDisplay\":\" Incluido\",\"Exceptions\":[]},{\"NombreVisible\":\"Válido en cruceros\",\"Nombre\":\"14 - Válido en cruceros\",\"Unidad\":\"\",\"Valor\":\"Incluido\",\"ValorDisplay\":\" Incluido\",\"Exceptions\":[]},{\"NombreVisible\":\"Gastos de hotel por convalecencia - total*\",\"Nombre\":\"15 - Gastos de hotel por convalecencia - total*\",\"Unidad\":\"USD\",\"Valor\":\"500\",\"ValorDisplay\":\"USD 500\",\"Exceptions\":[]},{\"NombreVisible\":\"Gastos de hotel por convalecencia - por día*\",\"Nombre\":\"16 - Gastos de hotel por convalecencia - por día*\",\"Unidad\":\"USD\",\"Valor\":\"100\",\"ValorDisplay\":\"USD 100\",\"Exceptions\":[]},{\"NombreVisible\":\"Gastos de hotel familiar acompañante - total*\",\"Nombre\":\"17 - Gastos de hotel familiar acompañante - total*\",\"Unidad\":\"USD\",\"Valor\":\"500\",\"ValorDisplay\":\"USD 500\",\"Exceptions\":[]},{\"NombreVisible\":\"Gastos de hotel familiar acompañante - por día*\",\"Nombre\":\"18 - Gastos de hotel familiar acompañante - por día*\",\"Unidad\":\"USD\",\"Valor\":\"100\",\"ValorDisplay\":\"USD 100\",\"Exceptions\":[]},{\"NombreVisible\":\"Asesoría y gastos por demora de equipaje (8 horas)*****\",\"Nombre\":\"19 - Asesoría y gastos por demora de equipaje (8 horas)*****\",\"Unidad\":\"USD\",\"Valor\":\"300\",\"ValorDisplay\":\"USD 300\",\"Exceptions\":[]},{\"NombreVisible\":\"*****No aplica para vuelo de regreso a país de residencia\",\"Nombre\":\"20 - *****No aplica para vuelo de regreso a país de residencia\",\"Unidad\":\"\",\"Valor\":\"\",\"ValorDisplay\":\" \",\"Exceptions\":[]},{\"NombreVisible\":\"Garantía gastos cancelación/interrupción c/restricción de causas (h/70 años)\",\"Nombre\":\"20 - Garantía gastos cancelación/interrupción c/restricción de causas (h/70 años)\",\"Unidad\":\"USD\",\"Valor\":\"2000\",\"ValorDisplay\":\"USD 2.000\",\"Exceptions\":[]},{\"NombreVisible\":\"Gastos por vuelo demorado (más de 6 hs)\",\"Nombre\":\"20 - Gastos por vuelo demorado (más de 6 hs)\",\"Unidad\":\"USD\",\"Valor\":\"150\",\"ValorDisplay\":\"USD 150\",\"Exceptions\":[]},{\"NombreVisible\":\"Asistencia legal en caso de accidente\",\"Nombre\":\"21 - Asistencia legal en caso de accidente\",\"Unidad\":\"USD\",\"Valor\":\"1200\",\"ValorDisplay\":\"USD 1.200\",\"Exceptions\":[]},{\"NombreVisible\":\"Práctica recreativa de deportes*\",\"Nombre\":\"21 - Práctica recreativa de deportes\",\"Unidad\":\"USD\",\"Valor\":\"10000\",\"ValorDisplay\":\"USD 10.000\",\"Exceptions\":[]},{\"NombreVisible\":\"Asistencia embarazadas (hasta semana 26)*\",\"Nombre\":\"22 - Asistencia embarazadas (hasta semana 26)*\",\"Unidad\":\"USD\",\"Valor\":\"10000\",\"ValorDisplay\":\"USD 10.000\",\"Exceptions\":[]},{\"NombreVisible\":\"Anticipo de fondos para fianza\",\"Nombre\":\"23 - Anticipo de fondos para fianza\",\"Unidad\":\"USD\",\"Valor\":\"10000\",\"ValorDisplay\":\"USD 10.000\",\"Exceptions\":[]},{\"NombreVisible\":\"Transferencia de fondos\",\"Nombre\":\"24 - Transferencia de fondos\",\"Unidad\":\"USD\",\"Valor\":\"3000\",\"ValorDisplay\":\"USD 3.000\",\"Exceptions\":[]},{\"NombreVisible\":\"Traslado de familiar por internación de más de 5 días del titular*\",\"Nombre\":\"25 - Traslado de familiar por internación de más de 5 días del titular*\",\"Unidad\":\"\",\"Valor\":\"Incluido\",\"ValorDisplay\":\" Incluido\",\"Exceptions\":[]},{\"NombreVisible\":\"Asistencia en caso de extravío de documentos\",\"Nombre\":\"26 - Asistencia en caso de extravío de documentos\",\"Unidad\":\"\",\"Valor\":\"Incluido\",\"ValorDisplay\":\" Incluido\",\"Exceptions\":[]},{\"NombreVisible\":\"Acompañamiento de menores*\",\"Nombre\":\"27 - Acompañamiento de menores*\",\"Unidad\":\"\",\"Valor\":\"Incluido\",\"ValorDisplay\":\" Incluido\",\"Exceptions\":[]},{\"NombreVisible\":\"Viaje de regreso por enfermedad del Titular*\",\"Nombre\":\"28 - Viaje de regreso por enfermedad del Titular*\",\"Unidad\":\"\",\"Valor\":\"Incluido\",\"ValorDisplay\":\" Incluido\",\"Exceptions\":[]},{\"NombreVisible\":\"Regreso anticipado por siniestro en domicilio*\",\"Nombre\":\"30 - Regreso anticipado por siniestro en domicilio*\",\"Unidad\":\"\",\"Valor\":\"Incluido\",\"ValorDisplay\":\" Incluido\",\"Exceptions\":[]},{\"NombreVisible\":\"Traslado y Repatriación de Restos*\",\"Nombre\":\"31 - Traslado y Repatriación de Restos*\",\"Unidad\":\"\",\"Valor\":\"Incluido\",\"ValorDisplay\":\" Incluido\",\"Exceptions\":[]},{\"NombreVisible\":\"Traslado y repatriación sanitaria*\",\"Nombre\":\"31 - Traslado y repatriación sanitaria*\",\"Unidad\":\"\",\"Valor\":\"Incluido\",\"ValorDisplay\":\" Incluido\",\"Exceptions\":[]},{\"NombreVisible\":\"Secure Gift\",\"Nombre\":\"32 - Secure Gift\",\"Unidad\":\"USD\",\"Valor\":\"400\",\"ValorDisplay\":\"USD 400\",\"Exceptions\":[]},{\"NombreVisible\":\"Límite de edad\",\"Nombre\":\"33 - Límite de edad\",\"Unidad\":\"Años\",\"Valor\":\"70\",\"ValorDisplay\":\"70 Años\",\"Exceptions\":[]},{\"NombreVisible\":\"Ámbito de cobertura\",\"Nombre\":\"34 - Ámbito de cobertura\",\"Unidad\":\"\",\"Valor\":\"Internacional/Nacional**\",\"ValorDisplay\":\" Internacional/Nacional**\",\"Exceptions\":[]},{\"NombreVisible\":\"*Incluido dentro del límite de asistencia médica\",\"Nombre\":\"35 - *Incluido dentro del límite de asistencia médica\",\"Unidad\":\"\",\"Valor\":\"\",\"ValorDisplay\":\" \",\"Exceptions\":[]},{\"NombreVisible\":\"** Ámbito nacional: a más de 100km lugar de residencia\",\"Nombre\":\"36 - ** Ámbito nacional: a más de 100km lugar de residencia\",\"Unidad\":\"\",\"Valor\":\"\",\"ValorDisplay\":\" \",\"Exceptions\":[]},{\"NombreVisible\":\"Cúmulo por evento, accidente con múltiples Titulares, a prorrata\",\"Nombre\":\"61 - Cúmulo por evento, accidente con múltiples Titulares, a prorrata\",\"Unidad\":\"USD\",\"Valor\":\"500000\",\"ValorDisplay\":\"USD 500.000\",\"Exceptions\":[]},{\"NombreVisible\":\"a) Las coberturas de Gastos de hotel por convalecencia por SARS COV2 Covid 19, cancelación...\",\"Nombre\":\"a) Las coberturas de Gastos de hotel por convalecencia por SARS COV2 Covid 19, cancelación...\",\"Unidad\":\"\",\"Valor\":\"\",\"ValorDisplay\":\" \",\"Exceptions\":[]},{\"NombreVisible\":\"b) ...con causa o causa ampliada y asistencia médica por accidente podrán verse limitadas en…\",\"Nombre\":\"b) ...con causa o causa ampliada y asistencia médica por accidente podrán verse limitadas en…\",\"Unidad\":\"\",\"Valor\":\"\",\"ValorDisplay\":\" \",\"Exceptions\":[]},{\"NombreVisible\":\"c)  …función del “Cúmulo por eventos múltiples” según se detalla en las Condiciones Generales\",\"Nombre\":\"c)  …función del “Cúmulo por eventos múltiples” según se detalla en las Condiciones Generales\",\"Unidad\":\"\",\"Valor\":\"\",\"ValorDisplay\":\" \",\"Exceptions\":[]}]","Recomendado":false,"PrecioNeto":15.0,"PrecioNetoLocal":15.0,"PrecioEmision":15.0,"PrecioEmisionLocal":15.0,"PrecioBruto":15.0,"PrecioBrutoLocal":15.0,"PrecioUnitario":15.0,"MonedaLista":"USD","MonedaLocal":"USD","FueElegido":false,"DetallarPrecio":true,"ImprimeTarifa":false,"ComisionAgencia":0.0,"TipoDeCambio":1.0,"EsAnual":false,"Categoria":"Por días","Familia":"Value 80","PrecioBaseLista":15.0,"PrecioBaseLocal":15.0,"DescMatriz":0.0,"RankingCategoria":"","DiasAnual":0,"DynamicPricing":true}];</script>
+<script>var esPreCompra = false</script>
+
+
+
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+    <symbol id="icon-vermas" viewBox="0 0 13 9">
+        <path d='M6.40927 8.53948C10.2362 8.53948 12.8092 5.27743 12.8092 4.26728C12.8092 3.25713 10.2269 0 6.40927 0C2.63829 0 0 3.25713 0 4.26728C0 5.27743 2.62897 8.53948 6.40927 8.53948ZM6.40927 7.57368C3.43537 7.57368 1.08142 4.95714 1.08142 4.26728C1.08142 3.69075 3.43537 0.965804 6.40927 0.965804C9.36919 0.965804 11.7278 3.69075 11.7278 4.26728C11.7278 4.95714 9.36919 7.57368 6.40927 7.57368ZM6.40927 6.91338C7.79834 6.91338 8.91238 5.70613 8.91238 4.26728C8.91238 2.79393 7.79834 1.6261 6.40927 1.6261C5.01089 1.6261 3.89218 2.79393 3.89684 4.26728C3.90616 5.70613 5.01089 6.91338 6.40927 6.91338ZM6.40461 5.11975C5.95713 5.11975 5.59355 4.7354 5.59355 4.26728C5.59355 3.79916 5.95713 3.41481 6.40461 3.41481C6.85209 3.41481 7.21568 3.79916 7.21568 4.26728C7.21568 4.7354 6.85209 5.11975 6.40461 5.11975Z' />
+    </symbol>
+
+    <symbol id="icon-destino" fill="none" viewBox="0 0 15 14">
+        <path fill="#002A67" fill-rule="evenodd" d="M7.291 13.761a.323.323 0 0 0 .418 0c.018-.015.064-.048.135-.1.86-.626 5.344-3.89 5.344-7.955C13.188 2.65 10.636.162 7.5.162c-3.136 0-5.688 2.487-5.688 5.544 0 4.066 4.484 7.329 5.345 7.955.07.052.117.085.134.1ZM4.34 5.845A3.162 3.162 0 0 0 7.5 9.002a3.162 3.162 0 0 0 3.16-3.157 3.162 3.162 0 0 0-3.16-3.157 3.162 3.162 0 0 0-3.16 3.157Z" clip-rule="evenodd" />
+    </symbol>
+
+    <symbol id="icon-calendar" fill="none" viewBox="0 0 15 14">
+        <path fill="#002A67" d="M2.708 13.5h9.578c1.51 0 2.296-.779 2.296-2.268V2.768c0-1.489-.787-2.268-2.296-2.268H2.708C1.206.5.42 1.272.42 2.768v8.465c0 1.488.786 2.267 2.288 2.267Zm-.007-1.384c-.577 0-.897-.3-.897-.911v-6.4c0-.612.32-.91.897-.91h9.592c.577 0 .897.298.897.91v6.4c0 .612-.32.91-.897.91H2.701Zm3.457-5.822h.41c.251 0 .335-.076.335-.32v-.41c0-.25-.084-.327-.334-.327h-.41c-.251 0-.335.076-.335.327v.41c0 .244.084.32.334.32Zm2.275 0h.41c.244 0 .327-.076.327-.32v-.41c0-.25-.083-.327-.327-.327h-.41c-.25 0-.334.076-.334.327v.41c0 .244.083.32.334.32Zm2.267 0h.41c.251 0 .335-.076.335-.32v-.41c0-.25-.084-.327-.334-.327h-.41c-.244 0-.328.076-.328.327v.41c0 .244.084.32.327.32Zm-6.81 2.24h.404c.25 0 .334-.077.334-.327v-.41c0-.244-.083-.32-.334-.32h-.403c-.25 0-.334.076-.334.32v.41c0 .25.083.327.334.327Zm2.268 0h.41c.251 0 .335-.077.335-.327v-.41c0-.244-.084-.32-.334-.32h-.41c-.251 0-.335.076-.335.32v.41c0 .25.084.327.334.327Zm2.275 0h.41c.244 0 .327-.077.327-.327v-.41c0-.244-.083-.32-.327-.32h-.41c-.25 0-.334.076-.334.32v.41c0 .25.083.327.334.327Zm2.267 0h.41c.251 0 .335-.077.335-.327v-.41c0-.244-.084-.32-.334-.32h-.41c-.244 0-.328.076-.328.32v.41c0 .25.084.327.327.327Zm-6.81 2.232h.404c.25 0 .334-.076.334-.32v-.41c0-.25-.083-.327-.334-.327h-.403c-.25 0-.334.077-.334.327v.41c0 .244.083.32.334.32Zm2.268 0h.41c.251 0 .335-.076.335-.32v-.41c0-.25-.084-.327-.334-.327h-.41c-.251 0-.335.077-.335.327v.41c0 .244.084.32.334.32Zm2.275 0h.41c.244 0 .327-.076.327-.32v-.41c0-.25-.083-.327-.327-.327h-.41c-.25 0-.334.077-.334.327v.41c0 .244.083.32.334.32Z" />
+    </symbol>
+
+    <symbol id="icon-persona" fill="none" viewBox="0 0 15 18">
+        <path fill="#002A67" d="M7.509 8.77c1.935 0 3.577-1.722 3.577-3.95 0-2.175-1.651-3.843-3.577-3.843-1.935 0-3.595 1.695-3.586 3.86 0 2.21 1.642 3.932 3.586 3.932ZM1.97 17.023h11.06c1.464 0 1.97-.444 1.97-1.26 0-2.281-2.893-5.423-7.5-5.423-4.598 0-7.5 3.142-7.5 5.423 0 .816.506 1.26 1.97 1.26Z" />
+    </symbol>
+</svg>
+
+    </main>
+
+    <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+
+        <symbol id="default-avatar" viewBox="0 0 30 31">
+            <path d="M15.062 3.477a12.105 12.105 0 1 0 0 24.209 12.105 12.105 0 0 0 0-24.21Zm0 23.03a10.942 10.942 0 1 1 10.942-10.943A10.959 10.959 0 0 1 15.06 26.507Z"></path>
+            <path stroke-width=".326" d="M15.063 26.75A11.205 11.205 0 0 0 26.25 15.564 11.188 11.188 0 1 0 15.062 26.75ZM8.2 25.833A12.35 12.35 0 1 0 21.924 5.293 12.35 12.35 0 0 0 8.201 25.832Zm.273-20.13a11.858 11.858 0 0 1 6.588-1.998 11.875 11.875 0 0 1 11.859 11.859 11.859 11.859 0 1 1-18.447-9.86Zm.646.967a10.696 10.696 0 0 1 5.942-1.803A10.73 10.73 0 0 1 25.76 15.563 10.696 10.696 0 1 1 9.12 6.668Z"></path>
+            <path d="M15.062 19.349c2.906 0 5.645 1.428 7.77 4.035l.914-.698c-2.341-2.905-5.413-4.483-8.684-4.483-3.271 0-6.343 1.578-8.684 4.483l.913.698c2.125-2.607 4.865-4.035 7.77-4.035Z"></path>
+            <path stroke-width=".326" d="m22.686 23.595.098.131.131-.1 1.046-.796.129-.098-.097-.13-.05-.066-.004-.005c-2.384-2.955-5.533-4.577-8.877-4.577-3.344 0-6.493 1.622-8.877 4.577l-.004.005-.05.066-.097.13.129.098 1.046.797.13.1.1-.132.047-.064c2.083-2.541 4.762-3.939 7.576-3.939s5.493 1.398 7.576 3.94l.048.063Zm-7.624-5.149c3.1 0 6.05 1.47 8.334 4.194l-.522.4c-2.138-2.529-4.913-3.924-7.812-3.924-2.9 0-5.66 1.396-7.797 3.925l-.536-.402c2.284-2.723 5.234-4.193 8.333-4.193Z"></path>
+            <path d="M15.061 7.961a4.782 4.782 0 1 0 4.733 4.766A4.766 4.766 0 0 0 15.06 7.96Zm0 8.385a3.62 3.62 0 1 1 3.587-3.62 3.602 3.602 0 0 1-3.587 3.62Z"></path>
+            <path stroke-width=".326" d="M18.895 12.724a3.865 3.865 0 1 0-3.832 3.866 3.851 3.851 0 0 0 3.832-3.866Zm0 0h-.163.163Zm-6.638 4.206c.833.546 1.81.832 2.807.822a5.012 5.012 0 0 0 4.977-5.028 5.028 5.028 0 1 0-7.784 4.206Zm2.804-8.725h.001a4.502 4.502 0 0 1 4.503 4.519 4.536 4.536 0 1 1-4.504-4.52Zm0 1.162a3.357 3.357 0 0 1 3.342 3.357 3.374 3.374 0 1 1-3.342-3.357Z"></path>
+        </symbol>
+
+        <!-- Iconos del menu -->
+        <symbol id="home" fill="none" viewBox="0 0 24 24">
+            <path stroke="#005191" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12H3l9-9 9 9h-2M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"></path>
+            <path stroke="#005191" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 21v-6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v6"></path>
+        </symbol>
+
+        <symbol id="share" fill="none" viewBox="0 0 24 24">
+            <circle cx="12" cy="6" r="3" stroke="#004986" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" transform="rotate(90 12 6)"></circle>
+            <circle cx="18" cy="18" r="3" stroke="#004986" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" transform="rotate(90 18 18)"></circle>
+            <circle cx="6" cy="18" r="3" stroke="#004986" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" transform="rotate(90 6 18)"></circle>
+            <path stroke="#004986" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m13.3 8.703 3.4 6.6M10.7 8.703l-3.4 6.6"></path>
+        </symbol>
+
+        <symbol id="circle-check" fill="none" viewBox="0 0 24 24">
+            <path stroke="#004986" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m8 12 3 3 6-6"></path>
+            <circle cx="12" cy="12" r="9" stroke="#004986" stroke-width="2"></circle>
+        </symbol>
+
+        <symbol id="icon-plane" viewBox="0 0 24 24" fill="none">
+            <path d="M17.7448 2.81286C18.7095 1.81638 20.3036 1.80349 21.2843 2.78424C22.2382 3.73811 22.2559 5.27908 21.3243 6.25469L18.5456 9.16445C18.3278 9.39252 18.219 9.50656 18.1518 9.64012C18.0924 9.75835 18.0571 9.8872 18.0478 10.0192C18.0374 10.1683 18.0728 10.3219 18.1438 10.6292L19.8717 18.1168C19.9444 18.4322 19.9808 18.5899 19.9691 18.7425C19.9587 18.8775 19.921 19.009 19.8582 19.129C19.7873 19.2646 19.6729 19.379 19.444 19.6079L19.0732 19.9787C18.4671 20.5848 18.164 20.8879 17.8538 20.9428C17.583 20.9907 17.3043 20.9249 17.0835 20.7609C16.8306 20.5731 16.695 20.1665 16.424 19.3533L14.4142 13.324L11.0689 16.6693C10.8692 16.869 10.7694 16.9689 10.7026 17.0864C10.6434 17.1906 10.6034 17.3045 10.5846 17.4228C10.5633 17.5564 10.5789 17.6967 10.61 17.9774L10.7937 19.6308C10.8249 19.9115 10.8405 20.0518 10.8192 20.1853C10.8004 20.3036 10.7604 20.4176 10.7012 20.5217C10.6344 20.6393 10.5346 20.7392 10.3349 20.9388L10.1374 21.1363C9.66434 21.6094 9.42781 21.8459 9.16496 21.9144C8.93442 21.9745 8.68999 21.9503 8.47571 21.8462C8.2314 21.7275 8.04585 21.4491 7.67475 20.8925L6.10643 18.54C6.04013 18.4406 6.00698 18.3908 5.96849 18.3457C5.9343 18.3057 5.89701 18.2684 5.85694 18.2342C5.81184 18.1957 5.76212 18.1626 5.66267 18.0963L3.31018 16.5279C2.75354 16.1568 2.47521 15.9713 2.35649 15.727C2.25236 15.5127 2.22816 15.2683 2.28824 15.0377C2.35674 14.7749 2.59327 14.5383 3.06633 14.0653L3.26384 13.8678C3.46352 13.6681 3.56337 13.5682 3.68095 13.5015C3.78511 13.4423 3.89906 13.4023 4.01736 13.3834C4.15089 13.3622 4.29123 13.3777 4.5719 13.4089L6.22529 13.5926C6.50596 13.6238 6.6463 13.6394 6.77983 13.6181C6.89813 13.5993 7.01208 13.5593 7.11624 13.5001C7.23382 13.4333 7.33366 13.3335 7.53335 13.1338L10.8787 9.78848L4.84939 7.77872C4.03616 7.50764 3.62955 7.3721 3.44176 7.11919C3.27777 6.89836 3.212 6.61972 3.2599 6.34886C3.31477 6.03867 3.61784 5.7356 4.22399 5.12945L4.59476 4.75868C4.82365 4.52979 4.9381 4.41534 5.07369 4.34445C5.1937 4.28171 5.3252 4.24399 5.46023 4.23359C5.61278 4.22184 5.77049 4.25824 6.0859 4.33103L13.545 6.05236C13.855 6.12389 14.01 6.15966 14.1596 6.14902C14.3041 6.13874 14.4446 6.09721 14.5714 6.0273C14.7028 5.95488 14.8134 5.84062 15.0347 5.61208L17.7448 2.81286Z"
+                  stroke="#005191" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        </symbol>
+
+        <symbol id="gift" fill="none" viewBox="0 0 24 24">
+            <rect width="18" height="4" x="3" y="8" stroke="#005191" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" rx="1"></rect>
+            <path stroke="#005191" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7M7.5 8a2.5 2.5 0 0 1 0-5c1.974-.034 3.76 1.95 4.5 5 .74-3.05 2.526-5.034 4.5-5a2.5 2.5 0 0 1 0 5"></path>
+        </symbol>
+
+        <symbol id="file-import" fill="none" viewBox="0 0 24 24">
+            <path stroke="#004986" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 3v4a1 1 0 0 0 1 1h4"></path>
+            <path fill="#004986" d="M4 13a1 1 0 1 0 2 0H4ZM14 3l.707-.707A1 1 0 0 0 14 2v1Zm5 5h1a1 1 0 0 0-.293-.707L19 8Zm-7.5 12a1 1 0 1 0 0 2v-2ZM2 18a1 1 0 1 0 0 2v-2Zm7 2a1 1 0 1 0 0-2v2Zm-2.293-4.707a1 1 0 0 0-1.414 1.414l1.414-1.414ZM9 19l.707.707a1 1 0 0 0 0-1.414L9 19Zm-3.707 2.293a1 1 0 1 0 1.414 1.414l-1.414-1.414ZM6 13V5H4v8h2Zm0-8a1 1 0 0 1 1-1V2a3 3 0 0 0-3 3h2Zm1-1h7V2H7v2Zm6.293-.293 5 5 1.414-1.414-5-5-1.414 1.414ZM18 8v11h2V8h-2Zm0 11a1 1 0 0 1-1 1v2a3 3 0 0 0 3-3h-2Zm-1 1h-5.5v2H17v-2ZM2 20h7v-2H2v2Zm3.293-3.293 3 3 1.414-1.414-3-3-1.414 1.414Zm3 1.586-3 3 1.414 1.414 3-3-1.414-1.414Z"></path>
+        </symbol>
+
+        <symbol id="icon-doc" viewBox="0 0 24 24" fill="none">
+            <path d="M14 11H8M10 15H8M16 7H8M20 6.8V17.2C20 18.8802 20 19.7202 19.673 20.362C19.3854 20.9265 18.9265 21.3854 18.362 21.673C17.7202 22 16.8802 22 15.2 22H8.8C7.11984 22 6.27976 22 5.63803 21.673C5.07354 21.3854 4.6146 20.9265 4.32698 20.362C4 19.7202 4 18.8802 4 17.2V6.8C4 5.11984 4 4.27976 4.32698 3.63803C4.6146 3.07354 5.07354 2.6146 5.63803 2.32698C6.27976 2 7.11984 2 8.8 2H15.2C16.8802 2 17.7202 2 18.362 2.32698C18.9265 2.6146 19.3854 3.07354 19.673 3.63803C20 4.27976 20 5.11984 20 6.8Z"
+                  stroke="#005191" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        </symbol>
+
+        <symbol id="license" fill="none" viewBox="0 0 24 24">
+            <path fill="#005191" d="M15 22a1 1 0 1 0 0-2v2ZM3 17v-1a1 1 0 0 0-1 1h1Zm10 0h1a1 1 0 0 0-1-1v1Zm4-11a1 1 0 1 0 0 2V6Zm2-2a1 1 0 1 0 0-2v2ZM4 17a1 1 0 1 0 2 0H4Zm11 3H6v2h9v-2Zm-9 0a2 2 0 0 1-2-2H2a4 4 0 0 0 4 4v-2Zm-2-2v-1H2v1h2Zm-1 0h10v-2H3v2Zm9-1v2h2v-2h-2Zm0 2a3 3 0 0 0 3 3v-2a1 1 0 0 1-1-1h-2Zm3 3a3 3 0 0 0 3-3h-2a1 1 0 0 1-1 1v2Zm3-3V5h-2v14h2Zm0-14a1 1 0 0 1 1-1V2a3 3 0 0 0-3 3h2Zm1-1a1 1 0 0 1 1 1h2a3 3 0 0 0-3-3v2Zm1 1a1 1 0 0 1-1 1v2a3 3 0 0 0 3-3h-2Zm-1 1h-2v2h2V6Zm0-4H8v2h11V2ZM8 2a4 4 0 0 0-4 4h2a2 2 0 0 1 2-2V2ZM4 6v11h2V6H4Z"></path>
+            <path stroke="#005191" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h4M9 11h4"></path>
+        </symbol>
+
+    </svg>
+    <script src="/Content/pdp/js/jquery-3.7.1.min.js?v=95"></script>
+        <script src="/Content/pdp/js/analytics.js?v=95"></script>
+    <script src="/Content/pdp/js/jquery-migrate-3.4.0.min.js?v=95"></script>
+    <script src="/Content/pdp/js/show-hide-password.js?v=95"></script>
+    <script src="/Content/pdp/js/bootstrap.bundle.min.js?v=95"></script>
+    <script src="/Content/pdp/js/bootstrap-select.min.js?v=95"></script>
+    <script src="/Content/pdp/js/splide.min.js?v=95"></script>
+    <script src="/Content/pdp/js/bootstrap-datepicker.min.js?v=95"></script>
+    <script src="/Content/pdp/js/bootstrap-datepicker.es.min.js?v=95" integrity="sha512-5pjEAV8mgR98bRTcqwZ3An0MYSOleV04mwwYj2yw+7PBhFVf/0KcE+NEox0XrFiU5+x5t5qidmo5MgBkDD9hEw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script nonce="B+Z2lIborw7piwESuHrXs8+O">
+        let pasoActual = 3;
+    </script>
+    <script src="/Content/pdp/js/emision.js?v=95"></script>
+                <script type="text/javascript" src="/Content/pdp/js/limitecredito.js?v=95"></script>
+        <script type="text/javascript" src="/Content/pdp/js/popupNoCotizar.js?v=95"></script>
+    <script src="/bundles/globalization?v=j9PnA5Lt7Er9DHCA7VRFcYhkg6-elcjKc8NhiBPAIRQ1"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            Globalize.culture("es-ES");
+		});
+    </script>
+
+        <!-- Google Tag Manager (noscript) -->
+        <noscript>
+            <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5K8WBVDH"
+                    height="0" width="0" style="display:none;visibility:hidden"></iframe>
+        </noscript>
+        <!-- End Google Tag Manager (noscript) -->
+
+    
+    <script>
+        function handleBannerError() {
+            var wrapper = document.querySelector('.slide-wrapper');
+            if (wrapper) { wrapper.style.display = 'none'; }
+
+            var container = document.getElementById('cotizadorContainer');
+            if (container) { container.style.paddingTop = '6px'; }
+        }
+    </script>
+        <script src="/Content/pdp/js/moment.min.js"></script>
+        <script src="/Content/daterangepicker/daterangepicker.js"></script>
+        <script src="/Content/pdp/js/mask-date.js"></script>
+            <script type="text/javascript">
+                (function() {
+                    var desktopSize = window.matchMedia('(min-width: 992px)');
+                    if (desktopSize.matches) {
+                        var offcanvas = document.getElementById('offcanvasForm');
+                        if (offcanvas) offcanvas.remove();
+                    } else {
+                        var detalle = document.getElementById('recotizadorDetalle');
+                        var form = document.getElementById('recotizadorForm');
+                        if (detalle) detalle.remove();
+                        if (form) form.remove();
+                    }
+                })();
+            </script>
+        <script src="/Content/daterangepicker/daterangepicker-custom.js?v=95"></script>
+        <script type="text/javascript">
+            (function() {
+                var desktopSize = window.matchMedia('(min-width: 992px)');
+                if (!desktopSize.matches) {
+                    $(document).ready(function () {
+                        $('#RangoFechas').data('daterangepicker').linkedCalendars = false;
+                    });
+                }
+            })();
+        </script>
+        <script>
+            $(document).on('input', '.fecha-nac', function () {
+                maskDateInput($(this));
+                if ($('.date').length && typeof $('.date').datepicker === 'function') {
+                    $('.date').datepicker('hide');
+                }
+            });
+        </script>
+        <script type="text/javascript" src="/Scripts/jquery.blockUI.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            window.emailIsValid = function (email)  {
+                var ret = true;
+                if (email == null || email == '' || email.indexOf('@') < 0) {
+                    ret = false;
+                }
+                var arrEmail = email.split('@');
+                if (arrEmail.length != 2 || arrEmail[1].indexOf('.') < 0) {
+                    ret = false;
+                }
+                var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+                if (!regex.test(email)) {
+                    ret = false;
+                }
+                return ret;
+            }
+            window.validateAge = function (dobYear, dobMonth, dobDay, age, indexPasajero) {
+                if (age < 0 || age > 120) return msgEdadRangoJs.replace('{0}', indexPasajero);
+                if (dobDay.length == 1 || dobMonth.length == 1) return msgFechaDiaMesMinimoJs.replace('{0}', indexPasajero);
+
+                var currentDate = new Date();
+                var currentYear = currentDate.getFullYear();
+                var currentMonth = currentDate.getMonth();
+                var currentDay = currentDate.getDate();
+                var dobAge = currentYear - dobYear;
+                if (currentMonth < (dobMonth - 1)) dobAge--;
+                if (((dobMonth - 1) == currentMonth) && (currentDay < dobDay)) dobAge--;
+                if (age != dobAge) return msgFechaEdadNoCoincideJs.replace('{0}', age);
+
+                return '';
+            }
+            $('.date').datepicker({
+                daysOfWeekHighlighted: '0,6',
+                format: 'dd/mm/yyyy',
+                autoclose: true,
+                showOnFocus: false,
+                templates: {
+                    leftArrow: '<span class="dp-left-arrow"></span>',
+                    rightArrow: '<span class="dp-right-arrow"></span>'
+                },
+                enableOnReadonly: false,
+                language: 'es'
+
+            });
+            $(document).on('changeDate', '.box-pasajeros .date', function () {
+                var $input = $(this).find('input.fecha-nac');
+                if ($input.length && typeof clearFieldError === 'function') clearFieldError($input);
+            });
+            $(document).on('hide', '.box-pasajeros .date', function () {
+                var $date = $(this);
+                var $input = $date.find('input.fecha-nac');
+                if (!$input.length) return;
+                var $feedback = $input.next('.invalid-feedback');
+                if (!$feedback.length) $feedback = $date.find('.invalid-feedback').first();
+                if ($feedback.length && $feedback.prev()[0] !== $input[0]) {
+                    $feedback.insertAfter($input);
+                }
+            });
+
+            const $barraPrecio = $('.barra-precio');
+
+            $('#collapseDetallePlan').on('shown.bs.collapse hidden.bs.collapse', function (e) {
+
+                if (e.target.id !== 'collapseDetallePlan') {
+                    return;
+                }
+
+
+                if (e.type === 'shown') {
+                    $barraPrecio.addClass('bg-activo').removeClass('bg-inactivo');
+                    $barraPrecio.css('position', 'relative');
+                } else {
+                    $barraPrecio.addClass('bg-inactivo').removeClass('bg-activo');
+                    $barraPrecio.css('position', 'unset');
+                }
+            });
+        });
+
+        function setCookie(name, value, expires) {
+            document.cookie = name + "=" + value + "; expires=" + expires.toUTCString() + "; path=/";
+        }
+
+        function getCookie(name, valor) {
+            var cookies = document.cookie.split("; ");
+            for (var i = 0; i < cookies.length; i++) {
+                var parts = cookies[i].split("=");
+                if (parts[0] === name) {
+                    return parts[1];
+                }
+            }
+            return false;
+        }
+
+        function getFechaActual() {
+            var today = new Date();
+            return today.toISOString().split('T')[0];
+        }
+
+        function getFechaExpiracionFinDia() {
+            var now = new Date();
+            var endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
+            return endOfDay;
+        }
+
+            
+            $(document).ready(function () {
+
+                esconderProgessBar(esTipoPuestoCotizador);
+                var mostrarPopupNoCorizar = false;
+                var volverDesdeAdicionales = sessionStorage.getItem("volverDesdeAdicionales");
+
+                if (volverDesdeAdicionales === "true") {
+                    mostrarPopupNoCorizar = false;
+                    sessionStorage.removeItem("volverDesdeAdicionales");
+                }
+
+                if (mostrarPopupNoCorizar) {
+                    ShowPopupNoCotizar();
+                }
+
+                $('.form-check-input[type="radio"]').each(function () { $(this).prop('checked', false); });
+                mostrarEdades();
+                configurarFechasRecotizador();
+                $('#CantidadPasajeros').on('change', function (e) {
+                    mostrarEdades();
+                });
+                $('#CantidadPasajeros').on('keyup', function (e) {
+                    mostrarEdades();
+                });
+                $('#FechaInicio').on('blur', function () {
+                    if (!$('.daterangepicker').is(':visible')) {
+                        calcularFechaFin();
+                    }
+                });
+                $('#FechaInicio').on('change', function () {
+                    var fi = moment($('#FechaInicio').val(), 'DD/MM/YYYY', true);
+                    if (fi.isValid() && fi.isSameOrAfter(moment().startOf('day'))) {
+                        $('#RangoFechas').data('daterangepicker').setStartDate(fi.startOf('day'));
+                    } else {
+                        $('#FechaInicio').val($('#RangoFechas').data('daterangepicker').startDate.format('DD/MM/YYYY'));
+                    }
+                    calcularFechaFin();
+                });
+                $('#FechaFin').on('change', function () {
+                    var ff = moment($('#FechaFin').val(), 'DD/MM/YYYY', true);
+                    if (ff.isValid() && ff.isSameOrBefore(moment().startOf('day').add(5, 'y'))) {
+                        $('#RangoFechas').data('daterangepicker').setEndDate(ff.startOf('day'));
+                    } else {
+                        $('#FechaFin').val($('#RangoFechas').data('daterangepicker').endDate.format('DD/MM/YYYY'));
+                    }
+                });
+                function configurarFechasRecotizador() {
+                    if ('Un viaje' == 'Varios viajes en un año') {
+                        $('#FechaFin').attr('disabled', true);
+                    }
+                    $('#RangoFechas').data('daterangepicker').setStartDate(moment($('#FechaInicio').val(), 'DD/MM/YYYY', true).startOf('day'));
+                    $('#RangoFechas').data('daterangepicker').setEndDate(moment($('#FechaFin').val(), 'DD/MM/YYYY', true).startOf('day'));
+                }
+                function calcularFechaFin(cambioTipoViaje = false) {
+                    var tipoViaje = $('#TipoViaje').val();
+                    if (cambioTipoViaje) {
+                        if ($('#TipoViaje').val() == 'Un viaje') {
+                            $('#FechaFin').attr('disabled', false);
+                            $('#FechaFin').val('');
+                        }
+                    }
+                    var fi = $('#FechaInicio').val();
+                    var ff = $('#FechaFin').val();
+                    if (ff != '') {
+                        var auxDI = moment(fi, 'DD/MM/YYYY', true).startOf('day');
+                        var auxDF = moment(ff, 'DD/MM/YYYY', true).startOf('day');
+                        if (auxDF.isSameOrBefore(auxDI, 'day') || tipoViaje == 'Varios viajes en un año') {
+                            ff = '';
+                        }
+                    }
+                    if (ff == '') {
+                        var auxDI = moment(fi, 'DD/MM/YYYY', true).startOf('day');
+                        if (tipoViaje == 'Varios viajes en un año') {
+                            $('#FechaFin').attr('disabled', true);
+                            var auxDF = auxDI.clone();
+                            auxDF.add(364, 'days');
+                            $('#FechaFin').val(auxDF.format('DD/MM/YYYY'));
+                        } else {
+                            $('#FechaFin').val(fi);
+                        }
+                        $('#RangoFechas').data('daterangepicker').setEndDate(moment($('#FechaFin').val(), 'DD/MM/YYYY', true).startOf('day'));
+                    }
+                }
+                window.daterangepickerStartDateSelected = function () {
+                    if ($('#TipoViaje').val() == 'Varios viajes en un año') {
+                        var start = $('#RangoFechas').data('daterangepicker').startDate;
+                        var end = start.clone();
+                        end.add(364, 'days');
+                        $('#RangoFechas').data('daterangepicker').setEndDate(end);
+                        $('#RangoFechas').data('daterangepicker').hide();
+                    }
+                }
+                window.daterangepickerEndDateSelected = function () {
+                    // do nothing
+                }
+                window.daterangepickerDatesApplied = function () {
+                    // do nothing
+                }
+                function mostrarEdades() {
+                    switch ('cargaredades') {
+                        case 'cargaredades':
+                            $('.recotizadorEdades').html('');
+                            var edades = '29'.split(',');
+                            for (var i = 0; i < $('#CantidadPasajeros').val(); i++) {
+                                $('.recotizadorEdades').append('<input type="text" class="form-control maxw-60p" value="' + (edades.length > i ? edades[i] : '') + '">');
+                            }
+                            break;
+                        case 'cargarfecnac':
+                            $('.recotizadorFecNac').html('');
+                            var fecnac = ''.split(',');
+                            for (var i = 0; i < $('#CantidadPasajeros').val(); i++) {
+                                $('.recotizadorFecNac').append('<input type="text" class="form-control fecha-nac" style="width:145px;" placeholder="dd/mm/aaaa" value="' + (fecnac.length > i ? fecnac[i] : '') + '">');
+                            }
+                            break;
+                    }
+                }
+                obtenerPrefiltros(true);
+                $('#TipoProducto').on('change', function (e) {
+                    obtenerPrefiltros(false);
+                });
+                $('body').on('click', '#PrefiltroSelect a.dropdown-item:not(.dropdown-toggle)', function (e) {
+                    e.preventDefault();
+                    $('#PrefiltroSelect .dropdown-select-placeholder').text('');
+                    $('#PrefiltroSelect .dropdown-select-selected-value').text(e.target.text);
+                    $('#PrefiltroSelect .dropdown-menu').removeClass('show');
+                    $('#Prefiltro').val(e.target.text);
+                    obtenerTipoViajePrefiltro()
+                    return false;
+                });
+                function obtenerTipoViajePrefiltro() {
+                    $.ajax({
+                        type: 'POST',
+                        url: '/Emision/GetTipoViajePrefiltroTipoProducto',
+                        data: JSON.stringify({ tipoProducto: $('#TipoProducto').val(), prefiltro: $('#Prefiltro').val(), origen: 'URUGUAY' }),
+                        dataType: 'html',
+                        contentType: 'application/json; charset=utf-8'
+                    }).done(function (data) {
+                        if (data != 'ERROR' && $('#TipoViaje').val() != data) {
+                            $('#TipoViaje').val(data);
+                            calcularFechaFin(true);
+                        }
+                    });
+                }
+                function obtenerPrefiltros(isPageLoad) {
+                    $('#ulPrefiltros').empty();
+                    $('#PrefiltroSelect .dropdown-select-placeholder').text('Seleccione un tipo de cotización');
+                    $('#PrefiltroSelect .dropdown-select-selected-value').text('');
+                    $('#PrefiltroSelect .dropdown-menu').removeClass('show');
+                    $('#Prefiltro').val('');
+                    if ($('#TipoProducto').val() != '') {
+                        $.ajax({
+                            type: 'POST',
+                            url: '/Emision/GetPrefiltros',
+                            data: JSON.stringify({ tipoProducto: $('#TipoProducto').val(), origen: 'URUGUAY' }),
+                            dataType: 'html',
+                            contentType: 'application/json; charset=utf-8'
+                        }).done(function (data) {
+                            $('#ulPrefiltros').append(data);
+                            if (isPageLoad && 'Un viaje' != '') {
+                                $('#PrefiltroSelect .dropdown-select-placeholder').text('');
+                                $('#PrefiltroSelect .dropdown-select-selected-value').text('Un viaje');
+                                $('#PrefiltroSelect .dropdown-menu').removeClass('show');
+                                $('#Prefiltro').val('Un viaje');
+                            }
+                        });
+                    }
+                }
+                $('#recotizadorEditar, #recotizadorCancelar').click(function () {
+                    $('#recotizadorDetalle, #recotizadorForm').toggleClass('d-none');
+                });
+                $('#formCotizacion').on('submit', function (e) {
+                    $('#formCotizacion button[type="submit"]').html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>').attr('disabled', true);
+
+                    var isValid = true;
+
+                    $('#recotizadorForm .is-invalid').removeClass('is-invalid');
+                    $('#recotizadorForm .validation-error-inline').remove();
+
+                    var tipoProducto = $('#TipoProducto')[0].value;
+                    if (tipoProducto == '') {
+                        isValid = false;
+                        $('#TipoProducto').closest('.bootstrap-select').addClass('is-invalid');
+                        $('#TipoProducto').closest('.bootstrap-select').after('<span class="field-validation-error validation-error-inline">Campo obligatorio</span>');
+                    }
+
+                    var prefiltro = $('#Prefiltro')[0].value;
+                    if (prefiltro == '') {
+                        isValid = false;
+                        $('#PrefiltroSelect').find('a.form-select').addClass('is-invalid');
+                        $('#PrefiltroSelect').after('<span class="field-validation-error validation-error-inline">Campo obligatorio</span>');
+                    }
+
+                    var destino = $('#Destino').find('option:selected');
+                    if (destino.length == 0 || destino[0].value == '') {
+                        isValid = false;
+                        $('#Destino').closest('.bootstrap-select').addClass('is-invalid');
+                        $('#Destino').closest('.bootstrap-select').after('<span class="field-validation-error field-validation-no-icon validation-error-inline">Debe seleccionar el destino.</span>');
+                    }
+
+                    var fechasInvalidas = false;
+                    var fechaInicio = $('#FechaInicio')[0].value;
+                    if (fechaInicio == '') {
+                        isValid = false;
+                        fechasInvalidas = true;
+                        $('#FechaInicio').addClass('is-invalid');
+                    }
+
+                    var fechaFin = $('#FechaFin')[0].value;
+                    if (fechaFin == '') {
+                        isValid = false;
+                        fechasInvalidas = true;
+                        $('#FechaFin').addClass('is-invalid');
+                    }
+
+                    if (fechasInvalidas) {
+                        $('#recotizadorForm #FechaInicio').closest('.row.gx-3').after('<span class="field-validation-error validation-error-inline">Campo obligatorio</span>');
+                    }
+
+                    if ($('#CantidadPasajeros').val() == '' || $('#CantidadPasajeros').val() == '0') {
+                        isValid = false;
+                        $('#CantidadPasajeros').closest('.bootstrap-select').addClass('is-invalid');
+                        $('#CantidadPasajeros').closest('.bootstrap-select').after('<span class="field-validation-error validation-error-inline">Campo obligatorio</span>');
+                    }
+                    switch ('cargaredades') {
+                        case "cargaredades":
+                            var listaEdades = '';
+                            var edadesVacias = false;
+                            var edadesFormatoInvalido = false;
+                            $('#edades').children().each(function (i) {
+                                if ($(this).val() == '') {
+                                    isValid = false;
+                                    edadesVacias = true;
+                                    $(this).addClass('is-invalid');
+                                }
+                                else {
+                                    var e = parseInt($(this).val());
+                                    if (isNaN(e) || e < 0 || e > 99) {
+                                        isValid = false;
+                                        edadesFormatoInvalido = true;
+                                        $(this).addClass('is-invalid');
+                                    }
+                                    else {
+                                        listaEdades = listaEdades + $(this).val() + ',';
+                                    }
+                                }
+                            });
+                            if (edadesFormatoInvalido) {
+                                $('#edades').after('<span class="field-validation-error validation-error-inline">La edad ingresada es inválida.</span>');
+                            } else if (edadesVacias) {
+                                $('#edades').after('<span class="field-validation-error validation-error-inline">Debe completar todas las edades.</span>');
+                            }
+                            $('#ListaEdades').val(listaEdades.slice(0, -1));
+                            break;
+                        case "cargarfecnac":
+                            var listaFechas = '';
+                            var fecnacVacias = false;
+                            var fecnacFormatoInvalido = false;
+                            var fecnacFechaInvalida = false;
+                            $('#fecnac').children().each(function (i) {
+                                if ($(this).val() == '') {
+                                    isValid = false;
+                                    fecnacVacias = true;
+                                    $(this).addClass('is-invalid');
+                                }
+                                else {
+                                    var f = $(this).val().split('/');
+                                    if ($(this).val().length != 10 || f.length != 3 || f[0].length != 2 || isNaN(parseInt(f[0])) || f[1].length != 2 || isNaN(parseInt(f[1])) || f[2].length != 4 || isNaN(parseInt(f[1]))) {
+                                        isValid = false;
+                                        fecnacFormatoInvalido = true;
+                                        $(this).addClass('is-invalid');
+                                    }
+                                    else if (parseInt(f[0]) < 1 || parseInt(f[0]) > 31 || parseInt(f[1]) < 1 || parseInt(f[1]) > 12 || parseInt(f[2]) < (new Date().getFullYear() - 100)) {
+                                        isValid = false;
+                                        fecnacFechaInvalida = true;
+                                        $(this).addClass('is-invalid');
+                                    }
+                                    else if (new Date(f[2] + '-' + f[1] + '-' + f[0] + 'T00:00:00').getTime() > new Date().getTime()) {
+                                        isValid = false;
+                                        fecnacFechaInvalida = true;
+                                        $(this).addClass('is-invalid');
+                                    }
+                                    else {
+                                        listaFechas = listaFechas + $(this).val() + ',';
+                                    }
+                                }
+                            });
+                            if (fecnacFormatoInvalido) {
+                                $('#fecnac').after('<span class="field-validation-error field-validation-no-icon validation-error-inline">Las fechas de nacimiento deben tener el formato dd/mm/aaaa.</span>');
+                            } else if (fecnacFechaInvalida) {
+                                $('#fecnac').after('<span class="field-validation-error field-validation-no-icon validation-error-inline">La fecha de nacimiento ingresada es inválida.</span>');
+                            } else if (fecnacVacias) {
+                                $('#fecnac').after('<span class="field-validation-error field-validation-no-icon validation-error-inline">Debe completar todas las fechas de nacimiento.</span>');
+                            }
+                            $('#ListaFecNac').val(listaFechas.slice(0, -1));
+                            break;
+                    }
+                    if (!isValid) {
+                        e.preventDefault();
+                        $('#formCotizacion button[type="submit"]').attr('disabled', false).html('Recotizar');
+                        return false;
+                    }
+                });
+                $('.vermas').click(function (e) {
+                    var id = $(this).attr('id');
+                    var producto = ($.grep(jsProductos, function (i) { return i.Codigo == id; }))[0];
+                    if (producto.EsAnual) {
+                        $('#detCoberturas').addClass('modal-detalle-cobertura-anual').removeClass('modal-detalle-cobertura-diario');
+                    }
+                    else {
+                        $('#detCoberturas').addClass('modal-detalle-cobertura-diario').removeClass('modal-detalle-cobertura-anual');
+                    }
+                    var tit = producto.DescripcionLarga.replaceAll(')', '').split('(');
+                    $('#detCoberturasLabel').html(tit[0]);
+                    if (tit.length > 1) { $('#detCoberturasSubLabel').html(tit[1]); }
+                    getTablaCoberturas(producto);
+                    e.preventDefault();
+                    $('#detCoberturas').modal('show');
+                });
+                function getTablaCoberturas(producto) {
+                    showModalCobertura(producto);
+
+                    $('#formSelProdCode').val(producto.Codigo);
+                }
+                $('#formSelProd').on('submit', function (e) {
+                    e.preventDefault();
+                    var url = '/Emision/ImprimirDetalleProducto?codigoProducto=' + $('#formSelProdCode').val();
+                    window.open(url, '_blank');
+                    return false;
+                });
+                $('input[name="radio-precompras"]').on('click', function () {
+                    $('.cabecera-precompra').addClass('d-none');
+                    $('#divPrecompras').removeClass('text-center').html('');
+                    var codigo = $(this).attr('id').replace('radio-', '');
+                    $.ajax({
+                        type: 'POST',
+                        url: '/Emision/GetNumerosPrecompra',
+                        data: JSON.stringify({ agencia: '1-QN2H3', producto: codigo }),
+                        dataType: 'text',
+                        contentType: 'application/json; charset=utf-8',
+                        async: false
+                    })
+                    .done(function (data) {
+                        $('.cabecera-precompra').removeClass('d-none');
+                        var jData = JSON.parse(data);
+                        if (jData.rowCount == 0) {
+                            $('#divPrecompras').addClass('text-center').html('<span style="color:red;">No hay Precompras con saldo disponible para el producto seleccionado</span>');
+                        }
+                        else {
+                            var multiplicador = parseInt('1');
+                            var precompras = JSON.parse(jData.precompras);
+                            var tarjetas = '';
+                            for (var i = 0; i < jData.rowCount; i++) {
+                                var p = precompras.ListPrecompras[i];
+                                var esPorMonto = (p.Modalidad.toLowerCase() == 'monto');
+                                var d = new Date(parseInt(/-?\d+/.exec(p.FechaFin)[0]));
+                                var fechaFin = d.getDate().toString().padStart(2, '0') + "/" + (d.getMonth() + 1).toString().padStart(2, '0') + "/" + d.getFullYear();
+                                tarjetas += '<div class="tarjeta tarjeta-precompra">';
+                                tarjetas += '<div class="cuerpo">';
+                                tarjetas += '<div class="encabezado">';
+                                tarjetas += '<div>';
+                                tarjetas += '<div class="titulo">' + p.Producto + ' <br class="d-none d-lg-block">' + '' /*subtitulo*/ + '</div>';
+                                tarjetas += '<div class="subtitulo">' + p.CodigoUA + '</div>';
+                                tarjetas += '</div>';
+                                tarjetas += '</div>';
+                                tarjetas += '<div class="cobertura">';
+                                tarjetas += '<ul class="mostrar-todo fs-12">';
+                                tarjetas += '<li>Saldo ' + p.Modalidad.toLowerCase() + ' <strong>' + (esPorMonto ? formatearPrecio(p.SaldoMonto, p.Moneda) : p.SaldoDias) + '</strong></li>';
+                                tarjetas += '<li>Fecha de vencimiento <strong>' + fechaFin + '</strong></li>';
+                                tarjetas += '</ul>';
+                                tarjetas += '</div>';
+                                tarjetas += '<div class="precios">';
+                                tarjetas += '<div class="wrapper-lg-center">';
+                                tarjetas += '<div class="importe">' + (esPorMonto ? formatearPrecio(/*(p.PrecioPactado * multiplicador)*/p.PrecioEmision, p.Moneda) : multiplicador + ' Días') + '</div>';
+                                if (esPorMonto) {
+                                    tarjetas += '<div class="nota">Precio pactado ' + formatearPrecio(p.PrecioPactado, p.Moneda) + '</div>';
+                                }
+                                tarjetas += '</div>';
+                                tarjetas += '<div class="col2">';
+                                tarjetas += '<form method="post" class="formPrecompra" action="/portal-de-partners-completar-datos-de-pasajeros">';
+                                tarjetas += '<input type="hidden" name="ProductoSeleccionado" id="ProductoSeleccionado-' + codigo + '" value="' + codigo + '" />';
+                                tarjetas += '<input type="hidden" name="NumeroPrecompra" id="NumeroPrecompra-' + p.CodigoUA + '" value="' + p.CodigoUA + '" />';
+                                tarjetas += '<button class="btn btn-sm ' + (esTipoPuestoCotizador ? 'disabled white-color' : '') +' " type="submit">Emitir</button>';
+                                tarjetas += '</form>';
+                                tarjetas += '</div>';
+                                tarjetas += '</div>';
+                                tarjetas += '</div>';
+                                tarjetas += '</div>';
+                                $('#divPrecompras').html(tarjetas);
+                            }
+                        }
+                    });
+                });
+
+                function formatearPrecio(precio, moneda = '') {
+                    return (moneda == '' ? '' : moneda + ' ') + Globalize.format(precio, 'N2').replace(',00', '');
+                }
+
+                $('#btnDescargarCotizacion').click(function (e) {
+                    $('#descargaForm .msg').addClass('d-none');
+                    var selRowIds = getProductosSeleccionados();
+                    var nombrePDF = 'CotizacionEmisionPDF';
+                    if (selRowIds != null) {
+                        var baseUrl = '/Emision/ImprimirCotizacion';
+                        var url = baseUrl + '?codigoProducto=' + encodeURIComponent(selRowIds) + '&nombrePDF=' + encodeURIComponent(nombrePDF);
+                        window.open(url, '_blank');
+                    }
+                });
+
+                $('#btnSendCotizacion').click(function () {
+                    $('#descargaForm .msg').addClass('d-none');
+                    var email = $('#descargaForm input[type="email"]').val();
+                    var selRowIds = getProductosSeleccionados();
+                    var nombrePDF = 'CotizacionEmisionPDF';
+                    if (emailIsValid(email)) {
+                        if (selRowIds != null) {
+                            $.ajax({
+                                type: 'POST',
+                                url: '/Emision/EnviarCotizacionPorMail',
+                                data: JSON.stringify({ email: email, codigoProducto: '|' + selRowIds + '|', nombrePDF: nombrePDF }),
+                                dataType: 'text',
+                                contentType: 'application/json; charset=utf-8'
+                            }).done(function (data) {
+                                $('#descargaForm .msg').removeClass('d-none').html(data);
+                                $('#descargaForm input[type="email"]').val('');
+                                hideMessage();
+                            });
+                        }
+                    }
+                    else {
+                        $('#descargaForm .msg').removeClass('d-none').html('La dirección de correo electrónico no es válida');
+                        hideMessage();
+                    }
+                });
+
+                function getProductosSeleccionados() {
+                    var msg = '';
+                    var selIds = $('.form-check-input[id*="check-"]:checked').map(function () { return this.id.replace('check-', ''); }).get();
+                    if (selIds.length == 0) {
+                        msg = 'Debe seleccionar al menos un producto.';
+                    }
+                    else if (selIds.length > 4) {
+                        msg = 'Puede seleccionar como máximo 4 productos.';
+                    }
+                    if (msg != '') {
+                        $('#descargaForm .msg').removeClass('d-none').html(msg);
+                        hideMessage();
+                        return null;
+                    }
+                    else {
+                        return selIds.join(',');
+                    }
+                }
+
+                function hideMessage() {
+                    setTimeout(function () {
+                        $('#descargaForm .msg').fadeOut('slow');
+                    }, 5000);
+                }
+
+                getTipoProductoMsg($('#TipoProducto').val());
+
+                $('#TipoProducto').on('changed.bs.select', function () {
+                    var producto = $(this).val();
+                    getTipoProductoMsg(producto);
+                });
+
+            });
+
+            function getTipoProductoMsg(producto) {
+                let mensaje = '';
+                switch (producto) {
+                    case 'Especiales':
+                    case 'Precompras':
+                        mensaje = 'Cotiza los diferentes rangos por separado';
+                        break;
+                    default:
+                        mensaje = '';
+                }
+
+                $('#mensaje-tipo-producto-recotizar').text(mensaje);
+            }
+
+            
+
+        function showModalCobertura(producto) {
+            var cobs = JSON.parse(producto.Atributos);
+            $('#detBody').html('');
+            var esAnual = producto.EsAnual;
+            var svgColor = getSvgColor(esAnual);
+
+            for (var i in cobs) {
+
+                var exceptions = cobs[i].Exceptions;
+                var tr = $('<tr class="accordion-header" style="position: relative;"/>');
+                var tdInfo = "td-svg-" + i;
+                var svgRowId = "div-svg-info-" + i;
+
+                tr.append('<td style="padding-right: 2px;">' + cobs[i].NombreVisible + '</td>');
+                tr.append('<td id="' + tdInfo + '" style="text-align:left;">' + cobs[i].ValorDisplay + '</td>');
+
+                if (exceptions.length > 0) {
+
+                    var row = getSvgRow(svgColor);
+                    var info = getSvgInfo(svgColor, svgRowId);
+
+                    var tdImg = $('<td class="tdImg-position-relative"></td>');
+                    var divContainer = $('<div class="div-position-absolute"></div>');
+                    divContainer.append(row);
+                    tdImg.append(divContainer);
+
+                    tr.append(tdImg);
+                    $('#detBody').append(tr);
+
+                    if (cobs[i].ValorDisplay !== " " && /\d/.test(cobs[i].ValorDisplay)) {
+                        $('#' + tdInfo).append('  ').append(info);
+
+                        $('#' + svgRowId).css({
+                            "display": "inline-flex",
+                            "align-items": "center",
+                            "margin-left": "5px",
+                            "position": "absolute"
+                        });
+                    }
+
+                    row.css('cursor', 'pointer');
+
+                    row.on('click', function () {
+                        var $this = $(this);
+                        var isExpanded = $this.hasClass("expanded");
+
+                        if (isExpanded) {
+                            $this.removeClass("expanded rotate");
+                        } else {
+                            $this.addClass("expanded rotate");
+                        }
+
+                        $(this).closest('tr').nextUntil('.accordion-header').toggle();
+                        $(this).closest('tr').nextAll('#tr-vacio').first().hide();
+
+                    });
+
+                    for (var e in exceptions) {
+                        var trVacio = $('<tr id="tr-vacio" class="accordion-content" style="display:none;"></tr>');
+                        trVacio.append('<td colspan="3">&nbsp;</td>');
+
+                        var trExcepcion = $('<tr id="tr-exep-' + e + '" class="accordion-content" style="display: none;"/>');
+                        trExcepcion.append('<td id="td-exep-' + e + '" style="padding-left: 8px;font-size: x-small;font-style: italic;color: #6c757d;">• ' + exceptions[e].Descripcion + '</td>');
+                        trExcepcion.append('<td id="td-exep-' + e + '" style="text-align:left;"> </td>');
+                        trExcepcion.append('<td id="td-exep-' + e + '" style="text-align:left;"> </td>');
+
+                        $('#detBody').append(trVacio);
+                        $('#detBody').append(trExcepcion);
+                    }
+
+                } else {
+                    $('#detBody').append(tr);
+                }
+            }
+        }
+
+        function getSvgRow(svgColor) {
+            var row = $('<svg class="accordion-arrow" fill="' + svgColor + '" width="40px" height="40px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">' +
+                '<path d="M8.12 9.29L12 13.17L15.88 9.29C16.27 8.9 16.9 8.9 17.29 9.29C17.68 9.68 17.68 10.31 17.29 10.7L12.7 15.29C12.31 15.68 11.68 15.68 11.29 15.29L6.7 10.7C6.31 10.31 6.31 9.68 6.7 9.29C7.09 8.9 7.73 8.9 8.12 9.29Z"/>' +
+                '</svg>');
+            return row;
+        }
+
+        function getSvgColor(esAnual) {
+            return esAnual ? "#FF436E" : "#00B2C2";
+        }
+
+        function getSvgInfo(svgColor, svgRowId) {
+            var row = $('<div id="' + svgRowId + '"><svg width="17px" height="17px" style="margin-bottom:20px" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg" fill=' + svgColor + '>' +
+                '<path d="M26,2C12.7,2,2,12.7,2,26s10.7,24,24,24s24-10.7,24-24S39.3,2,26,2z M26,44C16,44,8,36,8,26S16,8,26,8s18,8,18,18S36,44,26,44z"/>' +
+                '<path d="M26,14.1c1.7,0,3,1.3,3,3s-1.3,3-3,3s-3-1.3-3-3S24.3,14.1,26,14.1z"/>' +
+                '<path d="M31,35.1c0,0.5-0.4,0.9-1,0.9h-8c-0.5,0-1-0.3-1-0.9v-2c0-0.5,0.4-1.1,1-1.1c0.5,0,1-0.3,1-0.9v-4c0-0.5-0.4-1.1-1-1.1c-0.5,0-1-0.3-1-0.9v-2c0-0.5,0.4-1.1,1-1.1h6c0.5,0,1,0.5,1,1.1v8c0,0.5,0.4,0.9,1,0.9c0.5,0,1,0.5,1,1.1V35.1z"/>' +
+                '</svg></div>');
+            return row;
+        }
+        var esTipoPuestoCotizador = false;
+        function esconderProgessBar(esTipoPuestoCotizador) {
+            if (esTipoPuestoCotizador) {
+                $(".navbar-progress-step").hide();
+            }
+        }
+    </script>
+
+
+    <script type="text/javascript">
+        $(document).on('ready', function () {
+            $('#linkPrecompras').on('click', function (e) {
+                $('#linkPrecompras').html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>MIS PRECOMPRAS').css('cursor', 'not-allowed');
+                setTimeout(function () { $('#linkPrecompras').removeAttr('href'); }, 250);
+            });
+
+            var poseeLimite = false;
+
+            if (poseeLimite) {
+
+                var color;
+                var porcentaje = 0;
+                var esNegativo = false;
+
+                if (porcentaje !== 0) {
+
+                    if (esNegativo) {
+                        $(".progress-bar").addClass("barra-rosa");
+                        $(".progress-bar").removeClass("barra-azul-menu");
+                    } else {
+                        $(".progress-bar").removeClass("barra-rosa");
+                        $(".progress-bar").addClass("barra-azul-menu");
+                    }
+
+                    $(".progress-bar").css("width", porcentaje + '%');
+                }
+            }
+        });
+    </script>
+
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"37880fbe3fc640c0982295c432124385","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>

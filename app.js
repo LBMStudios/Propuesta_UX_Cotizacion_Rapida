@@ -1,0 +1,521 @@
+/* ========================================================================
+   UNIVERSAL ASSISTANCE — One-Click Quote — Lógica de Aplicación
+   v3.0 — Refactorizado con Arquitectura Ordenanza de Datos
+   ======================================================================== */
+
+// ── Estado Global ──────────────────────────────────────────────────────
+let pax = { adultos: 1, mayores: 1, menores: 0 };
+let activeConvenio = null; // Guardará el ID del convenio de la BD (ej. 'SEMM_UY')
+let activeCardId = 'MAXIMUM_300K'; // Default a Maximum
+
+// Mapeo entre IDs legacy de HTML y IDs de la base de datos maestra
+const MAP_PRODUCTOS = { 'base': 'VALUE_80K', 'max': 'MAXIMUM_300K', 'pre': 'EXCLUSIVE_500K' };
+const REVERSE_MAP_PROD = { 'VALUE_80K': 'base', 'MAXIMUM_300K': 'max', 'EXCLUSIVE_500K': 'pre' };
+
+const MAP_CONVENIOS = {
+    'semm': 'SEMM_UY',
+    'oca': 'OCA_UY',
+    'master': 'MASTER_UY',
+    'itau': 'ITAU_UY',
+    'santander': 'SANTANDER_UY',
+    'santmc': 'SANTANDER_MC_UY'
+};
+
+const MAP_ADICIONALES = {
+    '20': 'TECH_PRO',
+    '10': 'DEP_ADV', // Ejemplo (ajustado para mapeo aproximado al HTML original)
+    '15': 'MASCOTAS'
+};
+
+// Variable para guardar la última cotización completa generada
+let ultimaCotizacion = null;
+
+// ========================================================================
+// RECALCULAR -> MOTOR -> RENDER
+// ========================================================================
+
+function recalcular() {
+    const totalPax = pax.adultos + pax.mayores + pax.menores;
+    if (totalPax === 0) return;
+
+    const diasEl = document.getElementById('dias');
+    const dias = diasEl ? (parseInt(diasEl.value) || 1) : 1;
+    const destinoEl = document.getElementById('destino');
+    const destinoNombre = destinoEl ? destinoEl.value : 'Europa*';
+    const salidaEl = document.getElementById('salida');
+    const regresoEl = document.getElementById('regreso');
+
+    // Extraer adicionales desde los checkbox
+    let adicionalesSeleccionados = [];
+    document.querySelectorAll('.extra-cbx:checked').forEach(cb => {
+        // En el HTML original los values son números (precios sueltos), hacemos un mock mapping.
+        const addId = Object.keys(MAP_ADICIONALES)[0]; // Usaremos TECH_PRO por defecto en el prototipo si está marcado
+        if(addId) adicionalesSeleccionados.push('TECH_PRO');
+    });
+    // Deduplicar si hay varios
+    adicionalesSeleccionados = [...new Set(adicionalesSeleccionados)];
+
+    // 1. Invocar al Motor de Cotización (Core)
+    const inputs = {
+        destino_nombre: destinoNombre,
+        fecha_inicio: salidaEl ? salidaEl.value : '',
+        fecha_fin: regresoEl ? regresoEl.value : '',
+        dias: dias,
+        pax: pax,
+        convenio_id: activeConvenio,
+        adicionales_ids: adicionalesSeleccionados
+    };
+
+    ultimaCotizacion = MotorCotizacion.generarCotizacion(inputs);
+
+    // 2. Renderizar UI basado en el objeto de cotización
+    renderUI(ultimaCotizacion);
+}
+
+function triggerPriceAnimation(id) {
+    const el = document.getElementById(`${id}-fin`);
+    if(el) {
+        el.classList.remove('updating');
+        void el.offsetWidth; // Force DOM reflow
+        el.classList.add('updating');
+    }
+}
+
+function renderUI(cotizacion) {
+    const totalPax = cotizacion.cantidad_pasajeros;
+    
+    // Render de cada tarjeta de producto
+    cotizacion.productos_ofrecidos.forEach(prod => {
+        const uiId = REVERSE_MAP_PROD[prod.producto_id];
+        if (!uiId) return;
+
+        const oriEl = document.getElementById(`${uiId}-ori`);
+        const finEl = document.getElementById(`${uiId}-fin`);
+        const discEl = document.getElementById(`${uiId}-disc`);
+        const subEl = document.getElementById(`${uiId}-sub`);
+        const totEl = document.getElementById(`${uiId}-tot`);
+
+        const tieneDescuento = prod.descuento_porcentaje > 0;
+
+        if (oriEl) {
+            oriEl.innerText = `${prod.importe_cotizado_original}`;
+            oriEl.style.display = tieneDescuento ? 'block' : 'none';
+            const wrapper = oriEl.closest('.price-old-wrapper');
+            if (wrapper) wrapper.style.display = tieneDescuento ? 'flex' : 'none';
+        }
+        if (finEl) {
+            const newVal = `${prod.importe_cotizado_final}`;
+            if (finEl.innerText !== newVal) triggerPriceAnimation(uiId);
+            finEl.innerText = newVal;
+        }
+        if (discEl) {
+            if (tieneDescuento) {
+                discEl.innerText = `${prod.descuento_porcentaje}% OFF`;
+                discEl.style.display = 'inline-block';
+            } else {
+                discEl.style.display = 'none';
+            }
+        }
+        if (subEl) subEl.innerText = `USD ${Math.round(prod.importe_cotizado_final / totalPax)}`;
+        if (totEl) totEl.innerText = `USD ${prod.importe_cotizado_final}`;
+    });
+
+    // Render footer
+    const activeProd = cotizacion.productos_ofrecidos.find(p => p.producto_id === activeCardId);
+    if (activeProd) {
+        const fPlan = document.getElementById('footer-plan-name');
+        const fTotal = document.getElementById('footer-total');
+        const fDisc = document.getElementById('footer-discount');
+
+        if (fPlan) fPlan.innerText = activeProd.nombre_comercial;
+        if (fTotal) fTotal.innerText = `USD ${activeProd.importe_cotizado_final}`;
+        
+        if (fDisc) {
+            if (activeProd.descuento_porcentaje > 0) {
+                const convInfo = DataRepository.getConvenioById(cotizacion.convenio_id);
+                const label = convInfo ? convInfo.nombre : '';
+                fDisc.innerText = `¡${label} -${activeProd.descuento_porcentaje}% aplicado!`;
+                fDisc.style.display = '';
+            } else {
+                fDisc.style.display = 'none';
+            }
+        }
+    }
+}
+
+// ========================================================================
+// F7 — GUARDAR PENDIENTE (JSON DE ORDENANZA)
+// ========================================================================
+
+function guardarPendiente() {
+    if (!ultimaCotizacion) return;
+
+    const modal = document.getElementById('modal');
+    const title = document.getElementById('modal-title');
+    const desc = document.getElementById('modal-desc');
+    const spinner = document.getElementById('modal-spinner');
+
+    // Obtener datos del prospecto (Lead data combinada con Cotizacion)
+    const nombre = document.getElementById('prospecto-nombre')?.value?.trim() || '';
+    const tel = document.getElementById('prospecto-tel')?.value || '';
+    const email = document.getElementById('prospecto-email')?.value || '';
+
+    // Clonamos la cotización y le inyectamos los datos del prospecto para guardarlo como Lead
+    const leadRecord = {
+        ...ultimaCotizacion, // Todo el modelo transaccional puro
+        lead_id: `LEAD-${Date.now()}`,
+        prospecto_nombre: nombre,
+        prospecto_tel: tel,
+        prospecto_email: email,
+        producto_seleccionado_ui: activeCardId
+    };
+
+    const pendientes = JSON.parse(localStorage.getItem('ua_pendientes') || '[]');
+    pendientes.unshift(leadRecord);
+    localStorage.setItem('ua_pendientes', JSON.stringify(pendientes));
+    updatePendientesBadge();
+
+    modal.style.display = 'flex';
+    title.innerText = "Guardando Lead estructurado...";
+    title.style.color = "#002447";
+    desc.innerText = "Generando JSON bajo Ordenanza de Datos...";
+    spinner.style.display = "block";
+
+    setTimeout(() => {
+        spinner.style.display = "none";
+        title.innerText = "\u2705 Lead Guardado (Ordenanza v2)";
+        title.style.color = "var(--success)";
+        
+        const actProd = ultimaCotizacion.productos_ofrecidos.find(p => p.producto_id === activeCardId);
+        const planName = actProd ? actProd.nombre_comercial : '';
+        const total = actProd ? actProd.importe_cotizado_final : '';
+
+        desc.innerHTML = `<strong>Cotización guardada exitosamente.</strong><br>
+            <span style="color:#7f8c8d;font-size:0.8rem;">${leadRecord.cotizacion_id} \u2014 ${nombre || 'Sin nombre'} \u2014 ${planName} USD ${total}</span><br>
+            <span style="color:#7f8c8d;font-size:0.7rem;">Estado: <b>${leadRecord.estado_cotizacion}</b> &mdash; Listo para integrar con Siebel/CRM.</span>`;
+        setTimeout(() => { modal.style.display = 'none'; }, 2500);
+    }, 800);
+}
+
+function updatePendientesBadge() {
+    const pendientes = JSON.parse(localStorage.getItem('ua_pendientes') || '[]');
+    let badge = document.getElementById('pendientes-badge');
+    if (!badge) {
+        const f7Btn = document.querySelector('[onclick*="guardarPendiente"]') || document.querySelector('.footer-btn');
+        if (f7Btn) {
+            badge = document.createElement('span');
+            badge.id = 'pendientes-badge';
+            badge.style.cssText = 'background:#E40046; color:white; font-size:0.6rem; font-weight:800; padding:1px 5px; border-radius:10px; margin-left:4px; min-width:16px; text-align:center; display:inline-block;';
+            f7Btn.appendChild(badge);
+        }
+    }
+    if (badge) {
+        if (pendientes.length > 0) {
+            badge.textContent = pendientes.length;
+            badge.style.display = 'inline-block';
+        } else {
+            badge.style.display = 'none';
+        }
+    }
+}
+
+// ========================================================================
+// HELPERS — Construcción de mensaje WA/Email
+// ========================================================================
+
+function _buildQuoteMsg() {
+    const nombre = document.getElementById('prospecto-nombre')?.value?.trim() || '';
+    if(!ultimaCotizacion) return { nombre, plan: '', total: '', destino: '', dias: '', totalPax: 0 };
+    
+    const actProd = ultimaCotizacion.productos_ofrecidos.find(p => p.producto_id === activeCardId);
+    return { 
+        nombre, 
+        plan: actProd ? actProd.nombre_comercial : '', 
+        total: actProd ? `USD ${actProd.importe_cotizado_final}` : '', 
+        destino: document.getElementById('destino')?.value || '', 
+        dias: ultimaCotizacion.dias, 
+        totalPax: ultimaCotizacion.cantidad_pasajeros 
+    };
+}
+
+// ========================================================================
+// EVENT LISTENERS — Toggles, Selects, Inputs
+// ========================================================================
+
+// Toggle buttons (Tipo de viaje)
+document.querySelectorAll('.btn-group .btn-toggle').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        const group = e.target.closest('.btn-group');
+        group.querySelectorAll('.btn-toggle').forEach(b => b.classList.remove('active'));
+        e.target.classList.add('active');
+        recalcular();
+    });
+});
+
+// Selects e inputs disparan recalcular
+document.querySelectorAll('select, input[type="number"], .extra-cbx').forEach(el => {
+    el.addEventListener('change', recalcular);
+});
+
+// FECHA & DÍAS
+function calcDias() {
+    const outStr = document.getElementById('salida')?.value;
+    const retStr = document.getElementById('regreso')?.value;
+    if (outStr && retStr) {
+        const out = new Date(outStr + 'T00:00:00');
+        const ret = new Date(retStr + 'T00:00:00');
+        if (!isNaN(out) && !isNaN(ret)) {
+            const diffTime = ret - out;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+            const diasEl = document.getElementById('dias');
+            if (diasEl) diasEl.value = diffDays > 0 ? diffDays : 1;
+            recalcular();
+        }
+    }
+}
+document.getElementById('salida')?.addEventListener('change', calcDias);
+document.getElementById('regreso')?.addEventListener('change', calcDias);
+
+function onDiasInput() {
+    const diasEl = document.getElementById('dias');
+    const salidaEl = document.getElementById('salida');
+    const regresoEl = document.getElementById('regreso');
+    if (diasEl && salidaEl && regresoEl) {
+        const days = parseInt(diasEl.value) || 1;
+        const outDate = new Date(salidaEl.value + 'T00:00:00');
+        if (!isNaN(outDate)) {
+            outDate.setDate(outDate.getDate() + days);
+            const yyyy = outDate.getFullYear();
+            const mm = String(outDate.getMonth() + 1).padStart(2, '0');
+            const dd = String(outDate.getDate()).padStart(2, '0');
+            regresoEl.value = `${yyyy}-${mm}-${dd}`;
+            recalcular();
+        }
+    }
+}
+
+// PASAJEROS
+function updatePax(type, delta) {
+    if(pax[type] + delta >= 0) pax[type] += delta;
+    document.getElementById(`pax-${type}`).innerText = pax[type];
+    recalcular();
+}
+
+// SELECCIÓN DE TARJETAS (CARDS)
+function selectCard(uiId) {
+    document.querySelectorAll('.prod-card').forEach(c => c.classList.remove('card-active'));
+    const cardEl = document.getElementById(`card-${uiId}`);
+    if(cardEl) cardEl.classList.add('card-active');
+    activeCardId = MAP_PRODUCTOS[uiId] || 'MAXIMUM_300K';
+    recalcular();
+}
+document.querySelectorAll('.prod-card').forEach(card => {
+    card.addEventListener('click', (e) => {
+        if (!e.target.closest('.ver-mas')) {
+            const cardId = card.id.replace('card-', '');
+            selectCard(cardId);
+        }
+    });
+});
+
+// CONVENIOS
+function toggleConvenio(htmlId, dummyDesc) {
+    document.querySelectorAll('.convenio-logo').forEach(c => c.classList.remove('active'));
+    
+    const dbId = MAP_CONVENIOS[htmlId];
+    
+    if (activeConvenio === dbId) {
+        activeConvenio = null;
+    } else {
+        activeConvenio = dbId;
+        const el = document.getElementById(`conv-${htmlId}`);
+        if(el) el.classList.add('active');
+    }
+    
+    // Update convenio message
+    const msgEl = document.getElementById('convenio-msg');
+    if (msgEl) {
+        if (activeConvenio) {
+            const convData = DataRepository.getConvenioById(activeConvenio);
+            if (convData) {
+                const val = convData.reglas_precio['VALUE_80K'] ? (convData.reglas_precio['VALUE_80K']*100) : 10;
+                const max = convData.reglas_precio['MAXIMUM_300K'] ? (convData.reglas_precio['MAXIMUM_300K']*100) : 15;
+                const pre = convData.reglas_precio['EXCLUSIVE_500K'] ? (convData.reglas_precio['EXCLUSIVE_500K']*100) : 20;
+                msgEl.innerHTML = `<i class="fa-solid fa-tag" style="color:#E40046;"></i> <b>${convData.nombre}:</b> ${max}% en Maximum / ${pre}% en Exclusive / ${val}% en Value`;
+            }
+        } else {
+            msgEl.innerHTML = 'Selecciona un convenio para ver descuentos';
+        }
+    }
+    recalcular();
+}
+
+function filtrarConvenios() {
+    const input = document.querySelector('input[placeholder*="Escribe para buscar"]');
+    if (!input) return;
+    const query = input.value.toLowerCase().trim();
+    document.querySelectorAll('.convenio-logo').forEach(el => {
+        const text = el.textContent.toLowerCase();
+        el.style.display = (query === '' || text.includes(query)) ? '' : 'none';
+    });
+}
+
+// MODAL DETALLES DEL PLAN
+function abrirDetalles(planUiName) { // Recibe 'Value', 'Maximum', 'Exclusive'
+    document.getElementById('modal-plan-name').innerText = planUiName;
+    
+    let prodId = null;
+    let uiId = null;
+    if (planUiName === 'Value') { prodId = 'VALUE_80K'; uiId = 'base'; }
+    if (planUiName === 'Maximum') { prodId = 'MAXIMUM_300K'; uiId = 'max'; }
+    if (planUiName === 'Exclusive') { prodId = 'EXCLUSIVE_500K'; uiId = 'pre'; }
+    
+    if (ultimaCotizacion && prodId) {
+        const prodData = ultimaCotizacion.productos_ofrecidos.find(p => p.producto_id === prodId);
+        if (prodData) {
+            const oldPrice = prodData.descuento_porcentaje > 0 ? `USD ${prodData.importe_cotizado_original}` : '';
+            const newPrice = `USD ${prodData.importe_cotizado_final}`;
+            
+            document.getElementById('modal-old-price').innerText = oldPrice;
+            document.getElementById('modal-new-price').innerText = newPrice;
+            
+            // Actualizar coberturas iterando el array de beneficios de la Ordenanza
+            // Nota: En un sistema real esto generaría filas dinámicas en el HTML.
+            // Aquí setearemos las clásicas hardcodeadas para no romper el CSS actual.
+            const getVal = (nom) => {
+                const ben = prodData.beneficios_snapshot.find(b => b.nombre_beneficio.includes(nom));
+                return ben ? ben.valor : 'Incluido';
+            };
+            
+            const setVal = (id, val) => { const el = document.getElementById(`modal-detalles-${id}`); if (el) el.innerText = val; };
+            setVal('medica', getVal('médica'));
+            setVal('preex', getVal('Pre-existencias') || 'USD 10.000');
+            setVal('tele', 'Incluido');
+        }
+    }
+    
+    document.getElementById('modal-detalles').style.display = 'flex';
+}
+
+function cerrarDetalles(e) {
+    if(!e || e.target.id === 'modal-detalles') {
+        document.getElementById('modal-detalles').style.display = 'none';
+    }
+}
+
+// ========================================================================
+// ACCIONES Y ATAJOS
+// ========================================================================
+
+function enviarWhatsAppProspecto() {
+    const tel = document.getElementById('prospecto-tel')?.value?.replace(/\D/g,'');
+    if (!tel) { alert('Ingresa el telefono del prospecto primero.'); return; }
+    const { nombre, plan, total, destino, dias, totalPax } = _buildQuoteMsg();
+    if (!nombre) { alert('Ingresa el nombre del prospecto primero.'); return; }
+    
+    const convInfo = activeConvenio ? DataRepository.getConvenioById(activeConvenio) : null;
+    const convenioTxt = convInfo ? `Convenio: ${convInfo.nombre}` : '';
+    
+    const lines = [
+        `Hola *${nombre}*!`,
+        '',
+        'Te comparto la cotizacion de tu seguro de viaje con *Universal Assistance*:',
+        '',
+        `Destino: *${destino}*`,
+        `Dias: *${dias}*`,
+        `Pasajeros: *${totalPax}*`,
+        `Plan: *${plan}*`,
+        convenioTxt ? convenioTxt : null,
+        '',
+        `*TOTAL: ${total}*`,
+        '',
+        'Para confirmar tu reserva podes responder este mensaje.',
+        '',
+        '_Universal Assistance - A Zurich Company_'
+    ].filter(l => l !== null).join('\n');
+    window.open(`https://wa.me/598${tel}?text=${encodeURIComponent(lines)}`, '_blank');
+}
+
+function enviarEmailProspecto() {
+    const email = document.getElementById('prospecto-email')?.value;
+    if (!email) { alert('Ingresá el email del prospecto primero.'); return; }
+    const { nombre, plan, total, destino, dias } = _buildQuoteMsg();
+    const subject = encodeURIComponent(`Cotización Seguro de Viaje – Plan ${plan} | Universal Assistance`);
+    const body = encodeURIComponent(
+        `Estimado/a ${nombre},\n\nAdjuntamos su cotización personalizada:\n\n` +
+        `Destino: ${destino}\nDías: ${dias}\nPlan: ${plan}\nTotal: ${total}\n\n` +
+        `Para confirmar, comuníquese con su agente.\n\nSaludos,\nUniversal Assistance`
+    );
+    window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
+}
+
+function enviarContacto() {
+    const tel = document.getElementById('prospecto-tel')?.value?.trim();
+    if (tel) enviarWhatsAppProspecto();
+    else enviarEmailProspecto();
+}
+
+function cargarSiebel() {
+    const modal   = document.getElementById('modal');
+    const title   = document.getElementById('modal-title');
+    const desc    = document.getElementById('modal-desc');
+    const spinner = document.getElementById('modal-spinner');
+    const { nombre, plan, total, destino, dias } = _buildQuoteMsg();
+
+    const steps = [
+        { t: 0,    icon: '🔗', txt: 'Conectando con Siebel CRM...' },
+        { t: 800,  icon: '👤', txt: `Enviando JSON modelo Ordenanza...` },
+        { t: 1700, icon: '📋', txt: `Validando cotización: Plan <b>${plan}</b>` },
+        { t: 2600, icon: '💰', txt: `Registrando precio: <b>${total}</b>` },
+        { t: 3500, icon: '✅', txt: `<b>¡Sincronización completa!</b><br><span style="color:#7f8c8d;font-size:0.8rem;">Oportunidad creada en Siebel</span>` },
+    ];
+
+    modal.style.display = 'flex';
+    spinner.style.display = 'block';
+    title.innerText = '⚙️ Exportando a Siebel...';
+    title.style.color = '#002447';
+
+    steps.forEach((s, i) => {
+        setTimeout(() => {
+            if (i < steps.length - 1) {
+                desc.innerHTML = `${s.icon} ${s.txt}`;
+            } else {
+                spinner.style.display = 'none';
+                title.innerText = '✅ Siebel Actualizado';
+                title.style.color = 'var(--success, #27ae60)';
+                desc.innerHTML = s.txt;
+                setTimeout(() => { modal.style.display = 'none'; }, 2500);
+            }
+        }, s.t);
+    });
+}
+
+function nuevaCotizacion() {
+    if (!confirm('\u00bfIniciar una nueva cotizacion? Se perderan los datos actuales.')) return;
+    document.getElementById('prospecto-nombre').value = '';
+    document.getElementById('prospecto-tel').value    = '';
+    document.getElementById('prospecto-email').value  = '';
+    pax = { adultos: 1, mayores: 0, menores: 0 };
+    ['adultos','mayores','menores'].forEach(k => {
+        const el = document.getElementById(`pax-${k}`);
+        if (el) el.innerText = pax[k];
+    });
+    activeConvenio = null;
+    document.querySelectorAll('.convenio-logo').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.extra-cbx').forEach(cb => cb.checked = false);
+    selectCard('max');
+    recalcular();
+}
+
+window.addEventListener('keydown', function(e) {
+    if (e.key === 'F7') { e.preventDefault(); guardarPendiente(); }
+    if (e.key === 'F8') { e.preventDefault(); enviarContacto(); }
+    if (e.key === 'F9') { e.preventDefault(); cargarSiebel(); }
+    if (e.key === 'F10') { e.preventDefault(); nuevaCotizacion(); }
+});
+
+// INICIALIZACIÓN
+selectCard('max');
+recalcular();
+toggleConvenio('semm', 0.30); // Usamos 'semm' del HTML que se mapea a SEMM_UY internamente
+updatePendientesBadge();

@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>One-Click Quote | Universal Assistance</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         HEADER
+         ═══════════════════════════════════════════════════════════════════ -->
+    <header>
+        <div style="display: flex; align-items: center; gap: 16px;">
+            <img src="https://www.universal-assistance.com/uy/wp-content/uploads/sites/18/2026/03/ua-blanco-zurich-hd.svg" alt="Universal Assistance - A company of Zurich" style="height: 38px; filter: brightness(0) invert(1);">
+            <div style="height: 28px; width: 1px; background: rgba(255,255,255,0.25);"></div>
+            <h1 style="font-size: 0.95rem; font-weight: 500; line-height: 1.3;">Portal de Partners<br><b style="font-weight:700">Cotizador Rápido</b></h1>
+        </div>
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <div style="text-align: right; line-height: 1.2;">
+                <div style="font-size: 0.7rem; opacity: 0.7;">Organización emisora</div>
+                <div style="font-size: 0.85rem; font-weight: 700;">SURVIEW</div>
+            </div>
+            <div style="font-size: 0.8rem; opacity: 0.8;">Venta telefónica: <b style="text-decoration: underline;">2 9017378</b></div>
+            <button style="background: var(--ua-pink); color: white; border: none; padding: 8px 18px; border-radius: 30px; font-weight: 600; font-size: 0.8rem; cursor: pointer;">Solicitar asistencia</button>
+            <div style="cursor: pointer;">
+                <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="3" y="5" width="22" height="2.5" rx="1.25" fill="white" />
+                    <rect x="3" y="12.75" width="22" height="2.5" rx="1.25" fill="white" />
+                    <rect x="3" y="20.5" width="22" height="2.5" rx="1.25" fill="white" />
+                </svg>
+            </div>
+        </div>
+    </header>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         MAIN — 3 Column Grid
+         ═══════════════════════════════════════════════════════════════════ -->
+    <main>
+
+        <!-- ─── COL 1: Captura de Datos ──────────────────────────────── -->
+        <div class="column">
+            <div class="col-title">1. Captura de Datos</div>
+            <div class="card" style="flex:1; display:flex; flex-direction:column; gap:6px;">
+
+                <!-- Datos del Prospecto -->
+                <div style="background: rgba(0, 90, 239, 0.04); border: 1px solid rgba(0, 90, 239, 0.12); border-radius: 10px; padding: 6px 8px;">
+                    <div style="font-size: 0.6rem; font-weight: 800; color: #002447; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 5px; display: flex; align-items: center; gap: 4px;">
+                        <i class="fa-solid fa-address-card" style="color:var(--ua-blue); font-size:0.6rem;"></i> Datos del Prospecto
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:5px;">
+                        <div style="position: relative; display: flex; align-items: center;">
+                            <i class="fa-solid fa-user" style="position: absolute; left: 9px; color: #005AEF; font-size: 0.65rem; pointer-events: none; z-index: 5;"></i>
+                            <input type="text" id="prospecto-nombre" placeholder="Nombre (Ej: Juan Pérez)" style="padding-left: 24px; border-radius: 20px; font-size: 0.68rem; height: 24px; width: 100%; border: 1px solid #cbd5e1; background: white;">
+                        </div>
+                        <div style="display:flex; align-items:center; gap:4px;">
+                            <div style="position: relative; display: flex; align-items: center; flex: 1;">
+                                <i class="fa-solid fa-phone" style="position: absolute; left: 9px; color: #005AEF; font-size: 0.65rem; pointer-events: none; z-index: 5;"></i>
+                                <input type="text" id="prospecto-tel" placeholder="Tel (Ej: 099 123 456)" style="padding-left: 24px; border-radius: 20px; font-size: 0.68rem; height: 24px; width: 100%; border: 1px solid #cbd5e1; background: white;">
+                            </div>
+                            <button onclick="enviarWhatsAppProspecto()" title="WhatsApp" style="flex-shrink:0; background:#25D366; border:none; border-radius:50%; width:22px; height:22px; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:0.2s; box-shadow: 0 2px 6px rgba(37,211,102,0.35);" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                                <i class="fa-brands fa-whatsapp" style="color:white; font-size:0.8rem;"></i>
+                            </button>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:4px;">
+                            <div style="position: relative; display: flex; align-items: center; flex: 1;">
+                                <i class="fa-solid fa-envelope" style="position: absolute; left: 9px; color: #005AEF; font-size: 0.65rem; pointer-events: none; z-index: 5;"></i>
+                                <input type="email" id="prospecto-email" placeholder="Email (Ej: j.perez@mail.com)" style="padding-left: 24px; border-radius: 20px; font-size: 0.68rem; height: 24px; width: 100%; border: 1px solid #cbd5e1; background: white;">
+                            </div>
+                            <button onclick="enviarEmailProspecto()" title="Email" style="flex-shrink:0; background:#005AEF; border:none; border-radius:50%; width:22px; height:22px; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:0.2s; box-shadow: 0 2px 6px rgba(0,90,239,0.3);" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                                <i class="fa-solid fa-paper-plane" style="color:white; font-size:0.65rem;"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Viaje -->
+                <div style="border: 1px solid rgba(0, 90, 239, 0.1); border-radius: 10px; padding: 6px 8px; background: rgba(255,255,255,0.5); display: flex; flex-direction: column; gap: 5px;">
+                    <div style="font-size:0.6rem; font-weight:800; color:#002447; text-transform:uppercase; letter-spacing:0.4px; display:flex; align-items:center; gap:4px;">
+                        <i class="fa-solid fa-plane" style="color:#005AEF; font-size:0.6rem;"></i> Viaje
+                    </div>
+
+                    <!-- Destino -->
+                    <div style="display:flex; flex-direction:column; gap:1px;">
+                        <span style="font-size:0.55rem; font-weight:700; color:#64748b; margin-left:3px;">Destino</span>
+                        <select id="destino" style="background:white; height:24px; border-radius:20px; font-size:0.68rem; padding:1px 8px; border:1px solid #cbd5e1;">
+                            <option>Argentina</option>
+                            <option>Centroamérica y Caribe (excepto Cuba*)</option>
+                            <option selected>Europa*</option>
+                            <option>Múltiples Destinos*</option>
+                            <option>Norteamérica</option>
+                            <option>Oceanía, Asia*, África</option>
+                            <option>Países Limítrofes</option>
+                            <option>Sudamérica</option>
+                            <option>Territorio Nacional</option>
+                        </select>
+                    </div>
+
+                    <!-- Tipo de viaje -->
+                    <div style="display:flex; flex-direction:column; gap:1px;">
+                        <span style="font-size:0.55rem; font-weight:700; color:#64748b; margin-left:3px;">Tipo de viaje</span>
+                        <div class="btn-group" style="padding: 2px;">
+                            <button class="btn-toggle active" style="font-size: 0.62rem; padding: 3px 0;">Vacaciones</button>
+                            <button class="btn-toggle" style="font-size: 0.62rem; padding: 3px 0;">Trabajo</button>
+                            <button class="btn-toggle" style="font-size: 0.62rem; padding: 3px 0;">Estudios</button>
+                        </div>
+                    </div>
+
+                    <!-- Fechas + Días -->
+                    <div style="display:flex; gap:4px; align-items:center;">
+                        <div style="flex:1.2; min-width:0; background:white; border: 1px solid #cbd5e1; border-radius: 16px; padding: 1px 6px; display:flex; flex-direction:column;">
+                            <span style="font-size:0.5rem; color:#64748b; font-weight:600;">Salida</span>
+                            <input type="date" id="salida" value="2026-06-01" style="border:none; padding:0; font-size:0.65rem; background:transparent; height:16px;">
+                        </div>
+                        <div style="flex:1.2; min-width:0; background:white; border: 1px solid #cbd5e1; border-radius: 16px; padding: 1px 6px; display:flex; flex-direction:column;">
+                            <span style="font-size:0.5rem; color:#64748b; font-weight:600;">Regreso</span>
+                            <input type="date" id="regreso" value="2026-06-11" style="border:none; padding:0; font-size:0.65rem; background:transparent; height:16px;">
+                        </div>
+                        <div style="flex:0.6; display:flex; flex-direction:column; align-items:center; flex-shrink:0;">
+                            <span style="font-size:0.5rem; color:#64748b; font-weight:600;">Días</span>
+                            <input type="number" id="dias" value="10" min="1" max="365" style="width:36px; padding:0 2px; border:1px solid #b3d4ff; border-radius:8px; text-align:center; font-size:0.68rem; font-weight:800; color:#002447; background:white; height:18px;" oninput="onDiasInput()">
+                        </div>
+                    </div>
+
+                    <!-- Pasajeros -->
+                    <div style="display:flex; flex-direction:column; gap:3px; margin-top:2px;">
+                        <span style="font-size:0.55rem; font-weight:700; color:#64748b; margin-left:3px;">Pasajeros</span>
+                        
+                        <!-- Adultos -->
+                        <div style="display:flex; align-items:center; justify-content:space-between; background:white; border:1px solid #cbd5e1; border-radius:20px; padding:2px 8px; height:24px;">
+                            <span style="font-size:0.62rem; font-weight:600; color:#002447;">Adultos <small style="color:#64748b; font-size:0.52rem; font-weight:normal;">(hasta 64)</small></span>
+                            <div style="display:flex; align-items:center; gap:6px;">
+                                <button onclick="updatePax('adultos',-1)" style="border:none; background:none; color:var(--ua-blue); font-weight:bold; cursor:pointer; font-size:0.8rem; padding:0; line-height:1; width:14px; height:14px; display:flex; align-items:center; justify-content:center;">−</button>
+                                <span id="pax-adultos" style="font-size:0.7rem; font-weight:800; color:#002447; min-width:12px; text-align:center;">1</span>
+                                <button onclick="updatePax('adultos',1)" style="border:none; background:none; color:var(--ua-blue); font-weight:bold; cursor:pointer; font-size:0.8rem; padding:0; line-height:1; width:14px; height:14px; display:flex; align-items:center; justify-content:center;">+</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Mayores (+65) -->
+                        <div style="display:flex; align-items:center; justify-content:space-between; background:white; border:1px solid #cbd5e1; border-radius:20px; padding:2px 8px; height:24px;">
+                            <span style="font-size:0.62rem; font-weight:600; color:#002447;">Mayores <small style="color:#64748b; font-size:0.52rem; font-weight:normal;">(+65)</small></span>
+                            <div style="display:flex; align-items:center; gap:6px;">
+                                <button onclick="updatePax('mayores',-1)" style="border:none; background:none; color:var(--ua-blue); font-weight:bold; cursor:pointer; font-size:0.8rem; padding:0; line-height:1; width:14px; height:14px; display:flex; align-items:center; justify-content:center;">−</button>
+                                <span id="pax-mayores" style="font-size:0.7rem; font-weight:800; color:#002447; min-width:12px; text-align:center;">1</span>
+                                <button onclick="updatePax('mayores',1)" style="border:none; background:none; color:var(--ua-blue); font-weight:bold; cursor:pointer; font-size:0.8rem; padding:0; line-height:1; width:14px; height:14px; display:flex; align-items:center; justify-content:center;">+</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Menores -->
+                        <div style="display:flex; align-items:center; justify-content:space-between; background:white; border:1px solid #cbd5e1; border-radius:20px; padding:2px 8px; height:24px;">
+                            <span style="font-size:0.62rem; font-weight:600; color:#002447;">Menores <small style="color:#64748b; font-size:0.52rem; font-weight:normal;">(hasta 17)</small></span>
+                            <div style="display:flex; align-items:center; gap:6px;">
+                                <button onclick="updatePax('menores',-1)" style="border:none; background:none; color:var(--ua-blue); font-weight:bold; cursor:pointer; font-size:0.8rem; padding:0; line-height:1; width:14px; height:14px; display:flex; align-items:center; justify-content:center;">−</button>
+                                <span id="pax-menores" style="font-size:0.7rem; font-weight:800; color:#002447; min-width:12px; text-align:center;">0</span>
+                                <button onclick="updatePax('menores',1)" style="border:none; background:none; color:var(--ua-blue); font-weight:bold; cursor:pointer; font-size:0.8rem; padding:0; line-height:1; width:14px; height:14px; display:flex; align-items:center; justify-content:center;">+</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ─── COL 2: Convenio y Descuentos ─────────────────────────── -->
+        <div class="column">
+            <div class="col-title">2. Convenio y Descuentos</div>
+            <div class="card" style="flex:1; display:flex; flex-direction:column; gap:6px;">
+                <button class="btn-outline-blue" style="padding:5px 0; font-size:0.7rem;">VER CONVENIOS ACTIVOS</button>
+                
+                <div class="convenios-grid">
+                    <div class="convenio-logo logo-semm active" id="conv-semm" onclick="toggleConvenio('semm', 0.30)">SEMM</div>
+                    <div class="convenio-logo logo-oca" id="conv-oca" onclick="toggleConvenio('oca', 0.10)">OCA</div>
+                    <div class="convenio-logo logo-master" id="conv-master" onclick="toggleConvenio('master', 0.05)">Mastercard</div>
+                    <div class="convenio-logo" id="conv-itau" style="background:#003087; color:white; border:none;" onclick="toggleConvenio('itau', 0.20)">Itaú</div>
+                    <div class="convenio-logo" id="conv-santander" style="background:#ec0000; color:white; border:none;" onclick="toggleConvenio('santander', 0.25)">Santander</div>
+                    <div class="convenio-logo" id="conv-santmc" style="background:#ec0000; color:white; border:none; line-height:1.1;" onclick="toggleConvenio('santmc', 0.25)">Santander<br><small style="font-size:0.55rem;">Mastercard</small></div>
+                </div>
+
+                <div class="discount-text" id="convenio-msg" style="font-size:0.65rem; padding:4px 8px; background:rgba(228,0,70,0.06); border-radius:8px; border:1px solid rgba(228,0,70,0.12); line-height:1.3;">
+                    <i class="fa-solid fa-tag" style="color:#E40046;"></i> <b>SEMM:</b> 30% en Maximum / 20% en Premium / 10% en Value
+                </div>
+
+                <!-- Buscar Convenio -->
+                <div style="display:flex; flex-direction:column; gap:1px;">
+                    <span style="font-size:0.55rem; font-weight:700; color:#64748b; margin-left:4px;">Buscar convenio</span>
+                    <input type="text" placeholder="🔍 Escribe para buscar..." oninput="filtrarConvenios()" style="background:white; border-radius:20px; padding:4px 12px; font-size:0.68rem; border:1px solid #cbd5e1; height:24px;">
+                </div>
+
+                <!-- Tarjetas + Org en fila -->
+                <div style="display:flex; gap:4px;">
+                    <div style="flex:1; display:flex; flex-direction:column; gap:1px;">
+                        <span style="font-size:0.55rem; font-weight:700; color:#64748b; margin-left:4px;">Tarjeta de crédito</span>
+                        <select id="tarjeta-credito" onchange="onTarjetaChange(this.value)" style="background:white; height:24px; border-radius:20px; font-size:0.65rem; padding:1px 6px; border:1px solid #cbd5e1;">
+                            <option value="">💳 Seleccionar</option>
+                            <option value="visa">Visa</option>
+                            <option value="mastercard">Mastercard</option>
+                            <option value="amex">American Express</option>
+                        </select>
+                    </div>
+                    <div style="flex:1; display:flex; flex-direction:column; gap:1px;">
+                        <span style="font-size:0.55rem; font-weight:700; color:#64748b; margin-left:4px;">Organización</span>
+                        <select id="org-emisora" onchange="onOrgChange(this.value)" style="background:white; height:24px; border-radius:20px; font-size:0.65rem; padding:1px 6px; border:1px solid #cbd5e1;">
+                            <option value="">📍 Seleccionar</option>
+                            <option value="surview">Surview</option>
+                            <option value="semm">SEMM</option>
+                            <option value="casmu">Casmu</option>
+                            <option value="smi">SMI</option>
+                            <option value="oca">OCA</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Extras -->
+                <div style="border-top:1px solid rgba(0,0,0,0.06); padding-top:6px;">
+                    <strong style="font-size:0.65rem; text-transform:uppercase; color:#002447; display:flex; align-items:center; gap:4px; margin-bottom:4px;">
+                        <i class="fa-solid fa-puzzle-piece" style="color:var(--ua-blue); font-size:0.6rem;"></i> Extras Disponibles
+                    </strong>
+                    
+                    <div style="display:flex; flex-direction:column; gap:4px;">
+                        <label class="extra-item" style="padding:3px 0; margin:0;">
+                            <div style="display:flex; flex-direction:column; line-height:1.1;">
+                                <span style="font-weight:600; color:#002447; font-size:0.68rem;">Preexistencias Extendidas</span>
+                                <span style="font-size:0.55rem; color:#64748b;">+USD 4.50/día por pax</span>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" class="extra-cbx" value="4.5" onchange="recalcular()">
+                                <span class="slider"></span>
+                            </label>
+                        </label>
+                        
+                        <label class="extra-item" style="padding:3px 0; margin:0;">
+                            <div style="display:flex; flex-direction:column; line-height:1.1;">
+                                <span style="font-weight:600; color:#002447; font-size:0.68rem;">Tecnología Protegida</span>
+                                <span style="font-size:0.55rem; color:#64748b;">+USD 15.00/día por pax</span>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" class="extra-cbx" value="15" onchange="recalcular()">
+                                <span class="slider"></span>
+                            </label>
+                        </label>
+
+                        <label class="extra-item" style="padding:3px 0; margin:0;">
+                            <div style="display:flex; flex-direction:column; line-height:1.1;">
+                                <span style="font-weight:600; color:#002447; font-size:0.68rem;">Deportes de Aventura</span>
+                                <span style="font-size:0.55rem; color:#64748b;">+USD 8.00/día por pax</span>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" class="extra-cbx" value="8" onchange="recalcular()">
+                                <span class="slider"></span>
+                            </label>
+                        </label>
+
+                        <label class="extra-item" style="padding:3px 0; margin:0;">
+                            <div style="display:flex; flex-direction:column; line-height:1.1;">
+                                <span style="font-weight:600; color:#002447; font-size:0.68rem;">Cancel. de Viaje</span>
+                                <span style="font-size:0.55rem; color:#64748b;">+USD 3.50/día por pax</span>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" class="extra-cbx" value="3.5" onchange="recalcular()">
+                                <span class="slider"></span>
+                            </label>
+                        </label>
+
+                        <label class="extra-item" style="padding:3px 0; margin:0;">
+                            <div style="display:flex; flex-direction:column; line-height:1.1;">
+                                <span style="font-weight:600; color:#002447; font-size:0.68rem;">Cobertura Embarazo</span>
+                                <span style="font-size:0.55rem; color:#64748b;">+USD 6.00/día por pax</span>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" class="extra-cbx" value="6" onchange="recalcular()">
+                                <span class="slider"></span>
+                            </label>
+                        </label>
+
+                        <label class="extra-item" style="padding:3px 0; margin:0;">
+                            <div style="display:flex; flex-direction:column; line-height:1.1;">
+                                <span style="font-weight:600; color:#002447; font-size:0.68rem;">Mascotas</span>
+                                <span style="font-size:0.55rem; color:#64748b;">+USD 10.00 fijo por pax</span>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" class="extra-cbx" data-fixed="true" value="10" onchange="recalcular()">
+                                <span class="slider"></span>
+                            </label>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ─── COL 3: Propuesta y Cotización ────────────────────────── -->
+        <div class="column">
+            <div class="col-title">3. Propuesta y Cotización</div>
+            <div class="products-grid">
+                
+                <!-- Value (Básico) -->
+                <div class="prod-card" id="card-base">
+                    <div class="card-tag tag-economico">✈ EL MÁS ECONÓMICO</div>
+                    <div class="prod-row-main">
+                        <div class="prod-col-info">
+                            <div class="plan-name">Value</div>
+                            <div style="font-size:0.6rem; color:#7f8c8d; font-weight:600; margin-top:2px;">Cobertura Estándar</div>
+                        </div>
+                        <div class="prod-col-middle">
+                            <div class="prod-col-features">
+                                <div class="feature-item-col">
+                                    <div class="feature-icon"><i class="fa-solid fa-circle-plus"></i></div>
+                                    <div class="feature-label">Asistencia médica</div>
+                                    <div class="feature-value-pill">USD 80.000</div>
+                                </div>
+                                <div class="feature-item-col">
+                                    <div class="feature-icon"><i class="fa-solid fa-suitcase"></i></div>
+                                    <div class="feature-label">Demora de equipaje</div>
+                                    <div class="feature-value-pill">USD 1.000</div>
+                                </div>
+                                <div class="feature-item-col">
+                                    <div class="feature-icon"><i class="fa-solid fa-tooth"></i></div>
+                                    <div class="feature-label">Asistencia odontologica*</div>
+                                    <div class="feature-value-pill">USD 600</div>
+                                </div>
+                                <div class="feature-item-col">
+                                    <div class="feature-icon"><i class="fa-solid fa-pills"></i></div>
+                                    <div class="feature-label">Asistencia ante pre-existencias</div>
+                                    <div class="feature-value-pill">USD 10.000</div>
+                                </div>
+                            </div>
+                            <a href="#" class="ver-mas-link ver-mas" onclick="abrirDetalles('Value'); event.stopPropagation(); return false;">
+                                <i class="fa-regular fa-eye" style="margin-right:4px;"></i>Ver detalles del plan
+                            </a>
+                        </div>
+                        <div class="prod-col-pricing">
+                            <div class="pill-discount" id="base-disc">10% OFF</div>
+                            <div class="price-old-wrapper">
+                                <span class="price-usd-label">USD</span>
+                                <span class="price-old" id="base-ori">108</span>
+                            </div>
+                            <div class="price-new-wrapper">
+                                <span class="price-usd-label-main">USD</span>
+                                <span class="price-new" id="base-fin">98</span>
+                            </div>
+                            <button class="btn-seleccionar" style="margin-top:4px;">Seleccionar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Maximum -->
+                <div class="prod-card card-active" id="card-max">
+                    <div class="card-banner-elegido">⭐ EL MÁS ELEGIDO</div>
+                    <div class="prod-row-main">
+                        <div class="prod-col-info">
+                            <div class="plan-name">Maximum</div>
+                            <div style="font-size:0.6rem; color:#7f8c8d; font-weight:600; margin-top:2px;">Cobertura Premium</div>
+                        </div>
+                        <div class="prod-col-middle">
+                            <div class="prod-col-features">
+                                <div class="feature-item-col">
+                                    <div class="feature-icon"><i class="fa-solid fa-circle-plus"></i></div>
+                                    <div class="feature-label">Asistencia médica</div>
+                                    <div class="feature-value-pill">USD 300.000</div>
+                                </div>
+                                <div class="feature-item-col">
+                                    <div class="feature-icon"><i class="fa-solid fa-suitcase"></i></div>
+                                    <div class="feature-label">Demora de equipaje</div>
+                                    <div class="feature-value-pill">USD 2.000</div>
+                                </div>
+                                <div class="feature-item-col">
+                                    <div class="feature-icon"><i class="fa-solid fa-tooth"></i></div>
+                                    <div class="feature-label">Asistencia odontologica*</div>
+                                    <div class="feature-value-pill">USD 3.000</div>
+                                </div>
+                                <div class="feature-item-col">
+                                    <div class="feature-icon"><i class="fa-solid fa-pills"></i></div>
+                                    <div class="feature-label">Asistencia ante pre-existencias</div>
+                                    <div class="feature-value-pill">USD 25.000</div>
+                                </div>
+                            </div>
+                            <a href="#" class="ver-mas-link ver-mas" onclick="abrirDetalles('Maximum'); event.stopPropagation(); return false;">
+                                <i class="fa-regular fa-eye" style="margin-right:4px;"></i>Ver detalles del plan
+                            </a>
+                        </div>
+                        <div class="prod-col-pricing">
+                            <div class="pill-discount" id="max-disc">25% OFF</div>
+                            <div class="price-old-wrapper">
+                                <span class="price-usd-label">USD</span>
+                                <span class="price-old" id="max-ori">264</span>
+                            </div>
+                            <div class="price-new-wrapper">
+                                <span class="price-usd-label-main">USD</span>
+                                <span class="price-new" id="max-fin">198</span>
+                            </div>
+                            <button class="btn-seleccionar" style="margin-top:4px;">Seleccionar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Premium (Exclusive) -->
+                <div class="prod-card" id="card-pre">
+                    <div class="card-tag tag-recomendado">⭐ EL MÁS RECOMENDADO</div>
+                    <div class="prod-row-main">
+                        <div class="prod-col-info">
+                            <div class="plan-name">Exclusive</div>
+                            <div style="font-size:0.6rem; color:#7f8c8d; font-weight:600; margin-top:2px;">Cobertura Vip</div>
+                        </div>
+                        <div class="prod-col-middle">
+                            <div class="prod-col-features">
+                                <div class="feature-item-col">
+                                    <div class="feature-icon"><i class="fa-solid fa-circle-plus"></i></div>
+                                    <div class="feature-label">Asistencia médica</div>
+                                    <div class="feature-value-pill">USD 500.000</div>
+                                </div>
+                                <div class="feature-item-col">
+                                    <div class="feature-icon"><i class="fa-solid fa-suitcase"></i></div>
+                                    <div class="feature-label">Demora de equipaje</div>
+                                    <div class="feature-value-pill">USD 2.500</div>
+                                </div>
+                                <div class="feature-item-col">
+                                    <div class="feature-icon"><i class="fa-solid fa-tooth"></i></div>
+                                    <div class="feature-label">Asistencia odontologica*</div>
+                                    <div class="feature-value-pill">USD 5.000</div>
+                                </div>
+                                <div class="feature-item-col">
+                                    <div class="feature-icon"><i class="fa-solid fa-pills"></i></div>
+                                    <div class="feature-label">Asistencia ante pre-existencias</div>
+                                    <div class="feature-value-pill">USD 30.000</div>
+                                </div>
+                            </div>
+                            <a href="#" class="ver-mas-link ver-mas" onclick="abrirDetalles('Exclusive'); event.stopPropagation(); return false;">
+                                <i class="fa-regular fa-eye" style="margin-right:4px;"></i>Ver detalles del plan
+                            </a>
+                        </div>
+                        <div class="prod-col-pricing">
+                            <div class="pill-discount" id="pre-disc">20% OFF</div>
+                            <div class="price-old-wrapper">
+                                <span class="price-usd-label">USD</span>
+                                <span class="price-old" id="pre-ori">350</span>
+                            </div>
+                            <div class="price-new-wrapper">
+                                <span class="price-usd-label-main">USD</span>
+                                <span class="price-new" id="pre-fin">280</span>
+                            </div>
+                            <button class="btn-seleccionar" style="margin-top:4px;">Seleccionar</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         FOOTER
+         ═══════════════════════════════════════════════════════════════════ -->
+    <footer>
+        <div class="footer-quote-info" id="footer-msg">
+            <div class="footer-badge"><i class="fa-solid fa-circle-check"></i> COTIZACIÓN SELECCIONADA</div>
+            <div style="display:flex; flex-direction:column; line-height:1.2; margin-left:4px;">
+                <span class="footer-plan-name" id="footer-plan-name">Maximum</span>
+                <span class="footer-price" style="font-size:0.72rem;">Total: <strong id="footer-total">USD 385</strong> &nbsp;<span class="footer-discount-tag" id="footer-discount" style="display:inline-flex;">¡Descuento 30%!</span></span>
+            </div>
+        </div>
+        <div class="footer-actions">
+            <button class="btn-action btn-pending" onclick="guardarPendiente()" title="F7">
+                <i class="fa-regular fa-bookmark"></i> [F7] DEJAR PENDIENTE
+            </button>
+            <div class="footer-btn-divider"></div>
+            <button class="btn-action btn-wa-email" onclick="enviarContacto()" title="F8">
+                <span style="display:flex; align-items:center; gap:4px;">
+                    <i class="fa-brands fa-whatsapp" style="font-size:1rem;"></i>
+                    <i class="fa-solid fa-slash" style="font-size:0.5rem; opacity:0.6;"></i>
+                    <i class="fa-solid fa-envelope" style="font-size:0.8rem;"></i>
+                </span>
+                [F8] ENVIAR POR WA / EMAIL
+            </button>
+            <button class="btn-action btn-siebel-pago" onclick="cargarSiebel()" title="F9">
+                <i class="fa-solid fa-upload"></i> [F9] SIEBEL / PAGO
+            </button>
+            <button class="btn-action btn-nueva" onclick="nuevaCotizacion()" title="F10">
+                <i class="fa-solid fa-rotate-left"></i> [F10] NUEVA COTIZACIÓN
+            </button>
+        </div>
+    </footer>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         MODALS
+         ═══════════════════════════════════════════════════════════════════ -->
+
+    <!-- Modal Pago / Sincronización -->
+    <div class="overlay" id="modal">
+        <div style="background:white; padding:30px; border-radius:12px; width:400px; text-align:center;">
+            <h3 id="modal-title" style="margin-bottom:16px; color:#002447;">Esperando...</h3>
+            <div class="spinner" id="modal-spinner"></div>
+            <div id="modal-desc" style="font-size:0.85rem; color:#6c757d;">Procesando...</div>
+        </div>
+    </div>
+
+    <!-- Modal Detalles Cobertura -->
+    <div class="overlay" id="modal-detalles" onclick="cerrarDetalles()">
+        <div class="modal-cobertura" onclick="event.stopPropagation()">
+            <div class="modal-cobertura-header">
+                <h3>Tu plan <strong id="modal-plan-name">MAXIMUM</strong> incluye</h3>
+                <span style="cursor:pointer; font-size:1.5rem; color:#002447;" onclick="cerrarDetalles()">&times;</span>
+            </div>
+            <div class="modal-cobertura-body">
+                <div style="padding: 16px 24px; font-weight:700; color:var(--ua-blue); border-bottom:1px solid #f0f1f3; display:flex; align-items:center; gap:8px;">
+                    ❤️ Asistencia Médica
+                </div>
+                <ul class="striped-list">
+                    <li>Asistencia médica por enfermedad / accidente <strong id="modal-detalles-medica">USD 300.000</strong></li>
+                    <li>Teleasistencia <strong id="modal-detalles-tele">Incluido</strong></li>
+                    <li>Asistencia médica por pre-existencia* <strong id="modal-detalles-preex">USD 25.000</strong></li>
+                    <li>Prótesis y órtesis* <strong id="modal-detalles-protesis">USD 5.000</strong></li>
+                    <li>Asistencia médica en caso de enfermedad nacional <strong id="modal-detalles-nacional">USD 75.000</strong></li>
+                    <li>Gastos de hotel por convalecencia <strong id="modal-detalles-hotel">USD 15.000</strong></li>
+                    <li>Odontología* <strong id="modal-detalles-odonto">USD 3.000</strong></li>
+                    <li>Medicamentos ambulatorio* <strong id="modal-detalles-medicamentos">USD 3.000</strong></li>
+                </ul>
+            </div>
+            <div class="modal-cobertura-footer">
+                <div>
+                    <div style="text-decoration:line-through; font-size:0.75rem; color:#6c757d;" id="modal-old-price">USD 333,00</div>
+                    <div style="font-size:1.4rem; font-weight:800; color:#002447;" id="modal-new-price">USD 216,45</div>
+                </div>
+                <button class="btn-seleccionar" style="background:var(--ua-blue); width:auto; padding: 10px 30px; border-radius: 25px; color: white; font-weight: bold; cursor: pointer; border: none;" onclick="cerrarDetalles()">Seleccionar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         JAVASCRIPT — Motor de Cotización y Lógica de Aplicación
+         ═══════════════════════════════════════════════════════════════════ -->
+    <script src="data-maestros.js"></script>
+    <script src="motor-cotizacion.js"></script>
+    <script src="app.js"></script>
+
+</body>
+</html>
