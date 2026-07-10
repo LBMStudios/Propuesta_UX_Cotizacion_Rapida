@@ -6,6 +6,7 @@
 import '../css/styles.css';
 import { DataRepository } from './data-maestros.js';
 import { MotorCotizacion, PlantillasMsg } from './motor-cotizacion.js';
+import { PlexoService } from './plexo-service.js';
 
 // ── Estado Global ──────────────────────────────────────────────────────
 let pax = { adultos: 1, seniors: 0, menores: 0 };
@@ -302,21 +303,35 @@ function updatePendientesBadge() {
 
 function _buildQuoteData() {
     const nombre = document.getElementById('prospecto-nombre')?.value?.trim() || '';
-    if(!ultimaCotizacion) return { nombre, plan: '', total: '', destino: '', dias: '', totalPax: 0, convenioNombre: null, descuento: 0 };
+    if(!ultimaCotizacion) return { nombre, plan: '', total: '', totalNum: 0, moneda: 'USD', destino: '', dias: '', totalPax: 0, convenioNombre: null, descuento: 0, opcionesAdicionales: [] };
     
     const actProd = ultimaCotizacion.productos_ofrecidos.find(p => p.producto_id === activeCardId);
     const convInfo = activeConvenio ? DataRepository.getConvenioById(activeConvenio) : null;
     const descPct = actProd ? actProd.descuento_porcentaje : 0;
     
+    // Buscar opciones adicionales marcadas para descargar (en downloadQueue)
+    const opcionesAdicionales = [];
+    ultimaCotizacion.productos_ofrecidos.forEach(p => {
+        if (downloadQueue.includes(p.producto_id) && p.producto_id !== activeCardId) {
+            opcionesAdicionales.push({
+                nombre: p.nombre_comercial,
+                total: `USD ${p.importe_cotizado_final}`
+            });
+        }
+    });
+    
     return { 
         nombre, 
         plan: actProd ? actProd.nombre_comercial : '', 
         total: actProd ? `USD ${actProd.importe_cotizado_final}` : '', 
+        totalNum: actProd ? actProd.importe_cotizado_final : 0,
+        moneda: 'USD',
         destino: document.getElementById('destino')?.value || '', 
         dias: ultimaCotizacion.dias, 
         totalPax: ultimaCotizacion.cantidad_pasajeros,
         convenioNombre: convInfo ? convInfo.nombre : null,
-        descuento: descPct
+        descuento: descPct,
+        opcionesAdicionales: opcionesAdicionales
     };
 }
 
@@ -592,11 +607,40 @@ function cerrarDetalles() {
 // ACCIONES Y ATAJOS
 // ========================================================================
 
-function enviarWhatsAppProspecto() {
+async function enviarWhatsAppProspecto() {
     const tel = document.getElementById('prospecto-tel')?.value?.replace(/\D/g,'');
     if (!tel) { alert('Ingresa el teléfono del prospecto primero.'); return; }
     const data = _buildQuoteData();
     if (!data.nombre) { alert('Ingresa el nombre del prospecto primero.'); return; }
+    
+    // Mostrar cargando
+    const modal = document.getElementById('modal');
+    const title = document.getElementById('modal-title');
+    const desc = document.getElementById('modal-desc');
+    const spinner = document.getElementById('modal-spinner');
+    if (modal) {
+        modal.style.display = 'flex';
+        if (spinner) spinner.style.display = 'block';
+        if (title) title.innerText = '💳 Generando Link de Pago...';
+        if (desc) desc.innerText = 'Conectando de forma segura con Plexo...';
+    }
+
+    try {
+        const usarSplit = document.getElementById('usar-split-pago')?.checked || false;
+        const paymentLink = await PlexoService.generarLinkPago({
+            monto: data.totalNum,
+            moneda: data.moneda,
+            prospectoNombre: data.nombre,
+            prospectoEmail: document.getElementById('prospecto-email')?.value?.trim() || '',
+            externalId: ultimaCotizacion?.cotizacion_id,
+            usarSplit: usarSplit
+        });
+        data.linkPago = paymentLink;
+    } catch (e) {
+        console.error('Error generating link:', e);
+    } finally {
+        if (modal) modal.style.display = 'none';
+    }
     
     // Usar plantilla real de ENV-004
     const template = PlantillasMsg.TEMPLATES.COTIZACION_WA;
@@ -605,10 +649,40 @@ function enviarWhatsAppProspecto() {
     window.open(`https://wa.me/598${tel}?text=${encodeURIComponent(mensaje)}`, '_blank');
 }
 
-function enviarEmailProspecto() {
+async function enviarEmailProspecto() {
     const email = document.getElementById('prospecto-email')?.value;
     if (!email) { alert('Ingresá el email del prospecto primero.'); return; }
     const data = _buildQuoteData();
+    if (!data.nombre) { alert('Ingresa el nombre del prospecto primero.'); return; }
+    
+    // Mostrar cargando
+    const modal = document.getElementById('modal');
+    const title = document.getElementById('modal-title');
+    const desc = document.getElementById('modal-desc');
+    const spinner = document.getElementById('modal-spinner');
+    if (modal) {
+        modal.style.display = 'flex';
+        if (spinner) spinner.style.display = 'block';
+        if (title) title.innerText = '💳 Generando Link de Pago...';
+        if (desc) desc.innerText = 'Conectando de forma segura con Plexo...';
+    }
+
+    try {
+        const usarSplit = document.getElementById('usar-split-pago')?.checked || false;
+        const paymentLink = await PlexoService.generarLinkPago({
+            monto: data.totalNum,
+            moneda: data.moneda,
+            prospectoNombre: data.nombre,
+            prospectoEmail: email,
+            externalId: ultimaCotizacion?.cotizacion_id,
+            usarSplit: usarSplit
+        });
+        data.linkPago = paymentLink;
+    } catch (e) {
+        console.error('Error generating link:', e);
+    } finally {
+        if (modal) modal.style.display = 'none';
+    }
     
     // Usar plantilla real de ENV-004
     const template = PlantillasMsg.TEMPLATES.COTIZACION_EMAIL;
@@ -1204,3 +1278,7 @@ window.cerrarDashboard = cerrarDashboard;
 window.renderDashboard = renderDashboard;
 window.filtrarConvenios = filtrarConvenios;
 window.recalcular = recalcular;
+window.enviarWhatsAppProspecto = enviarWhatsAppProspecto;
+window.enviarEmailProspecto = enviarEmailProspecto;
+window.onDownloadCheckboxChange = onDownloadCheckboxChange;
+window.exportarLeadsCSV = exportarLeadsCSV;

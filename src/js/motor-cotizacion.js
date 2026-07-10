@@ -197,7 +197,18 @@ export const PlantillasMsg = {
             id: 'COT_WA_ENVIO',
             canal: 'WhatsApp',
             generar: (data) => {
-                const { nombre, plan, total, destino, dias, totalPax, convenioNombre, descuento } = data;
+                const { nombre, plan, total, destino, dias, totalPax, convenioNombre, descuento, opcionesAdicionales, linkPago } = data;
+                
+                // Formatear opciones adicionales
+                let altLines = '';
+                if (opcionesAdicionales && opcionesAdicionales.length > 0) {
+                    altLines = '\n🔍 *Otras opciones comparadas en propuesta PDF:*' + 
+                        opcionesAdicionales.map(opt => `\n• Plan *${opt.nombre}*: ${opt.total}`).join('') + '\n';
+                }
+
+                // Línea de link de pago Plexo
+                const paymentLine = linkPago ? `\n💳 *Link de Pago Seguro (Plexo):*\n${linkPago}\n` : '';
+
                 const lines = [
                     `Hola *${nombre}*! 👋`,
                     '',
@@ -206,12 +217,12 @@ export const PlantillasMsg = {
                     `🌍 Destino: *${destino}*`,
                     `📅 Días: *${dias}*`,
                     `👥 Pasajeros: *${totalPax}*`,
-                    `📋 Plan: *${plan}*`,
+                    `📋 Plan Seleccionado: *${plan}*`,
                     convenioNombre ? `🏷️ Convenio: *${convenioNombre}* (${descuento}% dto)` : null,
-                    '',
+                    altLines || null,
                     `💰 *TOTAL: ${total}*`,
-                    '',
-                    '✅ Para confirmar tu reserva podés responder este mensaje.',
+                    paymentLine || null,
+                    '✅ Para confirmar tu reserva podés responder este mensaje o realizar el pago en el link de arriba.',
                     '',
                     '📞 Cualquier consulta: *2 9017378*',
                     '',
@@ -224,11 +235,20 @@ export const PlantillasMsg = {
             id: 'COT_EMAIL_ENVIO',
             canal: 'Email',
             generar: (data) => {
-                const { nombre, plan, total, destino, dias, totalPax, convenioNombre, descuento } = data;
-                const convenioLine = convenioNombre ? `\nConvenio: ${convenioNombre} (${descuento}% descuento)\n` : '';
+                const { nombre, plan, total, destino, dias, totalPax, convenioNombre, descuento, opcionesAdicionales, linkPago } = data;
+                const convenioLine = convenioNombre ? `\nConvenio: ${convenioNombre} (${descuento}% descuento)` : '';
+                
+                let altText = '';
+                if (opcionesAdicionales && opcionesAdicionales.length > 0) {
+                    altText = '\nOtras opciones comparadas en propuesta PDF:\n' + 
+                        opcionesAdicionales.map(opt => `- Plan ${opt.nombre}: ${opt.total}`).join('\n') + '\n';
+                }
+
+                const paymentText = linkPago ? `\nLink de Pago Seguro (Plexo) para el plan ${plan}:\n${linkPago}\n` : '';
+
                 return {
                     subject: `Cotización Seguro de Viaje – Plan ${plan} | Universal Assistance`,
-                    body: `Estimado/a ${nombre},\n\nGracias por tenernos en cuenta para brindar nuestros servicios de asistencia en viajes.\n\nLe compartimos su cotización personalizada:\n\nDestino: ${destino}\nDías: ${dias}\nPasajeros: ${totalPax}\nPlan: ${plan}${convenioLine}\nTotal: ${total}\n\nPara confirmar su reserva, comuníquese con su agente al 2 9017378.\n\nSaludos cordiales,\nUniversal Assistance – A Zurich Company`
+                    body: `Estimado/a ${nombre},\n\nGracias por tenernos en cuenta para brindar nuestros servicios de asistencia en viajes.\n\nLe compartimos su cotización personalizada:\n\nDestino: ${destino}\nDías: ${dias}\nPasajeros: ${totalPax}\nPlan Seleccionado: ${plan}${convenioLine}\n${altText}\nTotal: ${total}\n${paymentText}\nPara confirmar su reserva, comuníquese con su agente al 2 9017378 o realice el pago directamente en el link adjunto.\n\nSaludos cordiales,\nUniversal Assistance – A Zurich Company`
                 };
             }
         },
