@@ -57,7 +57,7 @@ const ApiConfig = {
         const payload = {
             fechaSalida: params.fecha_inicio,
             fechaRegreso: params.fecha_fin,
-            cantidadPasajeros: params.pax.adultos + params.pax.mayores + params.pax.menores,
+            cantidadPasajeros: params.pax.adultos + (params.pax.seniors || 0) + params.pax.menores,
             edades: this._buildEdades(params.pax),
             destino: params.destino_nombre,
             agencia: this.AGENCIA.codigo
@@ -124,7 +124,7 @@ const ApiConfig = {
     _buildEdades(pax) {
         const edades = [];
         for (let i = 0; i < pax.adultos; i++) edades.push(35);
-        for (let i = 0; i < pax.mayores; i++) edades.push(72);
+        for (let i = 0; i < (pax.seniors || 0); i++) edades.push(72);
         for (let i = 0; i < pax.menores; i++) edades.push(10);
         return edades;
     },

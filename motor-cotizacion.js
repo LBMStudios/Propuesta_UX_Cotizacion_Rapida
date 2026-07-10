@@ -39,10 +39,9 @@ class MotorCotizacion {
         }
 
         // 4. Resolver elegibilidad por edad (COT-001, Paso 3)
-        // La categoría "mayores" en la UI corresponde a pasajeros 65+.
-        // Si hay pasajeros "mayores", la edad máxima estimada es 71+ (conservador).
-        const edadMaxEstimada = pax.mayores > 0 ? 71 : (pax.adultos > 0 ? 65 : 17);
-        const hayMayores70 = pax.mayores > 0;
+        // Adultos hasta 69, menores hasta 20, y seniors 70+.
+        const edadMaxEstimada = (pax.seniors || 0) > 0 ? 70 : ((pax.adultos || 0) > 0 ? 21 : 17);
+        const hayMayores70 = (pax.seniors || 0) > 0;
 
         // 5. Calcular Precio por Producto
         const productosOfrecidos = productos.map(prod => {
@@ -57,7 +56,7 @@ class MotorCotizacion {
                 elegible = false;
                 motivo_no_elegible = `Límite de edad: ${limiteEdad} años. Pasajero(s) mayor(es) de 70.`;
             }
-            // Productos "Mayores" (edad mínima 71+): NO elegibles si NO hay pasajeros mayores
+            // Productos "Mayores" (edad mínima 70+): NO elegibles si NO hay pasajeros mayores
             if (edadMinima > 0 && !hayMayores70) {
                 elegible = false;
                 motivo_no_elegible = `Solo disponible para pasajeros de ${edadMinima}+ años.`;
@@ -69,14 +68,14 @@ class MotorCotizacion {
 
             let precioTotalOriginal = 0;
             
-            // Adultos 18-64 (Factor 1.0)
-            precioTotalOriginal += (tarifaMinimaAdulto * 1.0) * pax.adultos;
+            // Adultos hasta 69 (Factor 1.0)
+            precioTotalOriginal += (tarifaMinimaAdulto * 1.0) * (pax.adultos || 0);
             
-            // Mayores +65 (Factor 1.5 — COT-001: recargo por edad)
-            precioTotalOriginal += (tarifaMinimaAdulto * 1.5) * pax.mayores;
+            // Seniors 70+ (Factor 1.5 — recargo por edad)
+            precioTotalOriginal += (tarifaMinimaAdulto * 1.5) * (pax.seniors || 0);
             
-            // Menores hasta 17 (Factor 0.65 — descuento menores)
-            precioTotalOriginal += (tarifaMinimaAdulto * 0.65) * pax.menores;
+            // Menores hasta 20 (Factor 0.65 — descuento menores)
+            precioTotalOriginal += (tarifaMinimaAdulto * 0.65) * (pax.menores || 0);
 
             // ── DESCUENTOS DE CONVENIO ──
             let descuentoPorcentaje = 0;
@@ -90,7 +89,7 @@ class MotorCotizacion {
             // ── ADICIONALES ──
             let precioAdicionales = 0;
             let extrasSnapshot = [];
-            const totalPax = pax.adultos + pax.mayores + pax.menores;
+            const totalPax = (pax.adultos || 0) + (pax.seniors || 0) + (pax.menores || 0);
             
             if (adicionales_ids && adicionales_ids.length > 0) {
                 adicionales_ids.forEach(addId => {
@@ -156,7 +155,7 @@ class MotorCotizacion {
             fecha_inicio: fecha_inicio,
             fecha_fin: fecha_fin,
             dias: parseInt(dias) || 1,
-            cantidad_pasajeros: pax.adultos + pax.mayores + pax.menores,
+            cantidad_pasajeros: (pax.adultos || 0) + (pax.seniors || 0) + (pax.menores || 0),
             pasajeros: { ...pax },
             convenio_id: convenio ? convenio.convenio_id : null,
             productos_ofrecidos: productosOfrecidos,

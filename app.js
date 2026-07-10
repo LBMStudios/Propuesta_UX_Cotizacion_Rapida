@@ -4,7 +4,7 @@
    ======================================================================== */
 
 // ── Estado Global ──────────────────────────────────────────────────────
-let pax = { adultos: 1, mayores: 1, menores: 0 };
+let pax = { adultos: 1, seniors: 0, menores: 0 };
 let activeConvenio = null; // Guardará el ID del convenio de la BD (ej. 'SEMM_UY')
 let activeCardId = 'MAXIMUM_300K'; // Default a Maximum
 let downloadQueue = []; // Cola de descarga de cotizaciones
@@ -41,7 +41,7 @@ let ultimaCotizacion = null;
 // ========================================================================
 
 function recalcular() {
-    const totalPax = pax.adultos + pax.mayores + pax.menores;
+    const totalPax = pax.adultos + pax.seniors + pax.menores;
     if (totalPax === 0) return;
 
     const diasEl = document.getElementById('dias');
@@ -183,7 +183,7 @@ function renderAlertas(alertas) {
         if (footer) {
             container = document.createElement('div');
             container.id = 'alertas-container';
-            container.style.cssText = 'padding:0 12px; display:flex; flex-direction:column; gap:4px;';
+            container.style.cssText = 'padding:0 12px; display:flex; flex-direction:column; gap:4px; margin-bottom:6px;';
             footer.parentNode.insertBefore(container, footer);
         }
     }
@@ -197,12 +197,10 @@ function renderAlertas(alertas) {
 
     container.style.display = 'flex';
     container.innerHTML = alertas.map(a => {
-        const colors = a.severidad === 'WARNING' 
-            ? 'background:#fff3cd;border:1px solid #ffc107;color:#856404;' 
-            : 'background:#d1ecf1;border:1px solid #17a2b8;color:#0c5460;';
-        const icon = a.severidad === 'WARNING' ? '⚠️' : '💡';
-        return `<div style="${colors} padding:6px 10px; border-radius:8px; font-size:0.65rem; line-height:1.3;">
-            ${icon} ${a.mensaje}
+        const alertClass = a.severidad === 'WARNING' ? 'alert-warning' : 'alert-info';
+        const icon = a.severidad === 'WARNING' ? '<i class="fa-solid fa-triangle-exclamation"></i>' : '<i class="fa-solid fa-lightbulb"></i>';
+        return `<div class="alert-box ${alertClass}">
+            ${icon} <span>${a.mensaje}</span>
         </div>`;
     }).join('');
 }
@@ -388,18 +386,7 @@ document.querySelectorAll('.prod-card').forEach(card => {
 });
 
 // CONVENIOS
-function toggleConvenio(convenioDbId) {
-    document.querySelectorAll('.convenio-logo').forEach(c => c.classList.remove('active'));
-    
-    if (activeConvenio === convenioDbId) {
-        activeConvenio = null;
-    } else {
-        activeConvenio = convenioDbId;
-        const el = document.getElementById(`conv-${convenioDbId}`);
-        if(el) el.classList.add('active');
-    }
-    
-    // Update convenio message
+function updateConvenioMsg() {
     const msgEl = document.getElementById('convenio-msg');
     if (msgEl) {
         if (activeConvenio) {
@@ -415,7 +402,106 @@ function toggleConvenio(convenioDbId) {
             msgEl.innerHTML = 'Selecciona un convenio para ver descuentos';
         }
     }
+}
+
+function syncDropdowns() {
+    const orgSelect = document.getElementById('org-emisora');
+    const tarjetaSelect = document.getElementById('tarjeta-credito');
+    
+    if (orgSelect) orgSelect.value = '';
+    if (tarjetaSelect) tarjetaSelect.value = '';
+    
+    if (activeConvenio) {
+        const reverseMapping = {
+            'SEMM_UY': 'semm',
+            'SEMM_CALL_UY': 'semm_call',
+            'CASMU_UY': 'casmu',
+            'SMI_UY': 'smi',
+            'OCA_UY': 'oca',
+            'ITAU_UY': 'itau',
+            'H_EVANG_UY': 'h_evang',
+            'MP_UY': 'mp',
+            'ASOC_ESP_UY': 'asoc_esp',
+            'SUMMUM_UY': 'summum',
+            'AMECOM_UY': 'amecom',
+            'AMSJ_UY': 'amsj',
+            'COMERO_UY': 'comero',
+            'SAPP_UY': 'sapp',
+            'SAT_UY': 'sat',
+            'SEG_AMER_UY': 'seg_amer',
+            'BBVA_UY': 'bbva'
+        };
+        const orgVal = reverseMapping[activeConvenio];
+        if (orgVal && orgSelect) {
+            orgSelect.value = orgVal;
+        } else if (activeConvenio === 'MASTER_UY' && tarjetaSelect) {
+            tarjetaSelect.value = 'mastercard';
+        }
+    } else {
+        if (orgSelect) orgSelect.value = 'surview';
+    }
+}
+
+function selectConvenio(convenioDbId) {
+    activeConvenio = convenioDbId === 'FOLLETO' ? null : convenioDbId;
+    renderConveniosGrid();
+    
+    syncDropdowns();
+    updateConvenioMsg();
     recalcular();
+}
+
+function toggleConvenio(convenioDbId) {
+    if (activeConvenio === convenioDbId) {
+        activeConvenio = null;
+    } else {
+        activeConvenio = convenioDbId;
+    }
+    renderConveniosGrid();
+    
+    syncDropdowns();
+    updateConvenioMsg();
+    recalcular();
+}
+
+function onOrgChange(value) {
+    if (!value || value === 'surview') {
+        selectConvenio('FOLLETO');
+        return;
+    }
+    const mapping = {
+        'semm': 'SEMM_UY',
+        'semm_call': 'SEMM_CALL_UY',
+        'casmu': 'CASMU_UY',
+        'smi': 'SMI_UY',
+        'oca': 'OCA_UY',
+        'itau': 'ITAU_UY',
+        'h_evang': 'H_EVANG_UY',
+        'mp': 'MP_UY',
+        'asoc_esp': 'ASOC_ESP_UY',
+        'summum': 'SUMMUM_UY',
+        'amecom': 'AMECOM_UY',
+        'amsj': 'AMSJ_UY',
+        'comero': 'COMERO_UY',
+        'sapp': 'SAPP_UY',
+        'sat': 'SAT_UY',
+        'seg_amer': 'SEG_AMER_UY',
+        'bbva': 'BBVA_UY'
+    };
+    const convId = mapping[value];
+    if (convId) {
+        selectConvenio(convId);
+    }
+}
+
+function onTarjetaChange(value) {
+    if (value === 'mastercard') {
+        selectConvenio('MASTER_UY');
+    } else {
+        if (!value) {
+            selectConvenio('FOLLETO');
+        }
+    }
 }
 
 function filtrarConvenios() {
@@ -562,13 +648,23 @@ function nuevaCotizacion() {
     document.getElementById('prospecto-nombre').value = '';
     document.getElementById('prospecto-tel').value    = '';
     document.getElementById('prospecto-email').value  = '';
-    pax = { adultos: 1, mayores: 0, menores: 0 };
-    ['adultos','mayores','menores'].forEach(k => {
+    pax = { adultos: 1, seniors: 0, menores: 0 };
+    ['adultos','seniors','menores'].forEach(k => {
         const el = document.getElementById(`pax-${k}`);
         if (el) el.innerText = pax[k];
     });
     activeConvenio = null;
-    document.querySelectorAll('.convenio-logo').forEach(el => el.classList.remove('active'));
+    mostrarTodosConvenios = false;
+    renderConveniosGrid();
+    
+    // Resetear selectores de convenios en la UI
+    const orgSelect = document.getElementById('org-emisora');
+    const tarjetaSelect = document.getElementById('tarjeta-credito');
+    if (orgSelect) orgSelect.value = 'surview';
+    if (tarjetaSelect) tarjetaSelect.value = '';
+    const msgEl = document.getElementById('convenio-msg');
+    if (msgEl) msgEl.innerHTML = 'Selecciona un convenio para ver descuentos';
+    
     document.querySelectorAll('.extra-cbx').forEach(cb => cb.checked = false);
     
     // Resetear cola de descarga y checkboxes
@@ -591,21 +687,44 @@ window.addEventListener('keydown', function(e) {
 // RENDER DINÁMICO DE CONVENIOS (desde data-maestros.js)
 // ========================================================================
 
+let mostrarTodosConvenios = false;
+
 function renderConveniosGrid() {
     const grid = document.getElementById('convenios-grid');
     if (!grid) return;
     
     const convenios = DataRepository.getConvenios().filter(c => c.convenio_id !== 'FOLLETO');
     
-    grid.innerHTML = convenios.map(conv => {
+    // Si hay un convenio activo que no está entre los primeros 6, forzar expansión para mostrarlo
+    if (activeConvenio) {
+        const indexActivo = convenios.findIndex(c => c.convenio_id === activeConvenio);
+        if (indexActivo >= 6) {
+            mostrarTodosConvenios = true;
+        }
+    }
+    
+    const conveniosAMostrar = mostrarTodosConvenios ? convenios : convenios.slice(0, 6);
+    
+    grid.innerHTML = conveniosAMostrar.map(conv => {
         const style = CONVENIO_STYLES[conv.tipo_convenio] || CONVENIO_STYLES['DIRECTO'];
-        const capitaDot = conv.tiene_capita ? '<span style="position:absolute;top:2px;right:3px;width:5px;height:5px;background:#27ae60;border-radius:50;"></span>' : '';
-        return `<div class="convenio-logo" id="conv-${conv.convenio_id}" 
+        const capitaDot = conv.tiene_capita ? '<span style="position:absolute;top:2px;right:3px;width:5px;height:5px;background:#27ae60;border-radius:50%"></span>' : '';
+        const activeClass = activeConvenio === conv.convenio_id ? 'active' : '';
+        return `<div class="convenio-logo ${activeClass}" id="conv-${conv.convenio_id}" 
                      onclick="toggleConvenio('${conv.convenio_id}')" 
                      style="background:${style.bg}; color:${style.color}; border:1px solid ${style.border}; position:relative; font-size:0.58rem;">
                     ${capitaDot}${conv.nombre}
                 </div>`;
     }).join('');
+    
+    const btn = document.getElementById('btn-toggle-convenios');
+    if (btn) {
+        btn.textContent = mostrarTodosConvenios ? 'VER CONVENIOS PRINCIPALES' : 'VER TODOS LOS CONVENIOS';
+    }
+}
+
+function toggleMostrarTodosConvenios() {
+    mostrarTodosConvenios = !mostrarTodosConvenios;
+    renderConveniosGrid();
 }
 
 // ========================================================================

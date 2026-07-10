@@ -97,7 +97,7 @@ const dbProductos = [
         nombre_comercial: 'Value Preex 7 Mayores', familia: 'Value',
         tipo_producto: 'DIARIO', cobertura_principal_usd: 80000,
         tarifa_diaria_base: 8.5, tarifa_minima: 65,
-        limite_edad: 999, edad_minima: 71,
+        limite_edad: 999, edad_minima: 70,
         ambito: 'Internacional',
         activo: true, vigencia_desde: '2022-03-01', fuente: 'CAT-001_VALUE_PREEX_7_MAYORES_03-22.pdf'
     },

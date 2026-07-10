@@ -54,38 +54,38 @@
             <div class="card" style="flex:1; display:flex; flex-direction:column; gap:6px;">
 
                 <!-- Datos del Prospecto -->
-                <div style="background: rgba(0, 90, 239, 0.04); border: 1px solid rgba(0, 90, 239, 0.12); border-radius: 10px; padding: 6px 8px;">
-                    <div style="font-size: 0.6rem; font-weight: 800; color: #002447; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 5px; display: flex; align-items: center; gap: 4px;">
+                <div style="background: rgba(0, 90, 239, 0.04); border: 1px solid rgba(0, 90, 239, 0.12); border-radius: 10px; padding: 4px 6px;">
+                    <div style="font-size: 0.6rem; font-weight: 800; color: #002447; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 4px; display: flex; align-items: center; gap: 4px;">
                         <i class="fa-solid fa-address-card" style="color:var(--ua-blue); font-size:0.6rem;"></i> Datos del Prospecto
                     </div>
-                    <div style="display:flex; flex-direction:column; gap:5px;">
+                    <div style="display:flex; flex-direction:column; gap:4px;">
                         <div style="position: relative; display: flex; align-items: center;">
                             <i class="fa-solid fa-user" style="position: absolute; left: 9px; color: #005AEF; font-size: 0.65rem; pointer-events: none; z-index: 5;"></i>
-                            <input type="text" id="prospecto-nombre" placeholder="Nombre (Ej: Juan Pérez)" style="padding-left: 24px; border-radius: 20px; font-size: 0.68rem; height: 24px; width: 100%; border: 1px solid #cbd5e1; background: white;">
+                            <input type="text" id="prospecto-nombre" placeholder="Nombre (Ej: Juan Pérez)" style="padding-left: 24px;">
                         </div>
                         <div style="display:flex; align-items:center; gap:4px;">
                             <div style="position: relative; display: flex; align-items: center; flex: 1;">
                                 <i class="fa-solid fa-phone" style="position: absolute; left: 9px; color: #005AEF; font-size: 0.65rem; pointer-events: none; z-index: 5;"></i>
-                                <input type="text" id="prospecto-tel" placeholder="Tel (Ej: 099 123 456)" style="padding-left: 24px; border-radius: 20px; font-size: 0.68rem; height: 24px; width: 100%; border: 1px solid #cbd5e1; background: white;">
+                                <input type="text" id="prospecto-tel" placeholder="Tel (Ej: 099 123 456)" style="padding-left: 24px;">
                             </div>
-                            <button onclick="enviarWhatsAppProspecto()" title="WhatsApp" style="flex-shrink:0; background:#25D366; border:none; border-radius:50%; width:22px; height:22px; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:0.2s; box-shadow: 0 2px 6px rgba(37,211,102,0.35);" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
-                                <i class="fa-brands fa-whatsapp" style="color:white; font-size:0.8rem;"></i>
+                            <button onclick="enviarWhatsAppProspecto()" title="WhatsApp" style="flex-shrink:0; background:#25D366; border:none; border-radius:50%; width:24px; height:24px; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:0.2s; box-shadow: 0 2px 6px rgba(37,211,102,0.35);" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                                <i class="fa-brands fa-whatsapp" style="color:white; font-size:0.85rem;"></i>
                             </button>
                         </div>
                         <div style="display:flex; align-items:center; gap:4px;">
                             <div style="position: relative; display: flex; align-items: center; flex: 1;">
                                 <i class="fa-solid fa-envelope" style="position: absolute; left: 9px; color: #005AEF; font-size: 0.65rem; pointer-events: none; z-index: 5;"></i>
-                                <input type="email" id="prospecto-email" placeholder="Email (Ej: j.perez@mail.com)" style="padding-left: 24px; border-radius: 20px; font-size: 0.68rem; height: 24px; width: 100%; border: 1px solid #cbd5e1; background: white;">
+                                <input type="email" id="prospecto-email" placeholder="Email (Ej: j.perez@mail.com)" style="padding-left: 24px;">
                             </div>
-                            <button onclick="enviarEmailProspecto()" title="Email" style="flex-shrink:0; background:#005AEF; border:none; border-radius:50%; width:22px; height:22px; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:0.2s; box-shadow: 0 2px 6px rgba(0,90,239,0.3);" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
-                                <i class="fa-solid fa-paper-plane" style="color:white; font-size:0.65rem;"></i>
+                            <button onclick="enviarEmailProspecto()" title="Email" style="flex-shrink:0; background:#005AEF; border:none; border-radius:50%; width:24px; height:24px; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:0.2s; box-shadow: 0 2px 6px rgba(0,90,239,0.3);" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                                <i class="fa-solid fa-paper-plane" style="color:white; font-size:0.7rem;"></i>
                             </button>
                         </div>
                     </div>
                 </div>
 
                 <!-- Viaje -->
-                <div style="border: 1px solid rgba(0, 90, 239, 0.1); border-radius: 10px; padding: 6px 8px; background: rgba(255,255,255,0.5); display: flex; flex-direction: column; gap: 5px;">
+                <div style="border: 1px solid rgba(0, 90, 239, 0.1); border-radius: 10px; padding: 4px 6px; background: rgba(255,255,255,0.5); display: flex; flex-direction: column; gap: 4px;">
                     <div style="font-size:0.6rem; font-weight:800; color:#002447; text-transform:uppercase; letter-spacing:0.4px; display:flex; align-items:center; gap:4px;">
                         <i class="fa-solid fa-plane" style="color:#005AEF; font-size:0.6rem;"></i> Viaje
                     </div>
@@ -93,7 +93,7 @@
                     <!-- Destino -->
                     <div style="display:flex; flex-direction:column; gap:1px;">
                         <span style="font-size:0.55rem; font-weight:700; color:#64748b; margin-left:3px;">Destino</span>
-                        <select id="destino" style="background:white; height:24px; border-radius:20px; font-size:0.68rem; padding:1px 8px; border:1px solid #cbd5e1;">
+                        <select id="destino">
                             <option>Argentina</option>
                             <option>Centroamérica y Caribe (excepto Cuba*)</option>
                             <option selected>Europa*</option>
@@ -109,26 +109,26 @@
                     <!-- Tipo de viaje -->
                     <div style="display:flex; flex-direction:column; gap:1px;">
                         <span style="font-size:0.55rem; font-weight:700; color:#64748b; margin-left:3px;">Tipo de viaje</span>
-                        <div class="btn-group" style="padding: 2px;">
-                            <button class="btn-toggle active" style="font-size: 0.62rem; padding: 3px 0;">Vacaciones</button>
-                            <button class="btn-toggle" style="font-size: 0.62rem; padding: 3px 0;">Trabajo</button>
-                            <button class="btn-toggle" style="font-size: 0.62rem; padding: 3px 0;">Estudios</button>
+                        <div class="btn-group">
+                            <button class="btn-toggle active">Vacaciones</button>
+                            <button class="btn-toggle">Trabajo</button>
+                            <button class="btn-toggle">Estudios</button>
                         </div>
                     </div>
 
                     <!-- Fechas + Días -->
-                    <div style="display:flex; gap:4px; align-items:center;">
-                        <div style="flex:1.2; min-width:0; background:white; border: 1px solid #cbd5e1; border-radius: 16px; padding: 1px 6px; display:flex; flex-direction:column;">
-                            <span style="font-size:0.5rem; color:#64748b; font-weight:600;">Salida</span>
-                            <input type="date" id="salida" value="2026-06-01" style="border:none; padding:0; font-size:0.65rem; background:transparent; height:16px;">
+                    <div style="display:flex; gap:6px;">
+                        <div style="flex:1; display:flex; flex-direction:column; gap:1px;">
+                            <span style="font-size:0.55rem; font-weight:700; color:#64748b; margin-left:3px;">Salida</span>
+                            <input type="date" id="salida" value="2026-06-01">
                         </div>
-                        <div style="flex:1.2; min-width:0; background:white; border: 1px solid #cbd5e1; border-radius: 16px; padding: 1px 6px; display:flex; flex-direction:column;">
-                            <span style="font-size:0.5rem; color:#64748b; font-weight:600;">Regreso</span>
-                            <input type="date" id="regreso" value="2026-06-11" style="border:none; padding:0; font-size:0.65rem; background:transparent; height:16px;">
+                        <div style="flex:1; display:flex; flex-direction:column; gap:1px;">
+                            <span style="font-size:0.55rem; font-weight:700; color:#64748b; margin-left:3px;">Regreso</span>
+                            <input type="date" id="regreso" value="2026-06-11">
                         </div>
-                        <div style="flex:0.6; display:flex; flex-direction:column; align-items:center; flex-shrink:0;">
-                            <span style="font-size:0.5rem; color:#64748b; font-weight:600;">Días</span>
-                            <input type="number" id="dias" value="10" min="1" max="365" style="width:36px; padding:0 2px; border:1px solid #b3d4ff; border-radius:8px; text-align:center; font-size:0.68rem; font-weight:800; color:#002447; background:white; height:18px;" oninput="onDiasInput()">
+                        <div style="flex:0.5; display:flex; flex-direction:column; gap:1px;">
+                            <span style="font-size:0.55rem; font-weight:700; color:#64748b; margin-left:3px; text-align:center;">Días</span>
+                            <input type="number" id="dias" value="10" min="1" max="365" oninput="onDiasInput()" style="text-align:center; font-weight:700;">
                         </div>
                     </div>
 
@@ -137,32 +137,32 @@
                         <span style="font-size:0.55rem; font-weight:700; color:#64748b; margin-left:3px;">Pasajeros</span>
                         
                         <!-- Adultos -->
-                        <div style="display:flex; align-items:center; justify-content:space-between; background:white; border:1px solid #cbd5e1; border-radius:20px; padding:2px 8px; height:24px;">
-                            <span style="font-size:0.62rem; font-weight:600; color:#002447;">Adultos <small style="color:#64748b; font-size:0.52rem; font-weight:normal;">(hasta 64)</small></span>
-                            <div style="display:flex; align-items:center; gap:6px;">
-                                <button onclick="updatePax('adultos',-1)" style="border:none; background:none; color:var(--ua-blue); font-weight:bold; cursor:pointer; font-size:0.8rem; padding:0; line-height:1; width:14px; height:14px; display:flex; align-items:center; justify-content:center;">−</button>
-                                <span id="pax-adultos" style="font-size:0.7rem; font-weight:800; color:#002447; min-width:12px; text-align:center;">1</span>
-                                <button onclick="updatePax('adultos',1)" style="border:none; background:none; color:var(--ua-blue); font-weight:bold; cursor:pointer; font-size:0.8rem; padding:0; line-height:1; width:14px; height:14px; display:flex; align-items:center; justify-content:center;">+</button>
+                        <div class="pax-row">
+                            <span class="pax-label">Adultos <small>(hasta 69)</small></span>
+                            <div class="pax-controls">
+                                <button onclick="updatePax('adultos',-1)" class="pax-btn">−</button>
+                                <span id="pax-adultos" class="pax-count">1</span>
+                                <button onclick="updatePax('adultos',1)" class="pax-btn">+</button>
                             </div>
                         </div>
-                        
-                        <!-- Mayores (+65) -->
-                        <div style="display:flex; align-items:center; justify-content:space-between; background:white; border:1px solid #cbd5e1; border-radius:20px; padding:2px 8px; height:24px;">
-                            <span style="font-size:0.62rem; font-weight:600; color:#002447;">Mayores <small style="color:#64748b; font-size:0.52rem; font-weight:normal;">(+65)</small></span>
-                            <div style="display:flex; align-items:center; gap:6px;">
-                                <button onclick="updatePax('mayores',-1)" style="border:none; background:none; color:var(--ua-blue); font-weight:bold; cursor:pointer; font-size:0.8rem; padding:0; line-height:1; width:14px; height:14px; display:flex; align-items:center; justify-content:center;">−</button>
-                                <span id="pax-mayores" style="font-size:0.7rem; font-weight:800; color:#002447; min-width:12px; text-align:center;">1</span>
-                                <button onclick="updatePax('mayores',1)" style="border:none; background:none; color:var(--ua-blue); font-weight:bold; cursor:pointer; font-size:0.8rem; padding:0; line-height:1; width:14px; height:14px; display:flex; align-items:center; justify-content:center;">+</button>
+
+                        <!-- Seniors (70+) -->
+                        <div class="pax-row">
+                            <span class="pax-label">Seniors <small>(70 o más)</small></span>
+                            <div class="pax-controls">
+                                <button onclick="updatePax('seniors',-1)" class="pax-btn">−</button>
+                                <span id="pax-seniors" class="pax-count">0</span>
+                                <button onclick="updatePax('seniors',1)" class="pax-btn">+</button>
                             </div>
                         </div>
-                        
+
                         <!-- Menores -->
-                        <div style="display:flex; align-items:center; justify-content:space-between; background:white; border:1px solid #cbd5e1; border-radius:20px; padding:2px 8px; height:24px;">
-                            <span style="font-size:0.62rem; font-weight:600; color:#002447;">Menores <small style="color:#64748b; font-size:0.52rem; font-weight:normal;">(hasta 17)</small></span>
-                            <div style="display:flex; align-items:center; gap:6px;">
-                                <button onclick="updatePax('menores',-1)" style="border:none; background:none; color:var(--ua-blue); font-weight:bold; cursor:pointer; font-size:0.8rem; padding:0; line-height:1; width:14px; height:14px; display:flex; align-items:center; justify-content:center;">−</button>
-                                <span id="pax-menores" style="font-size:0.7rem; font-weight:800; color:#002447; min-width:12px; text-align:center;">0</span>
-                                <button onclick="updatePax('menores',1)" style="border:none; background:none; color:var(--ua-blue); font-weight:bold; cursor:pointer; font-size:0.8rem; padding:0; line-height:1; width:14px; height:14px; display:flex; align-items:center; justify-content:center;">+</button>
+                        <div class="pax-row">
+                            <span class="pax-label">Menores <small>(hasta 20)</small></span>
+                            <div class="pax-controls">
+                                <button onclick="updatePax('menores',-1)" class="pax-btn">−</button>
+                                <span id="pax-menores" class="pax-count">0</span>
+                                <button onclick="updatePax('menores',1)" class="pax-btn">+</button>
                             </div>
                         </div>
                     </div>
@@ -174,7 +174,7 @@
         <div class="column">
             <div class="col-title">2. Convenio y Descuentos</div>
             <div class="card" style="flex:1; display:flex; flex-direction:column; gap:6px;">
-                <button class="btn-outline-blue" style="padding:5px 0; font-size:0.7rem;">VER CONVENIOS ACTIVOS</button>
+                <button class="btn-outline-blue" id="btn-toggle-convenios" onclick="toggleMostrarTodosConvenios()" style="padding:5px 0; font-size:0.7rem;">VER TODOS LOS CONVENIOS</button>
                 
                 <div class="convenios-grid" id="convenios-grid">
                     <!-- Se generan dinámicamente desde data-maestros.js -->
@@ -187,14 +187,14 @@
                 <!-- Buscar Convenio -->
                 <div style="display:flex; flex-direction:column; gap:1px;">
                     <span style="font-size:0.55rem; font-weight:700; color:#64748b; margin-left:4px;">Buscar convenio</span>
-                    <input type="text" placeholder="🔍 Escribe para buscar..." oninput="filtrarConvenios()" style="background:white; border-radius:20px; padding:4px 12px; font-size:0.68rem; border:1px solid #cbd5e1; height:24px;">
+                    <input type="text" placeholder="🔍 Escribe para buscar..." oninput="filtrarConvenios()">
                 </div>
 
                 <!-- Tarjetas + Org en fila -->
                 <div style="display:flex; gap:4px;">
                     <div style="flex:1; display:flex; flex-direction:column; gap:1px;">
                         <span style="font-size:0.55rem; font-weight:700; color:#64748b; margin-left:4px;">Tarjeta de crédito</span>
-                        <select id="tarjeta-credito" onchange="onTarjetaChange(this.value)" style="background:white; height:24px; border-radius:20px; font-size:0.65rem; padding:1px 6px; border:1px solid #cbd5e1;">
+                        <select id="tarjeta-credito" onchange="onTarjetaChange(this.value)">
                             <option value="">💳 Seleccionar</option>
                             <option value="visa">Visa</option>
                             <option value="mastercard">Mastercard</option>
@@ -203,7 +203,7 @@
                     </div>
                     <div style="flex:1; display:flex; flex-direction:column; gap:1px;">
                         <span style="font-size:0.55rem; font-weight:700; color:#64748b; margin-left:4px;">Organización emisora</span>
-                        <select id="org-emisora" onchange="onOrgChange(this.value)" style="background:white; height:24px; border-radius:20px; font-size:0.65rem; padding:1px 6px; border:1px solid #cbd5e1;">
+                        <select id="org-emisora" onchange="onOrgChange(this.value)">
                             <option value="">📍 Seleccionar</option>
                             <option value="surview">Surview (Directa)</option>
                             <option value="semm">SEMM</option>
