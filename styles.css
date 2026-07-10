@@ -4,20 +4,24 @@
 
 /* ── Design Tokens ─────────────────────────────────────────────────────── */
 :root {
-    --ua-navy: #002447;
-    --ua-blue: #005AEF;
-    --ua-blue-hover: #0046cd;
-    --ua-light-blue: #e6f3fa;
-    --ua-border-light: #b3d4ff;
-    --ua-cyan-start: #eef3f7;
-    --ua-cyan-end: #eef3f7;
-    --ua-footer: #002A67;
+    --ua-navy: #002B5C; /* Real PDP Navy */
+    --ua-blue: #0A4C8A; /* Real PDP Intermediate Blue */
+    --ua-blue-hover: #002060;
+    --ua-light-blue: #EAF3F4; /* Real PDP Light background */
+    --ua-cyan: #09B7C7; /* Accent Turquoise/Cyan */
+    --ua-cyan-hover: #11B8C5;
+    --ua-pink: #FF436E; /* Coral/Zurich Pink of state and progress */
+    --ua-border-light: #C9D2D8; /* Real gray border */
+    --ua-border-muted: #AAB5BF;
+    --ua-cyan-start: #EAF3F4;
+    --ua-cyan-end: #FFFFFF;
+    --ua-footer: #002B5C;
     --surface: #ffffff;
-    --text-main: #002447;
+    --text-main: #002B5C;
     --text-muted: #7f8c8d;
     --success: #22c55e;
-    --border: #d9d9d9;
-    --card-shadow: 0px 2px 8px rgba(0, 0, 0, 0.04);
+    --border: #C9D2D8;
+    --card-shadow: 0px 4px 16px rgba(0, 43, 92, 0.08);
     --border-radius: 16px;
 }
 
@@ -25,7 +29,7 @@
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
 
 body {
-    background: linear-gradient(160deg, #e8edf5 0%, #dce6f0 40%, #e4eaf4 100%);
+    background: #EAF3F4;
     color: var(--text-main);
     height: 100vh;
     display: flex;
@@ -41,7 +45,7 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 3px solid #E40046;
+    border-bottom: 3px solid var(--ua-pink);
 }
 
 .header-left {
@@ -938,4 +942,111 @@ footer {
 @keyframes fadeInEdad {
     from { opacity: 0; transform: translateY(-4px); }
     to   { opacity: 1; transform: translateY(0); }
+}
+
+
+
+/* ── Barra de Descarga Múltiple ────────────────────────────────────────── */
+.barra-descarga {
+    position: fixed;
+    bottom: 52px;
+    left: 12px;
+    right: 12px;
+    background: #ffffff;
+    border-radius: 12px 12px 0 0;
+    box-shadow: 0 -4px 20px rgba(0, 43, 92, 0.12);
+    border: 1px solid var(--border);
+    border-bottom: none;
+    z-index: 90;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    transform: translateY(calc(100% + 60px));
+    overflow: hidden;
+}
+.barra-descarga.visible {
+    transform: translateY(0);
+}
+.barra-descarga.expandida .barra-descarga-content {
+    display: flex;
+}
+.barra-descarga.colapsada .barra-descarga-content {
+    display: none;
+}
+.barra-descarga-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 16px;
+    background: #fff0f3;
+    cursor: pointer;
+    border-bottom: 1px solid #ffd1dc;
+}
+.barra-descarga-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    gap: 16px;
+    background: #ffffff;
+}
+.descarga-items {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    flex: 1;
+}
+.descarga-item-pill {
+    background: var(--ua-light-blue);
+    border: 1px solid var(--ua-border-light);
+    color: var(--ua-navy);
+    padding: 3px 8px;
+    border-radius: 20px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.descarga-item-pill .remove-item {
+    cursor: pointer;
+    color: #e11d48;
+    font-weight: bold;
+    font-size: 0.75rem;
+}
+.descarga-actions {
+    display: flex;
+    gap: 8px;
+}
+.btn-descargar-pdf {
+    background-color: var(--ua-pink);
+    color: white;
+    border: none;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.btn-descargar-pdf:hover {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(255, 67, 110, 0.3);
+}
+
+/* Custom styles for descarga checkboxes */
+.descarga-cb {
+    accent-color: var(--ua-pink);
+    cursor: pointer;
+    width: 12px;
+    height: 12px;
+}
+.descarga-checkbox-label {
+    user-select: none;
+    transition: color 0.2s;
+}
+.descarga-checkbox-label:hover {
+    color: var(--ua-pink) !important;
 }

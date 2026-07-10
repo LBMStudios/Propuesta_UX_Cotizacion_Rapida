@@ -7,6 +7,8 @@
 let pax = { adultos: 1, mayores: 1, menores: 0 };
 let activeConvenio = null; // Guardará el ID del convenio de la BD (ej. 'SEMM_UY')
 let activeCardId = 'MAXIMUM_300K'; // Default a Maximum
+let downloadQueue = []; // Cola de descarga de cotizaciones
+
 
 // IDs de los 3 productos que se muestran en las tarjetas de la UI
 const DISPLAY_PRODUCTS = ['VALUE_80K', 'MAXIMUM_300K', 'EXCLUSIVE_500K'];
@@ -103,9 +105,8 @@ function renderUI(cotizacion) {
         // ── ELEGIBILIDAD POR EDAD ──
         if (cardEl) {
             if (!prod.elegible) {
-                cardEl.style.opacity = '0.45';
-                cardEl.style.pointerEvents = 'none';
-                // Agregar badge de no elegible si no existe
+                cardEl.style.opacity = '0.5';
+                // NO bloqueamos pointer-events: el vendedor debe poder ver coberturas
                 let badge = cardEl.querySelector('.age-badge');
                 if (!badge) {
                     badge = document.createElement('div');
@@ -118,7 +119,6 @@ function renderUI(cotizacion) {
                 badge.style.display = 'block';
             } else {
                 cardEl.style.opacity = '1';
-                cardEl.style.pointerEvents = '';
                 const badge = cardEl.querySelector('.age-badge');
                 if (badge) badge.style.display = 'none';
             }
@@ -527,7 +527,7 @@ function cargarSiebel() {
     const title   = document.getElementById('modal-title');
     const desc    = document.getElementById('modal-desc');
     const spinner = document.getElementById('modal-spinner');
-    const { nombre, plan, total, destino, dias } = _buildQuoteMsg();
+    const { nombre, plan, total, destino, dias } = _buildQuoteData();
 
     const steps = [
         { t: 0,    icon: '🔗', txt: 'Conectando con Siebel CRM...' },
@@ -570,6 +570,12 @@ function nuevaCotizacion() {
     activeConvenio = null;
     document.querySelectorAll('.convenio-logo').forEach(el => el.classList.remove('active'));
     document.querySelectorAll('.extra-cbx').forEach(cb => cb.checked = false);
+    
+    // Resetear cola de descarga y checkboxes
+    downloadQueue = [];
+    document.querySelectorAll('.descarga-cb').forEach(cb => cb.checked = false);
+    updateBarraDescarga();
+
     selectCard('max');
     recalcular();
 }
@@ -746,7 +752,312 @@ function updatePendientesBadge() {
     if (headerBadge) headerBadge.textContent = count;
 }
 
-// INICIALIZACIÓN
+// ========================================================================
+// LOGICA DE DESCARGA MULTIPLE Y GENERACION MOCK PDF
+// ========================================================================
+
+let barraDescargaExpandida = true;
+
+function toggleBarraDescarga() {
+    const barra = document.getElementById('barra-descarga');
+    const icon = document.getElementById('barra-descarga-toggle-icon');
+    if (!barra) return;
+    
+    barraDescargaExpandida = !barraDescargaExpandida;
+    if (barraDescargaExpandida) {
+        barra.classList.remove('colapsada');
+        barra.classList.add('expandida');
+        if (icon) icon.innerHTML = '<i class="fa-solid fa-chevron-down"></i>';
+    } else {
+        barra.classList.remove('expandida');
+        barra.classList.add('colapsada');
+        if (icon) icon.innerHTML = '<i class="fa-solid fa-chevron-up"></i>';
+    }
+}
+
+function onDownloadCheckboxChange(checkbox) {
+    const prodId = checkbox.value;
+    if (checkbox.checked) {
+        if (downloadQueue.length >= 4) {
+            alert('Puedes seleccionar un máximo de 4 planes para descargar/comparar.');
+            checkbox.checked = false;
+            return;
+        }
+        if (!downloadQueue.includes(prodId)) {
+            downloadQueue.push(prodId);
+        }
+    } else {
+        downloadQueue = downloadQueue.filter(id => id !== prodId);
+    }
+    updateBarraDescarga();
+}
+
+function removeDownloadItem(prodId) {
+    downloadQueue = downloadQueue.filter(id => id !== prodId);
+    
+    // Desmarcar checkbox en la UI
+    document.querySelectorAll('.descarga-cb').forEach(cb => {
+        if (cb.value === prodId) cb.checked = false;
+    });
+    
+    updateBarraDescarga();
+}
+
+function updateBarraDescarga() {
+    const barra = document.getElementById('barra-descarga');
+    const countEl = document.getElementById('descarga-pax-count');
+    const itemsContainer = document.getElementById('descarga-items');
+    
+    if (!barra || !countEl || !itemsContainer) return;
+    
+    countEl.textContent = downloadQueue.length;
+    
+    if (downloadQueue.length === 0) {
+        barra.classList.remove('visible');
+        return;
+    }
+    
+    // Generar pills dinámicamente
+    itemsContainer.innerHTML = downloadQueue.map(prodId => {
+        const prodData = DataRepository.getProductoById(prodId);
+        const name = prodData ? prodData.nombre_comercial : prodId;
+        return `<div class="descarga-item-pill">
+            <span>${name}</span>
+            <span class="remove-item" onclick="removeDownloadItem('${prodId}')">&times;</span>
+        </div>`;
+    }).join('');
+    
+    barra.classList.add('visible');
+    
+    // Asegurar que esté expandida por defecto al mostrarse
+    barra.classList.add('expandida');
+    barra.classList.remove('colapsada');
+    const icon = document.getElementById('barra-descarga-toggle-icon');
+    if (icon) icon.innerHTML = '<i class="fa-solid fa-chevron-down"></i>';
+    barraDescargaExpandida = true;
+}
+
+function iniciarDescargaPDF() {
+    if (downloadQueue.length === 0) return;
+    
+    const container = document.getElementById('descarga-progreso-container');
+    const bar = document.getElementById('descarga-progreso-bar');
+    const btn = document.getElementById('btn-descargar-pdf');
+    
+    if (!container || !bar || !btn) return;
+    
+    btn.disabled = true;
+    btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> PREPARANDO...`;
+    container.style.display = 'block';
+    bar.style.width = '0%';
+    
+    let w = 0;
+    const interval = setInterval(() => {
+        w += 5;
+        bar.style.width = `${w}%`;
+        if (w >= 100) {
+            clearInterval(interval);
+            setTimeout(() => {
+                container.style.display = 'none';
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-solid fa-download"></i> DESCARGAR PDF`;
+                generarPDF();
+            }, 200);
+        }
+    }, 50);
+}
+
+function generarPDF() {
+    if (!ultimaCotizacion || downloadQueue.length === 0) return;
+    
+    const selectedProds = ultimaCotizacion.productos_ofrecidos.filter(p => downloadQueue.includes(p.producto_id));
+    if (selectedProds.length === 0) return;
+    
+    const nombreLead = document.getElementById('prospecto-nombre')?.value?.trim() || 'Cliente';
+    const telLead = document.getElementById('prospecto-tel')?.value || '—';
+    const emailLead = document.getElementById('prospecto-email')?.value || '—';
+    
+    const destinoEl = document.getElementById('destino');
+    const destinoTxt = destinoEl ? destinoEl.options[destinoEl.selectedIndex].text : 'Europa*';
+    const salidaVal = document.getElementById('salida')?.value || '';
+    const regresoVal = document.getElementById('regreso')?.value || '';
+    
+    const formattedSalida = salidaVal ? new Date(salidaVal + 'T00:00:00').toLocaleDateString('es-UY') : '—';
+    const formattedRegreso = regresoVal ? new Date(regresoVal + 'T00:00:00').toLocaleDateString('es-UY') : '—';
+    
+    const convenio = activeConvenio ? DataRepository.getConvenioById(activeConvenio) : null;
+    const convenioNombre = convenio ? convenio.nombre : 'Directa (Folleto)';
+    
+    // Obtener todos los beneficios agrupados para la comparativa
+    // Nos interesa comparar los beneficios clave
+    const listadoBeneficiosClave = [
+        { key: 'MEDICA', label: 'Asistencia Médica enfermedad/accidente' },
+        { key: 'PREEXISTENCIA', label: 'Asistencia por Preexistencias' },
+        { key: 'COVID', label: 'Asistencia Médica por COVID-19' },
+        { key: 'ODONTO', label: 'Asistencia Odontológica' },
+        { key: 'EQUIPAJE', label: 'Pérdida/Demora de Equipaje' },
+        { key: 'HOTEL', label: 'Gastos de Hotel por Convalecencia' }
+    ];
+    
+    let tableHeaders = `<th style="text-align:left; background:#002B5C; color:white; padding:12px; border:1px solid #cbd5e1;">Beneficio / Cobertura</th>`;
+    selectedProds.forEach(p => {
+        tableHeaders += `<th style="text-align:center; background:#002B5C; color:white; padding:12px; border:1px solid #cbd5e1; width: 180px;">${p.nombre_comercial}</th>`;
+    });
+    
+    let tableRows = '';
+    listadoBeneficiosClave.forEach(benInfo => {
+        tableRows += `<tr style="border-bottom: 1px solid #e2e8f0;">
+            <td style="padding:10px 12px; font-weight:600; color:#0A4C8A; font-size:0.75rem; border:1px solid #cbd5e1;">${benInfo.label}</td>`;
+            
+        selectedProds.forEach(p => {
+            let valStr = '—';
+            // Buscar beneficio en el snapshot
+            if (p.beneficios_snapshot) {
+                const ben = p.beneficios_snapshot.find(b => {
+                    if (benInfo.key === 'MEDICA') return b.categoria === 'MEDICA' && (b.nombre_beneficio.toLowerCase().includes('enfermedad') || b.nombre_beneficio.toLowerCase().includes('accidente') || b.beneficio_id.includes('MED'));
+                    if (benInfo.key === 'PREEXISTENCIA') return b.nombre_beneficio.toLowerCase().includes('pre-existencia') || b.nombre_beneficio.toLowerCase().includes('preex');
+                    if (benInfo.key === 'COVID') return b.nombre_beneficio.toLowerCase().includes('covid');
+                    if (benInfo.key === 'ODONTO') return b.nombre_beneficio.toLowerCase().includes('odont');
+                    if (benInfo.key === 'EQUIPAJE') return b.categoria === 'EQUIPAJE';
+                    if (benInfo.key === 'HOTEL') return b.nombre_beneficio.toLowerCase().includes('hotel');
+                    return false;
+                });
+                
+                if (ben) {
+                    valStr = typeof ben.valor === 'number' 
+                        ? `USD ${ben.valor.toLocaleString('es-UY')}` 
+                        : ben.valor;
+                }
+            }
+            tableRows += `<td style="padding:10px 12px; text-align:center; font-size:0.75rem; border:1px solid #cbd5e1;">${valStr}</td>`;
+        });
+        tableRows += `</tr>`;
+    });
+    
+    // Fila de Adicionales Seleccionados
+    tableRows += `<tr style="border-bottom: 1px solid #e2e8f0; background:#f8fafc;">
+        <td style="padding:10px 12px; font-weight:600; color:#0A4C8A; font-size:0.75rem; border:1px solid #cbd5e1;">Upgrades / Adicionales incluidos</td>`;
+    selectedProds.forEach(p => {
+        const extraNames = p.extras ? p.extras.map(e => e.nombre).join(', ') : '';
+        tableRows += `<td style="padding:10px 12px; text-align:center; font-size:0.65rem; color:#64748b; border:1px solid #cbd5e1;">${extraNames || 'Ninguno'}</td>`;
+    });
+    tableRows += `</tr>`;
+    
+    // Fila de Precios
+    tableRows += `<tr style="background:#fff0f3; font-weight:bold;">
+        <td style="padding:12px; font-weight:800; color:#002B5C; font-size:0.85rem; border:1px solid #cbd5e1;">PRECIO TOTAL (Impuestos Inc.)</td>`;
+    selectedProds.forEach(p => {
+        const descText = p.descuento_porcentaje > 0 ? `<div style="font-size:0.55rem; color:#FF436E; text-transform:uppercase;">${p.descuento_porcentaje}% OFF aplicado</div>` : '';
+        tableRows += `<td style="padding:12px; text-align:center; font-size:1.1rem; color:#002B5C; border:1px solid #cbd5e1;">
+            USD ${p.importe_cotizado_final}
+            ${descText}
+        </td>`;
+    });
+    tableRows += `</tr>`;
+
+    const htmlContent = `
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <title>Cotización de Viaje - Universal Assistance</title>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+        <style>
+            * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins', sans-serif; }
+            body { background:#f1f5f9; padding:40px; color:#002B5C; }
+            .container { max-width:800px; background:white; margin:0 auto; padding:40px; border-radius:12px; box-shadow:0 4px 20px rgba(0,43,92,0.1); border-top:6px solid #FF436E; }
+            .header { display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #e2e8f0; padding-bottom:20px; margin-bottom:25px; }
+            .logo-ua { height:45px; }
+            .quote-title { text-align:right; }
+            .quote-title h2 { font-size:1.2rem; font-weight:800; color:#002B5C; }
+            .quote-title p { font-size:0.7rem; color:#64748b; margin-top:2px; }
+            
+            .section-title { font-size:0.8rem; font-weight:800; text-transform:uppercase; color:#002B5C; border-bottom:1px solid #cbd5e1; padding-bottom:4px; margin-bottom:12px; letter-spacing:0.5px; }
+            
+            .meta-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:25px; }
+            .meta-card { background:#EAF3F4; padding:12px 16px; border-radius:8px; border:1px solid rgba(9,183,199,0.15); }
+            .meta-item { font-size:0.75rem; margin-bottom:6px; }
+            .meta-item strong { color:#002B5C; font-weight:600; }
+            
+            .comparison-table { width:100%; border-collapse:collapse; margin-bottom:25px; }
+            
+            .notes { background:#fff8e6; border:1px solid #ffeeba; border-radius:8px; padding:12px 16px; font-size:0.68rem; color:#856404; line-height:1.4; margin-bottom:25px; }
+            
+            .actions-print { display:flex; justify-content:center; gap:12px; margin-top:10px; }
+            .btn-print { background:#002B5C; color:white; border:none; padding:8px 24px; border-radius:20px; font-weight:700; font-size:0.75rem; cursor:pointer; display:flex; align-items:center; gap:6px; transition:0.2s; }
+            .btn-print:hover { background:#0A4C8A; }
+            
+            @media print {
+                body { background:white; padding:0; }
+                .container { box-shadow:none; padding:0; border-radius:0; border-top:none; }
+                .actions-print { display:none; }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <img src="https://www.universal-assistance.com/uy/wp-content/uploads/sites/18/2026/03/ua-blanco-zurich-hd.svg" class="logo-ua" style="filter: brightness(0) invert(0) sepia(1) saturate(5) hue-rotate(185deg);" alt="Universal Assistance">
+                <div class="quote-title">
+                    <h2>PROPUESTA DE VIAJE</h2>
+                    <p>Cotización N° ${ultimaCotizacion.cotizacion_id}</p>
+                </div>
+            </div>
+            
+            <div class="meta-grid">
+                <div class="meta-card">
+                    <h3 class="section-title">Datos del Pasajero</h3>
+                    <div class="meta-item"><strong>Nombre:</strong> ${nombreLead}</div>
+                    <div class="meta-item"><strong>Teléfono:</strong> ${telLead}</div>
+                    <div class="meta-item"><strong>Email:</strong> ${emailLead}</div>
+                </div>
+                <div class="meta-card">
+                    <h3 class="section-title">Detalles del Viaje</h3>
+                    <div class="meta-item"><strong>Destino:</strong> ${destinoTxt}</div>
+                    <div class="meta-item"><strong>Fechas:</strong> ${formattedSalida} al ${formattedRegreso} (${ultimaCotizacion.dias} días)</div>
+                    <div class="meta-item"><strong>Convenio:</strong> ${convenioNombre}</div>
+                </div>
+            </div>
+            
+            <h3 class="section-title">Comparativa de Planes</h3>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        ${tableHeaders}
+                    </tr>
+                </thead>
+                <tbody>
+                    ${tableRows}
+                </tbody>
+            </table>
+            
+            <div class="notes">
+                <strong>Información de validez:</strong> Esta cotización tiene fines informativos y los precios finales están sujetos a cambios según la reglamentación y tipo de cambio vigente al momento de la emisión. Todos los importes expresados incluyen el Impuesto al Valor Agregado (IVA).
+            </div>
+            
+            <div style="text-align:center; font-size:0.65rem; color:#64748b; margin-top:20px; border-top:1px solid #e2e8f0; padding-top:15px;">
+                Universal Assistance - A Zurich Company 🛡️ Uruguay. Teléfono Venta: 2 9017378
+            </div>
+            
+            <div class="actions-print">
+                <button class="btn-print" onclick="window.print()">Imprimir / Guardar como PDF</button>
+                <button class="btn-print" style="background:#cbd5e1; color:#002B5C;" onclick="window.close()">Cerrar</button>
+            </div>
+        </div>
+    </body>
+    </html>
+    `;
+    
+    const pdfWindow = window.open('', '_blank');
+    if (pdfWindow) {
+        pdfWindow.document.open();
+        pdfWindow.document.write(htmlContent);
+        pdfWindow.document.close();
+    } else {
+        alert('Por favor habilite las ventanas emergentes (pop-ups) para ver el PDF de cotización.');
+    }
+}
+
 renderConveniosGrid();
 selectCard('max');
 recalcular();

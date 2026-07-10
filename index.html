@@ -41,6 +41,8 @@
         </div>
     </header>
 
+
+
     <!-- ═══════════════════════════════════════════════════════════════════
          MAIN — 3 Column Grid
          ═══════════════════════════════════════════════════════════════════ -->
@@ -353,6 +355,10 @@
                                 <span class="price-new" id="base-fin">98</span>
                             </div>
                             <button class="btn-seleccionar" style="margin-top:4px;">Seleccionar</button>
+                            <label class="descarga-checkbox-label" style="display:flex; align-items:center; justify-content:center; gap:4px; margin-top:6px; font-size:0.55rem; font-weight:700; color:var(--ua-blue); cursor:pointer;">
+                                <input type="checkbox" class="descarga-cb" value="VALUE_80K" onclick="event.stopPropagation(); onDownloadCheckboxChange(this)">
+                                Elegir para PDF
+                            </label>
                         </div>
                     </div>
                 </div>
@@ -403,6 +409,10 @@
                                 <span class="price-new" id="max-fin">198</span>
                             </div>
                             <button class="btn-seleccionar" style="margin-top:4px;">Seleccionar</button>
+                            <label class="descarga-checkbox-label" style="display:flex; align-items:center; justify-content:center; gap:4px; margin-top:6px; font-size:0.55rem; font-weight:700; color:var(--ua-blue); cursor:pointer;">
+                                <input type="checkbox" class="descarga-cb" value="MAXIMUM_300K" onclick="event.stopPropagation(); onDownloadCheckboxChange(this)">
+                                Elegir para PDF
+                            </label>
                         </div>
                     </div>
                 </div>
@@ -453,6 +463,10 @@
                                 <span class="price-new" id="pre-fin">280</span>
                             </div>
                             <button class="btn-seleccionar" style="margin-top:4px;">Seleccionar</button>
+                            <label class="descarga-checkbox-label" style="display:flex; align-items:center; justify-content:center; gap:4px; margin-top:6px; font-size:0.55rem; font-weight:700; color:var(--ua-blue); cursor:pointer;">
+                                <input type="checkbox" class="descarga-cb" value="EXCLUSIVE_500K" onclick="event.stopPropagation(); onDownloadCheckboxChange(this)">
+                                Elegir para PDF
+                            </label>
                         </div>
                     </div>
                 </div>
@@ -464,6 +478,36 @@
     <!-- ═══════════════════════════════════════════════════════════════════
          FOOTER
          ═══════════════════════════════════════════════════════════════════ -->
+    <!-- Barra inferior de descarga colapsable -->
+    <div id="barra-descarga" class="barra-descarga">
+        <div class="barra-descarga-header" onclick="toggleBarraDescarga()">
+            <div style="display:flex; align-items:center; gap:8px;">
+                <i class="fa-solid fa-file-pdf" style="font-size:1.1rem; color:var(--ua-pink);"></i>
+                <span style="font-weight:700; font-size:0.75rem; color:var(--ua-navy); letter-spacing: 0.5px;">
+                    DESCARGAR COTIZACIONES (<span id="descarga-pax-count">0</span>)
+                </span>
+            </div>
+            <div style="display:flex; align-items:center; gap:10px;">
+                <span id="barra-descarga-toggle-icon" style="font-size:0.7rem; color:var(--ua-navy);">
+                    <i class="fa-solid fa-chevron-up"></i>
+                </span>
+            </div>
+        </div>
+        <div class="barra-descarga-content">
+            <div id="descarga-items" class="descarga-items">
+                <!-- Se inyecta dinámicamente -->
+            </div>
+            <div class="descarga-actions">
+                <button class="btn-descargar-pdf" id="btn-descargar-pdf" onclick="iniciarDescargaPDF()">
+                    <i class="fa-solid fa-download"></i> DESCARGAR PDF
+                </button>
+            </div>
+        </div>
+        <div id="descarga-progreso-container" style="display:none; position:absolute; bottom:0; left:0; width:100%; height:4px; background:#e2e8f0; overflow:hidden;">
+            <div id="descarga-progreso-bar" style="width:0%; height:100%; background:linear-gradient(to right, #ffb4c5, #ff436e); transition: width 0.1s;"></div>
+        </div>
+    </div>
+
     <footer>
         <div class="footer-quote-info" id="footer-msg">
             <div class="footer-badge"><i class="fa-solid fa-circle-check"></i> COTIZACIÓN SELECCIONADA</div>
