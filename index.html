@@ -27,6 +27,9 @@
                 <div style="font-size: 0.85rem; font-weight: 700;">SURVIEW</div>
             </div>
             <div style="font-size: 0.8rem; opacity: 0.8;">Venta telefónica: <b style="text-decoration: underline;">2 9017378</b></div>
+            <button onclick="abrirDashboard()" style="background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.3); padding: 6px 14px; border-radius: 30px; font-weight: 600; font-size: 0.72rem; cursor: pointer; display:flex; align-items:center; gap:6px; transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.15)'">
+                📋 Pendientes <span id="header-pendientes-badge" style="background:var(--ua-pink); padding:1px 7px; border-radius:10px; font-size:0.6rem; min-width:14px; text-align:center;">0</span>
+            </button>
             <button style="background: var(--ua-pink); color: white; border: none; padding: 8px 18px; border-radius: 30px; font-weight: 600; font-size: 0.8rem; cursor: pointer;">Solicitar asistencia</button>
             <div style="cursor: pointer;">
                 <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -504,27 +507,15 @@
         </div>
     </div>
 
-    <!-- Modal Detalles Cobertura -->
+    <!-- Modal Detalles Cobertura (ahora dinámico desde dbBeneficios) -->
     <div class="overlay" id="modal-detalles" onclick="cerrarDetalles()">
         <div class="modal-cobertura" onclick="event.stopPropagation()">
             <div class="modal-cobertura-header">
                 <h3>Tu plan <strong id="modal-plan-name">MAXIMUM</strong> incluye</h3>
                 <span style="cursor:pointer; font-size:1.5rem; color:#002447;" onclick="cerrarDetalles()">&times;</span>
             </div>
-            <div class="modal-cobertura-body">
-                <div style="padding: 16px 24px; font-weight:700; color:var(--ua-blue); border-bottom:1px solid #f0f1f3; display:flex; align-items:center; gap:8px;">
-                    ❤️ Asistencia Médica
-                </div>
-                <ul class="striped-list">
-                    <li>Asistencia médica por enfermedad / accidente <strong id="modal-detalles-medica">USD 300.000</strong></li>
-                    <li>Teleasistencia <strong id="modal-detalles-tele">Incluido</strong></li>
-                    <li>Asistencia médica por pre-existencia* <strong id="modal-detalles-preex">USD 25.000</strong></li>
-                    <li>Prótesis y órtesis* <strong id="modal-detalles-protesis">USD 5.000</strong></li>
-                    <li>Asistencia médica en caso de enfermedad nacional <strong id="modal-detalles-nacional">USD 75.000</strong></li>
-                    <li>Gastos de hotel por convalecencia <strong id="modal-detalles-hotel">USD 15.000</strong></li>
-                    <li>Odontología* <strong id="modal-detalles-odonto">USD 3.000</strong></li>
-                    <li>Medicamentos ambulatorio* <strong id="modal-detalles-medicamentos">USD 3.000</strong></li>
-                </ul>
+            <div class="modal-cobertura-body" id="modal-cobertura-body">
+                <!-- Se genera dinámicamente desde dbBeneficios -->
             </div>
             <div class="modal-cobertura-footer">
                 <div>
@@ -537,11 +528,70 @@
     </div>
 
     <!-- ═══════════════════════════════════════════════════════════════════
+         MODAL DASHBOARD DE PENDIENTES / LEADS
+         ═══════════════════════════════════════════════════════════════════ -->
+    <div class="overlay" id="modal-dashboard" onclick="cerrarDashboard()">
+        <div style="background:white; border-radius:16px; width:90vw; max-width:860px; max-height:85vh; display:flex; flex-direction:column; overflow:hidden;" onclick="event.stopPropagation()">
+            <!-- Header -->
+            <div style="background:linear-gradient(135deg, #002447 0%, #003366 100%); color:white; padding:16px 24px; display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <h3 style="margin:0; font-size:1rem;">📋 Dashboard de Pendientes</h3>
+                    <span style="font-size:0.7rem; opacity:0.7;">Leads guardados con [F7] • Datos en localStorage</span>
+                </div>
+                <div style="display:flex; gap:12px; align-items:center;">
+                    <span id="dash-count" style="background:var(--ua-pink); padding:3px 12px; border-radius:20px; font-size:0.7rem; font-weight:700;">0</span>
+                    <span style="cursor:pointer; font-size:1.5rem;" onclick="cerrarDashboard()">&times;</span>
+                </div>
+            </div>
+            <!-- Filtros -->
+            <div style="padding:10px 24px; display:flex; gap:8px; border-bottom:1px solid #e2e8f0; background:#f8fafc;">
+                <select id="dash-filter-estado" onchange="renderDashboard()" style="font-size:0.68rem; padding:4px 10px; border:1px solid #cbd5e1; border-radius:20px;">
+                    <option value="">Todos los estados</option>
+                    <option value="BORRADOR">Borrador</option>
+                    <option value="COTIZACION_ENVIADA">Cotización Enviada</option>
+                    <option value="CONTACTADO">Contactado</option>
+                    <option value="VENDIDO">Vendido</option>
+                    <option value="PERDIDO">Perdido</option>
+                </select>
+                <input type="text" id="dash-search" placeholder="🔍 Buscar por nombre..." oninput="renderDashboard()" style="flex:1; font-size:0.68rem; padding:4px 12px; border:1px solid #cbd5e1; border-radius:20px;">
+                <button onclick="exportarLeadsCSV()" style="background:#27ae60; color:white; border:none; padding:4px 14px; border-radius:20px; font-size:0.65rem; font-weight:600; cursor:pointer;">
+                    📊 Exportar CSV
+                </button>
+            </div>
+            <!-- Tabla -->
+            <div style="flex:1; overflow-y:auto; padding:0;">
+                <table style="width:100%; border-collapse:collapse; font-size:0.68rem;">
+                    <thead style="background:#f1f5f9; position:sticky; top:0;">
+                        <tr>
+                            <th style="padding:8px 12px; text-align:left; font-weight:700; color:#002447;">Fecha</th>
+                            <th style="padding:8px 12px; text-align:left; font-weight:700; color:#002447;">Prospecto</th>
+                            <th style="padding:8px 12px; text-align:left; font-weight:700; color:#002447;">Destino</th>
+                            <th style="padding:8px 12px; text-align:left; font-weight:700; color:#002447;">Plan</th>
+                            <th style="padding:8px 12px; text-align:right; font-weight:700; color:#002447;">Total</th>
+                            <th style="padding:8px 12px; text-align:center; font-weight:700; color:#002447;">Estado</th>
+                            <th style="padding:8px 12px; text-align:center; font-weight:700; color:#002447;">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dash-tbody">
+                        <!-- Se genera dinámicamente -->
+                    </tbody>
+                </table>
+                <div id="dash-empty" style="display:none; text-align:center; padding:40px; color:#94a3b8;">
+                    <i class="fa-regular fa-folder-open" style="font-size:2rem; display:block; margin-bottom:8px;"></i>
+                    No hay leads guardados aún. Usa [F7] para guardar cotizaciones.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
          JAVASCRIPT — Motor de Cotización y Lógica de Aplicación
          ═══════════════════════════════════════════════════════════════════ -->
     <script src="data-maestros.js"></script>
     <script src="motor-cotizacion.js"></script>
+    <script src="api-config.js"></script>
     <script src="app.js"></script>
 
 </body>
 </html>
+

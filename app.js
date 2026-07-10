@@ -428,47 +428,63 @@ function filtrarConvenios() {
     });
 }
 
-// MODAL DETALLES DEL PLAN
-function abrirDetalles(planUiName) { // Recibe 'Value', 'Maximum', 'Exclusive'
+// MODAL DETALLES DEL PLAN (dinámico desde dbBeneficios)
+function abrirDetalles(planUiName) {
     document.getElementById('modal-plan-name').innerText = planUiName;
     
     let prodId = null;
-    let uiId = null;
-    if (planUiName === 'Value') { prodId = 'VALUE_80K'; uiId = 'base'; }
-    if (planUiName === 'Maximum') { prodId = 'MAXIMUM_300K'; uiId = 'max'; }
-    if (planUiName === 'Exclusive') { prodId = 'EXCLUSIVE_500K'; uiId = 'pre'; }
+    if (planUiName === 'Value') prodId = 'VALUE_80K';
+    if (planUiName === 'Maximum') prodId = 'MAXIMUM_300K';
+    if (planUiName === 'Exclusive') prodId = 'EXCLUSIVE_500K';
+    
+    const body = document.getElementById('modal-cobertura-body');
+    if (!body) return;
     
     if (ultimaCotizacion && prodId) {
         const prodData = ultimaCotizacion.productos_ofrecidos.find(p => p.producto_id === prodId);
         if (prodData) {
             const oldPrice = prodData.descuento_porcentaje > 0 ? `USD ${prodData.importe_cotizado_original}` : '';
-            const newPrice = `USD ${prodData.importe_cotizado_final}`;
-            
             document.getElementById('modal-old-price').innerText = oldPrice;
-            document.getElementById('modal-new-price').innerText = newPrice;
+            document.getElementById('modal-new-price').innerText = `USD ${prodData.importe_cotizado_final}`;
             
-            // Actualizar coberturas iterando el array de beneficios de la Ordenanza
-            // Nota: En un sistema real esto generaría filas dinámicas en el HTML.
-            // Aquí setearemos las clásicas hardcodeadas para no romper el CSS actual.
-            const getVal = (nom) => {
-                const ben = prodData.beneficios_snapshot.find(b => b.nombre_beneficio.includes(nom));
-                return ben ? ben.valor : 'Incluido';
+            // Renderizar coberturas dinámicamente agrupadas por categoría
+            const beneficios = prodData.beneficios_snapshot;
+            const categorias = {
+                'MEDICA':   { icon: '❤️', label: 'Asistencia Médica' },
+                'EQUIPAJE': { icon: '🧳', label: 'Equipaje' },
+                'VIAJE':    { icon: '✈️', label: 'Viaje' },
+                'DEPORTE':  { icon: '⚽', label: 'Deportes' },
+                'LEGAL':    { icon: '⚖️', label: 'Legal y Financiero' },
+                'OTRO':     { icon: '⭐', label: 'Otros Beneficios' }
             };
             
-            const setVal = (id, val) => { const el = document.getElementById(`modal-detalles-${id}`); if (el) el.innerText = val; };
-            setVal('medica', getVal('médica'));
-            setVal('preex', getVal('Pre-existencias') || 'USD 10.000');
-            setVal('tele', 'Incluido');
+            let html = '';
+            for (const [catKey, catInfo] of Object.entries(categorias)) {
+                const catBens = beneficios.filter(b => b.categoria === catKey);
+                if (catBens.length === 0) continue;
+                
+                html += `<div style="padding:12px 24px; font-weight:700; color:var(--ua-blue); border-bottom:1px solid #f0f1f3; display:flex; align-items:center; gap:8px; font-size:0.85rem;">
+                    ${catInfo.icon} ${catInfo.label}
+                </div>`;
+                html += '<ul class="striped-list">';
+                catBens.forEach(b => {
+                    const valDisplay = typeof b.valor === 'number' 
+                        ? `USD ${b.valor.toLocaleString('es-UY')}` 
+                        : b.valor;
+                    html += `<li>${b.nombre_beneficio} <strong>${valDisplay}</strong></li>`;
+                });
+                html += '</ul>';
+            }
+            
+            body.innerHTML = html;
         }
     }
     
     document.getElementById('modal-detalles').style.display = 'flex';
 }
 
-function cerrarDetalles(e) {
-    if(!e || e.target.id === 'modal-detalles') {
-        document.getElementById('modal-detalles').style.display = 'none';
-    }
+function cerrarDetalles() {
+    document.getElementById('modal-detalles').style.display = 'none';
 }
 
 // ========================================================================
@@ -584,6 +600,150 @@ function renderConveniosGrid() {
                     ${capitaDot}${conv.nombre}
                 </div>`;
     }).join('');
+}
+
+// ========================================================================
+// DASHBOARD DE PENDIENTES / LEADS
+// ========================================================================
+
+function abrirDashboard() {
+    document.getElementById('modal-dashboard').style.display = 'flex';
+    renderDashboard();
+}
+
+function cerrarDashboard() {
+    document.getElementById('modal-dashboard').style.display = 'none';
+}
+
+function _getLeads() {
+    try {
+        return JSON.parse(localStorage.getItem('ua_pendientes') || '[]');
+    } catch(e) { return []; }
+}
+
+function renderDashboard() {
+    const leads = _getLeads();
+    const filterEstado = document.getElementById('dash-filter-estado')?.value || '';
+    const searchTxt = (document.getElementById('dash-search')?.value || '').toLowerCase();
+    
+    let filtered = leads;
+    if (filterEstado) filtered = filtered.filter(l => l.estado_cotizacion === filterEstado);
+    if (searchTxt) filtered = filtered.filter(l => (l.prospecto?.nombre || '').toLowerCase().includes(searchTxt));
+    
+    const tbody = document.getElementById('dash-tbody');
+    const emptyEl = document.getElementById('dash-empty');
+    const countEl = document.getElementById('dash-count');
+    
+    if (countEl) countEl.textContent = leads.length;
+    
+    if (filtered.length === 0) {
+        tbody.innerHTML = '';
+        emptyEl.style.display = 'block';
+        return;
+    }
+    emptyEl.style.display = 'none';
+    
+    const estadoColors = {
+        'BORRADOR': '#94a3b8', 'COTIZACION_ENVIADA': '#3b82f6', 'CONTACTADO': '#8b5cf6',
+        'VENDIDO': '#22c55e', 'PERDIDO': '#ef4444'
+    };
+    
+    tbody.innerHTML = filtered.map((lead, idx) => {
+        const fecha = new Date(lead.fecha_cotizacion).toLocaleDateString('es-UY', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' });
+        const nombre = lead.prospecto?.nombre || 'Sin nombre';
+        const destino = lead.destino_id || '—';
+        const plan = lead.productos_ofrecidos?.find(p => p.producto_id === (lead.plan_seleccionado || 'MAXIMUM_300K'));
+        const planNombre = plan ? plan.nombre_comercial : '—';
+        const total = plan ? `USD ${plan.importe_cotizado_final}` : '—';
+        const estado = lead.estado_cotizacion || 'BORRADOR';
+        const color = estadoColors[estado] || '#94a3b8';
+        const realIdx = leads.indexOf(lead);
+        
+        return `<tr style="border-bottom:1px solid #f1f5f9; transition: background 0.15s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background=''">
+            <td style="padding:8px 12px; color:#64748b;">${fecha}</td>
+            <td style="padding:8px 12px; font-weight:600; color:#002447;">${nombre}<br><span style="font-size:0.55rem; color:#94a3b8;">${lead.prospecto?.telefono || ''}</span></td>
+            <td style="padding:8px 12px;">${destino}</td>
+            <td style="padding:8px 12px; font-weight:500;">${planNombre}</td>
+            <td style="padding:8px 12px; text-align:right; font-weight:700; color:#002447;">${total}</td>
+            <td style="padding:8px 12px; text-align:center;">
+                <select onchange="cambiarEstadoLead(${realIdx}, this.value)" style="font-size:0.6rem; padding:2px 6px; border:1px solid ${color}; border-radius:12px; color:${color}; background:${color}15; font-weight:600; cursor:pointer;">
+                    <option value="BORRADOR" ${estado==='BORRADOR'?'selected':''}>Borrador</option>
+                    <option value="CONTACTADO" ${estado==='CONTACTADO'?'selected':''}>Contactado</option>
+                    <option value="COTIZACION_ENVIADA" ${estado==='COTIZACION_ENVIADA'?'selected':''}>Cot. Enviada</option>
+                    <option value="VENDIDO" ${estado==='VENDIDO'?'selected':''}>Vendido</option>
+                    <option value="PERDIDO" ${estado==='PERDIDO'?'selected':''}>Perdido</option>
+                </select>
+            </td>
+            <td style="padding:8px 12px; text-align:center;">
+                <button onclick="eliminarLead(${realIdx})" style="background:none; border:none; color:#ef4444; cursor:pointer; font-size:0.75rem;" title="Eliminar">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
+            </td>
+        </tr>`;
+    }).join('');
+}
+
+function cambiarEstadoLead(idx, nuevoEstado) {
+    const leads = _getLeads();
+    if (leads[idx]) {
+        leads[idx].estado_cotizacion = nuevoEstado;
+        localStorage.setItem('ua_pendientes', JSON.stringify(leads));
+        renderDashboard();
+        updatePendientesBadge();
+    }
+}
+
+function eliminarLead(idx) {
+    if (!confirm('¿Eliminar este lead?')) return;
+    const leads = _getLeads();
+    leads.splice(idx, 1);
+    localStorage.setItem('ua_pendientes', JSON.stringify(leads));
+    renderDashboard();
+    updatePendientesBadge();
+}
+
+function exportarLeadsCSV() {
+    const leads = _getLeads();
+    if (leads.length === 0) { alert('No hay leads para exportar.'); return; }
+    
+    const headers = ['Fecha', 'Nombre', 'Teléfono', 'Email', 'Destino', 'Días', 'Plan', 'Total USD', 'Convenio', 'Estado'];
+    const rows = leads.map(l => {
+        const plan = l.productos_ofrecidos?.find(p => p.producto_id === (l.plan_seleccionado || 'MAXIMUM_300K'));
+        return [
+            new Date(l.fecha_cotizacion).toLocaleDateString('es-UY'),
+            l.prospecto?.nombre || '',
+            l.prospecto?.telefono || '',
+            l.prospecto?.email || '',
+            l.destino_id || '',
+            l.dias || '',
+            plan?.nombre_comercial || '',
+            plan?.importe_cotizado_final || '',
+            l.convenio_id || 'Sin convenio',
+            l.estado_cotizacion || 'BORRADOR'
+        ].join(',');
+    });
+    
+    const csv = [headers.join(','), ...rows].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `UA_Leads_${new Date().toISOString().slice(0,10)}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+}
+
+// Override updatePendientesBadge to also update header badge
+const _origUpdateBadge = typeof updatePendientesBadge === 'function' ? updatePendientesBadge : null;
+function updatePendientesBadge() {
+    const leads = _getLeads();
+    const count = leads.length;
+    // Footer badge
+    const footerBadge = document.querySelector('.footer-pending-count');
+    if (footerBadge) footerBadge.textContent = count;
+    // Header badge
+    const headerBadge = document.getElementById('header-pendientes-badge');
+    if (headerBadge) headerBadge.textContent = count;
 }
 
 // INICIALIZACIÓN
