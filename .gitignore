@@ -1,0 +1,12 @@
+# Dependencias
+node_modules/
+
+# Compilados de producción
+dist/
+
+# Archivos de sistema / IDEs
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+.gemini/

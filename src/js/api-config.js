@@ -7,6 +7,8 @@
    cuando se dispongan de credenciales.
    ======================================================================== */
 
+import { MotorCotizacion } from './motor-cotizacion.js';
+
 const ApiConfig = {
     // ── Configuración ──
     modo: 'LOCAL', // 'LOCAL' | 'API_PARTNERS' | 'MOCK'
@@ -146,3 +148,5 @@ const ApiConfig = {
         };
     }
 };
+
+export { ApiConfig };

@@ -3,9 +3,9 @@
    v2.0 — Con reglas de elegibilidad por edad y estados CRM
    ======================================================================== */
 
-// Depende de DataRepository (de data-maestros.js)
+import { DataRepository } from './data-maestros.js';
 
-class MotorCotizacion {
+export class MotorCotizacion {
     
     // Función principal para generar el modelo transaccional "Cotizacion"
     static generarCotizacion(inputs) {
@@ -182,7 +182,7 @@ class MotorCotizacion {
 // Estados CRM y templates según tipo de lead
 // ═══════════════════════════════════════════════════════════════════════
 
-const PlantillasMsg = {
+export const PlantillasMsg = {
     // Estados CRM (de ENV-004)
     ESTADOS_CRM: [
         'LEAD_NUEVO_WEB', 'LEAD_NUEVO_OCA', 'CONTACTADO', 'PENDIENTE_DATOS',

@@ -337,3 +337,13 @@ const DataRepository = {
     getAdicionalById:     (id)     => dbAdicionales.find(a => a.adicional_id === id),
     getAdicionales:       ()       => dbAdicionales.filter(a => a.activo)
 };
+
+export {
+    dbDestinos,
+    dbZonasTarifarias,
+    dbProductos,
+    dbBeneficios,
+    dbConvenios,
+    dbAdicionales,
+    DataRepository
+};

@@ -3,6 +3,10 @@
    v4.0 — Con datos maestros REALES (20 convenios, 12 productos)
    ======================================================================== */
 
+import '../css/styles.css';
+import { DataRepository } from './data-maestros.js';
+import { MotorCotizacion, PlantillasMsg } from './motor-cotizacion.js';
+
 // ── Estado Global ──────────────────────────────────────────────────────
 let pax = { adultos: 1, seniors: 0, menores: 0 };
 let activeConvenio = null; // Guardará el ID del convenio de la BD (ej. 'SEMM_UY')
@@ -260,7 +264,10 @@ function guardarPendiente() {
 }
 
 function updatePendientesBadge() {
-    const pendientes = JSON.parse(localStorage.getItem('ua_pendientes') || '[]');
+    const leads = JSON.parse(localStorage.getItem('ua_pendientes') || '[]');
+    const count = leads.length;
+    
+    // 1. Badge creado dinámicamente
     let badge = document.getElementById('pendientes-badge');
     if (!badge) {
         const f7Btn = document.querySelector('[onclick*="guardarPendiente"]') || document.querySelector('.footer-btn');
@@ -272,13 +279,21 @@ function updatePendientesBadge() {
         }
     }
     if (badge) {
-        if (pendientes.length > 0) {
-            badge.textContent = pendientes.length;
+        if (count > 0) {
+            badge.textContent = count;
             badge.style.display = 'inline-block';
         } else {
             badge.style.display = 'none';
         }
     }
+
+    // 2. Footer badge
+    const footerBadge = document.querySelector('.footer-pending-count');
+    if (footerBadge) footerBadge.textContent = count;
+    
+    // 3. Header badge (si existe)
+    const headerBadge = document.getElementById('header-pendientes-badge');
+    if (headerBadge) headerBadge.textContent = count;
 }
 
 // ========================================================================
@@ -858,18 +873,7 @@ function exportarLeadsCSV() {
     URL.revokeObjectURL(url);
 }
 
-// Override updatePendientesBadge to also update header badge
-const _origUpdateBadge = typeof updatePendientesBadge === 'function' ? updatePendientesBadge : null;
-function updatePendientesBadge() {
-    const leads = _getLeads();
-    const count = leads.length;
-    // Footer badge
-    const footerBadge = document.querySelector('.footer-pending-count');
-    if (footerBadge) footerBadge.textContent = count;
-    // Header badge
-    const headerBadge = document.getElementById('header-pendientes-badge');
-    if (headerBadge) headerBadge.textContent = count;
-}
+
 
 // ========================================================================
 // LOGICA DE DESCARGA MULTIPLE Y GENERACION MOCK PDF
@@ -1181,3 +1185,22 @@ renderConveniosGrid();
 selectCard('max');
 recalcular();
 updatePendientesBadge();
+
+// Exponer funciones globales para interactividad del HTML
+window.updatePax = updatePax;
+window.toggleMostrarTodosConvenios = toggleMostrarTodosConvenios;
+window.toggleConvenio = toggleConvenio;
+window.selectCard = selectCard;
+window.guardarPendiente = guardarPendiente;
+window.enviarContacto = enviarContacto;
+window.cargarSiebel = cargarSiebel;
+window.nuevaCotizacion = nuevaCotizacion;
+window.abrirDetalles = abrirDetalles;
+window.cerrarDetalles = cerrarDetalles;
+window.iniciarDescargaPDF = iniciarDescargaPDF;
+window.removeDownloadItem = removeDownloadItem;
+window.abrirDashboard = abrirDashboard;
+window.cerrarDashboard = cerrarDashboard;
+window.renderDashboard = renderDashboard;
+window.filtrarConvenios = filtrarConvenios;
+window.recalcular = recalcular;
